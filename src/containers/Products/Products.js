@@ -14,7 +14,9 @@ const Product = (props) => {
     console.log(props.id);
     const deletedProduct = { id: props.id };
     axios
-      .post('/delete-product/', deletedProduct)
+      .post('/delete-product/', deletedProduct, {
+        headers: { token: localStorage.getItem('token') },
+      })
       .then((res) => {
         console.log('Delete res', res);
         console.log('Delete res.data', res.data);

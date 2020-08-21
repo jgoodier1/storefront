@@ -15,7 +15,7 @@ const StyledButton = styled.button`
   background-color: white;
   border: 3px solid #38689e;
   color: #38689e;
-  margin-right: 20px;
+  ${'' /* margin-right: 20px; */}
 
   &:hover {
     background-color: #38689e;

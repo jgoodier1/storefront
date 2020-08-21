@@ -129,7 +129,9 @@ const ProductForm = (props) => {
       description: controlsState.description.value,
     };
     axios
-      .post('/admin/add-product', newProduct)
+      .post('/admin/add-product', newProduct, {
+        headers: { token: localStorage.getItem('token') },
+      })
       .then((res) => {
         console.log('Axios res', res);
         console.log('Axios res.data', res.data);
@@ -151,7 +153,9 @@ const ProductForm = (props) => {
       id: location.search.split('=')[1],
     };
     axios
-      .post('/admin/edit-product', updatedProduct)
+      .post('/admin/edit-product', updatedProduct, {
+        headers: { token: localStorage.getItem('token') },
+      })
       .then((res) => {
         console.log('Axios res', res);
         console.log('Axios res.data', res.data);
