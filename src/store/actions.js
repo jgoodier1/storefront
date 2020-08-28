@@ -31,7 +31,7 @@ export const logout = () => {
     dispatch(authLogout());
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
-    localStorage.removeItem('expirationDate');
+    localStorage.removeItem('expiryDate');
     axios
       .post('/logout')
       .then((res) => console.log(res.data))
@@ -52,7 +52,7 @@ export const auth = (name, email, password, confirmPassword, isSignUp) => {
       axios
         .post('/signup', newUser)
         .then((res) => {
-          localStorage.setItem('token', res.data.token);
+          // localStorage.setItem('token', res.data.token);
           // localStorage.setItem('expirationDate', res.data.expirationDate);
           // localStorage.setItem('userId', res.data.userId);
           console.log('res.data', res.data);
@@ -71,12 +71,15 @@ export const auth = (name, email, password, confirmPassword, isSignUp) => {
         password: password,
       };
       axios
-        .post('/signin', user)
+        .post('/signin', user, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
         .then((res) => {
+          console.log('res.data', res.data);
           localStorage.setItem('token', res.data.token);
-          // localStorage.setItem('token', res.data.idToken);
-          // localStorage.setItem('expirationDate', res.data.expirationDate);
-          // localStorage.setItem('userId', res.data.userId);
+          localStorage.setItem('userId', res.data.userId);
           dispatch(authSuccess());
         })
         // .then(() => history.push('/products')) //change this
