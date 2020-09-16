@@ -1,48 +1,39 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Input = (props) => {
-  let inputElement = null;
-
-  switch (props.elementType) {
-    case 'input':
-      inputElement = (
-        <StyledInput
-          {...props.elementConfig}
-          value={props.value}
-          onChange={props.changed}
-        />
-      );
-      break;
-    case 'textarea':
-      inputElement = (
-        <StyledTextArea
-          {...props.elementConfig}
-          value={props.value}
-          onChange={props.changed}
-          rows='8'
-        />
-      );
-      break;
-    default:
-      inputElement = (
-        <StyledInput
-          {...props.elementConfig}
-          value={props.value}
-          onChange={props.changed}
-        />
-      );
-  }
+const Input = props => {
   return (
     <div>
-      <StyledLabel>{props.label}</StyledLabel>
+      <StyledLabel htmlFor={props.name}>{props.label}</StyledLabel>
       <br />
-      {inputElement}
+      <StyledInput
+        type={props.type}
+        name={props.name}
+        // required={props.required}
+        value={props.value}
+        onChange={props.changed}
+      />
     </div>
   );
 };
 
-export default Input;
+const TextArea = props => {
+  return (
+    <div>
+      <StyledLabel htmlFor={props.name}>{props.label}</StyledLabel>
+      <br />
+      <StyledTextArea
+        // required={props.required}
+        value={props.value}
+        onChange={props.changed}
+        rows={props.rows}
+        name={props.name}
+      />
+    </div>
+  );
+};
+
+export { Input, TextArea };
 
 const StyledInput = styled.input`
   font-family: inherit;

@@ -6,7 +6,7 @@ import axios from 'axios';
 import Spinner from '../../components/Spinner/Spinner';
 import Button from '../../components/Button/Button';
 
-const Product = (props) => {
+const Product = props => {
   const location = useLocation(); //might not be the best place for this
   const history = useHistory();
 
@@ -15,32 +15,50 @@ const Product = (props) => {
     const deletedProduct = { id: props.id };
     axios
       .post('/delete-product/', deletedProduct, {
-        headers: { token: localStorage.getItem('token') },
+        headers: { Authorization: 'bearer ' + localStorage.getItem('token') }
       })
-      .then((res) => {
+      .then(res => {
         console.log('Delete res', res);
         console.log('Delete res.data', res.data);
       })
       .then(() => {
         history.push('/products');
       })
-      .catch((err) => console.log(err));
+      .catch(err => console.log(err));
   };
 
   const addToCartHandler = () => {
-    const product = { id: props.id };
-    axios
-      .post('/cart', product)
-      .then((res) => {
-        console.log('Cart res', res);
-        console.log('Cart res.data', res.data);
-      })
-      .then(() => {
-        history.push('/cart');
-      })
-      .catch((err) => {
-        console.error(err);
+    let cart = JSON.parse(sessionStorage.getItem('cart')) || undefined;
+    if (cart === undefined) {
+      cart = {};
+      const products = [
+        {
+          prodId: props.id,
+          quantity: 1,
+          price: props.price
+        }
+      ];
+      let subTotal = 0;
+      products.forEach(p => {
+        subTotal += p.quantity * p.price;
       });
+      cart.products = products;
+      cart.subTotal = subTotal;
+    } else {
+      const existingProdId = cart.products.find(p => p.prodId === props.id);
+      if (!existingProdId) {
+        cart.products.push({ prodId: props.id, quantity: 1, price: props.price });
+      } else {
+        cart.products.map(p => p.prodId === props.id && p.quantity++);
+      }
+      let subTotal = 0;
+      cart.products.forEach(p => {
+        subTotal += p.quantity * p.price;
+      });
+      cart.subTotal = subTotal;
+    }
+    sessionStorage.setItem('cart', JSON.stringify(cart));
+    console.log(cart);
   };
 
   let buttons = undefined;
@@ -68,7 +86,7 @@ const Product = (props) => {
   );
 };
 
-const Products = (props) => {
+const Products = props => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -76,18 +94,18 @@ const Products = (props) => {
     setLoading(true);
     axios
       .get('/products')
-      .then((res) => {
+      .then(res => {
         const fetchedProducts = [];
         for (let key in res.data) {
           fetchedProducts.push({
             ...res.data[key],
-            id: key,
+            id: key
           });
         }
         setProducts(fetchedProducts);
         setLoading(false);
       })
-      .catch((err) => {
+      .catch(err => {
         console.error(err);
         setLoading(false);
       });
@@ -95,7 +113,7 @@ const Products = (props) => {
 
   let renderedProducts = <Spinner />;
   if (!loading) {
-    renderedProducts = products.map((p) => (
+    renderedProducts = products.map(p => (
       <Product key={p._id} title={p.title} img={p.image} price={p.price} id={p._id} />
     ));
   }
@@ -152,3 +170,18 @@ const StyledPrice = styled.p`
   font-weight: bold;
   margin: 0.5rem;
 `;
+
+// old add-to-cart
+// const product = { id: props.id, userId: localStorage.getItem('userId') };
+// axios
+//   .post('/cart', product)
+//   .then((res) => {
+//     console.log('Cart res', res);
+//     console.log('Cart res.data', res.data);
+//   })
+//   .then(() => {
+//     history.push('/');
+//   })
+//   .catch((err) => {
+//     console.error(err);
+//   });

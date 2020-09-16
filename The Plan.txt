@@ -1,0 +1,14 @@
+- Finish the checkout
+- Fix the styling for the entire site
+- Design the homepage 
+  - have a welcome message
+  - display `x` most recent products
+  - have a sign-up button right on the homepage (or at least highlight the one in the toolbar)
+- Add a searchbar to the nav
+- Add product pages, that display the full info (will need to add more product details)
+- Add payment (to the back-end)
+- Change to a PostgreSQL db at some point (no rush yet)
+- Write tests for everything on both front- and back-ends
+  - Should start writing test for all new components
+- Reorganize the folder structure
+- DRY code as needed (really think about it when reviewing code)

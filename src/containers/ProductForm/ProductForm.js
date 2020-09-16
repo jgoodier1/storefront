@@ -3,46 +3,50 @@ import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import axios from 'axios';
 
-import Input from '../../components/Input/Input';
+import { Input, TextArea } from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
 
-const ProductForm = (props) => {
-  const [controlsState, setControlsState] = useState({
-    title: {
-      elementType: 'input',
-      elementConfig: {
-        type: 'text',
-      },
-      label: 'Product Title: ',
-      value: '',
-    },
-    image: {
-      elementType: 'input',
-      elementConfig: {
-        type: 'url',
-      },
-      label: 'Image URL: ',
-      value: '',
-    },
-    price: {
-      elementType: 'input',
-      elementConfig: {
-        type: 'number',
-      },
-      label: 'Price: ',
-      value: '',
-    },
-    description: {
-      elementType: 'textarea',
-      elementConfig: {
-        name: 'description',
-        htmlFor: 'description',
-      },
-      label: 'Description: ',
-      value: '',
-    },
-  });
+const ProductForm = props => {
+  // const [controlsState, setControlsState] = useState({
+  //   title: {
+  //     elementType: 'input',
+  //     elementConfig: {
+  //       type: 'text',
+  //     },
+  //     label: 'Product Title: ',
+  //     value: '',
+  //   },
+  //   image: {
+  //     elementType: 'input',
+  //     elementConfig: {
+  //       type: 'url',
+  //     },
+  //     label: 'Image URL: ',
+  //     value: '',
+  //   },
+  //   price: {
+  //     elementType: 'input',
+  //     elementConfig: {
+  //       type: 'number',
+  //     },
+  //     label: 'Price: ',
+  //     value: '',
+  //   },
+  //   description: {
+  //     elementType: 'textarea',
+  //     elementConfig: {
+  //       name: 'description',
+  //       htmlFor: 'description',
+  //     },
+  //     label: 'Description: ',
+  //     value: '',
+  //   },
+  // });
 
+  const [titleValue, setTitleValue] = useState('');
+  const [imageValue, setImageValue] = useState('');
+  const [priceValue, setPriceValue] = useState('');
+  const [descValue, setDescValue] = useState('');
   const [editingState, setEditingState] = useState(false);
 
   const location = useLocation();
@@ -60,132 +64,111 @@ const ProductForm = (props) => {
     if (editingState) {
       axios
         .get('/admin/edit-product' + location.search)
-        .then((res) => {
+        .then(res => {
           console.log(res.data);
-          const updatedControls = {
-            ...controlsState,
-            title: {
-              ...controlsState.title,
-              value: res.data.title,
-            },
-            image: {
-              ...controlsState.image,
-              value: res.data.image,
-            },
-            price: {
-              ...controlsState.price,
-              value: res.data.price,
-            },
-            description: {
-              ...controlsState.description,
-              value: res.data.description,
-            },
-          };
-          setControlsState(updatedControls);
+          setTitleValue(res.data.title);
+          setImageValue(res.data.image);
+          setPriceValue(res.data.price);
+          setDescValue(res.data.description);
         })
-        .catch((err) => console.error(err));
+        .catch(err => console.error(err));
     } else if (editingState === false) {
-      const updatedControls = {
-        ...controlsState,
-        title: {
-          ...controlsState.title,
-          value: '',
-        },
-        image: {
-          ...controlsState.image,
-          value: '',
-        },
-        price: {
-          ...controlsState.price,
-          value: '',
-        },
-        description: {
-          ...controlsState.description,
-          value: '',
-        },
-      };
-      setControlsState(updatedControls);
+      setTitleValue('');
+      setImageValue('');
+      setPriceValue('');
+      setDescValue('');
     }
   }, [location.search, editingState]); //eslint-disable-line
 
-  const inputChangedHandler = (event, controlName) => {
-    const updatedControls = {
-      ...controlsState,
-      [controlName]: {
-        ...controlsState[controlName],
-        value: event.target.value,
-      },
-    };
-    setControlsState(updatedControls);
-  };
-
-  const onAddSubmitHandler = (event) => {
+  const onAddSubmitHandler = event => {
     event.preventDefault();
 
     const newProduct = {
-      title: controlsState.title.value,
-      image: controlsState.image.value,
-      price: controlsState.price.value,
-      description: controlsState.description.value,
+      title: titleValue,
+      image: imageValue,
+      price: priceValue,
+      description: descValue
     };
     axios
       .post('/admin/add-product', newProduct, {
-        headers: { token: localStorage.getItem('token') },
+        headers: { Authorization: 'bearer ' + localStorage.getItem('token') }
       })
-      .then((res) => {
+      .then(res => {
         console.log('Axios res', res);
         console.log('Axios res.data', res.data);
       })
       .then(() => {
         history.push('/products');
       })
-      .catch((err) => console.error(err));
+      .catch(err => console.error(err));
   };
 
-  const onEditSubmitHandler = (event) => {
+  const onEditSubmitHandler = event => {
     event.preventDefault();
 
     const updatedProduct = {
-      title: controlsState.title.value,
-      image: controlsState.image.value,
-      price: controlsState.price.value,
-      description: controlsState.description.value,
-      id: location.search.split('=')[1],
+      title: titleValue,
+      image: imageValue,
+      price: priceValue,
+      description: descValue,
+      id: location.search.split('=')[1]
     };
     axios
       .post('/admin/edit-product', updatedProduct, {
-        headers: { token: localStorage.getItem('token') },
+        headers: { Authorization: 'bearer ' + localStorage.getItem('token') }
       })
-      .then((res) => {
+      .then(res => {
         console.log('Axios res', res);
         console.log('Axios res.data', res.data);
       })
       .then(() => {
         history.push('/products');
       })
-      .catch((err) => {
+      .catch(err => {
         console.error(err);
       });
   };
 
-  const formElementsArray = [];
-  for (let key in controlsState) {
-    formElementsArray.push({
-      id: key,
-      config: controlsState[key],
-    });
-  }
+  // const formElementsArray = [];
+  // for (let key in controlsState) {
+  //   formElementsArray.push({
+  //     id: key,
+  //     config: controlsState[key],
+  //   });
+  // }
 
-  let form = formElementsArray.map((formElement) => (
-    <Input
-      key={formElement.id}
-      elementType={formElement.config.elementType}
-      elementConfig={formElement.config.elementConfig}
-      value={formElement.config.value || ''} // the || makes it controlled
-      changed={(event) => inputChangedHandler(event, formElement.id)}
-      label={formElement.config.label}
-    />
-  ));
+  let form = (
+    <>
+      <Input
+        type='text'
+        value={titleValue || ''} // the || makes it controlled
+        name='title'
+        changed={event => setTitleValue(event.target.value)}
+        label='Title'
+      />
+      <Input
+        type='text'
+        value={imageValue || ''} // the || makes it controlled
+        changed={event => setImageValue(event.target.value)}
+        name='imageurl'
+        label='Image URL'
+      />
+      <Input
+        type='number'
+        value={priceValue || ''} // the || makes it controlled
+        changed={event => setPriceValue(event.target.value)}
+        name='price'
+        label='Price'
+      />
+      <TextArea
+        value={descValue || ''}
+        changed={event => setDescValue(event.target.value)}
+        name='desc'
+        label='Description'
+        rows={'8'}
+      />
+    </>
+  );
 
   return (
     <>

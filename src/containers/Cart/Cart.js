@@ -6,19 +6,33 @@ import styled from 'styled-components';
 import Spinner from '../../components/Spinner/Spinner';
 import Button from '../../components/Button/Button';
 
-const CartItem = (props) => {
+const CartItem = props => {
   const history = useHistory();
 
   const deleteHandler = () => {
-    const deletedProduct = { id: props.id };
-    axios
-      .post('cart-delete', deletedProduct)
-      .then((res) => {
-        console.log('res.data', res.data);
-        console.log('res', res);
-      })
-      .then(() => history.go(0))
-      .catch((err) => console.error(err));
+    const cart = JSON.parse(sessionStorage.getItem('cart'));
+    if (cart === undefined) {
+      console.log('cart undefined');
+      return; // return some kind of error
+    }
+    const existingProdId = cart.products.find(p => p.prodId === props.id);
+    if (!existingProdId) {
+      console.log('no existing prod id');
+      return; // need another error
+    } else {
+      let subTotal = 0;
+      cart.products.forEach(p => {
+        subTotal += p.quantity * p.price;
+      });
+      const newCart = {
+        ...cart,
+        products: cart.products.filter(p => p.prodId !== props.id),
+        subTotal
+      };
+      console.log(newCart);
+      sessionStorage.setItem('cart', JSON.stringify(newCart));
+      setTimeout(() => history.push('/cart'), 500);
+    }
   };
 
   return (
@@ -37,24 +51,11 @@ const Cart = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
-    axios
-      .get('/cart')
-      .then((res) => {
-        const fetchedProducts = [];
-        for (let key in res.data) {
-          fetchedProducts.push({
-            ...res.data[key],
-            id: key,
-          });
-        }
-        setCart(fetchedProducts);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setLoading(false);
-        console.error(err);
-      });
+    const cart = JSON.parse(sessionStorage.getItem('cart'));
+    console.log(cart);
+    axios.post('/cart', cart).then(res => {
+      setCart(res.data);
+    });
   }, []);
 
   const orderHandler = () => {
@@ -62,12 +63,12 @@ const Cart = () => {
     const orderedCart = cart;
     axios
       .post('/order', orderedCart)
-      .then((res) => {
+      .then(res => {
         setLoading(false);
         console.log('res', res);
         console.log('res.data', res.data);
       })
-      .catch((err) => {
+      .catch(err => {
         setLoading(false);
         console.log(err);
       });
@@ -75,14 +76,14 @@ const Cart = () => {
 
   let renderedCart = <Spinner />;
   if (!loading) {
-    renderedCart = cart.map((ci) => (
+    renderedCart = cart.map(ci => (
       <CartItem
-        key={ci.prodId._id}
-        title={ci.prodId.title}
-        price={ci.prodId.price}
-        image={ci.prodId.image}
+        key={ci.prodId}
+        title={ci.title}
+        price={ci.price}
+        image={ci.image}
         quantity={ci.quantity}
-        id={ci.prodId._id}
+        id={ci.prodId}
       />
     ));
   }
@@ -91,8 +92,8 @@ const Cart = () => {
 
   let totalPrice; // should probably handle prices on back-end (or at least validate them)
   if (renderedCart.length > 0) {
-    const filteredPrices = renderedCart.map((obj) => obj.props.price);
-    const filteredQuants = renderedCart.map((obj) => obj.props.quantity);
+    const filteredPrices = renderedCart.map(obj => obj.props.price);
+    const filteredQuants = renderedCart.map(obj => obj.props.quantity);
     const oneArray = filteredPrices.map((x, index) => x * filteredQuants[index]);
     totalPrice = oneArray.reduce((a, b) => a + b).toFixed(2);
   }
@@ -102,7 +103,7 @@ const Cart = () => {
       {renderedCart}
       {totalPrice && <h2>Total Price: ${totalPrice}</h2>}
       {renderedCart.length > 0 ? (
-        <StyledButton clicked={orderHandler}>Order</StyledButton>
+        <StyledButton clicked={orderHandler}>Continue To Checkout</StyledButton>
       ) : (
         <h2>Cart is empty</h2>
       )}
@@ -174,3 +175,34 @@ const StyledButton = styled(Button)`
   grid-column: 2/3;
   grid-row: 1/2;
 `;
+
+// const deletedProduct = { id: props.id };
+// axios
+//   .post('cart-delete', deletedProduct)
+//   .then(res => {
+//     console.log('res.data', res.data);
+//     console.log('res', res);
+//   })
+//   .then(() => history.go(0))
+//   .catch(err => console.error(err));
+
+// useEffect(() => {
+//   setLoading(true);
+//   axios
+//     .get('/cart')
+//     .then((res) => {
+//       const fetchedProducts = [];
+//       for (let key in res.data) {
+//         fetchedProducts.push({
+//           ...res.data[key],
+//           id: key,
+//         });
+//       }
+//       setCart(fetchedProducts);
+//       setLoading(false);
+//     })
+//     .catch((err) => {
+//       setLoading(false);
+//       console.error(err);
+//     });
+// }, []);
