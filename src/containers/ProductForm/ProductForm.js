@@ -143,6 +143,7 @@ const ProductForm = props => {
         type='text'
         value={titleValue || ''} // the || makes it controlled
         name='title'
+        id='title'
         changed={event => setTitleValue(event.target.value)}
         label='Title'
       />
@@ -151,6 +152,7 @@ const ProductForm = props => {
         value={imageValue || ''} // the || makes it controlled
         changed={event => setImageValue(event.target.value)}
         name='imageurl'
+        id='imageurl'
         label='Image URL'
       />
       <Input
@@ -158,12 +160,14 @@ const ProductForm = props => {
         value={priceValue || ''} // the || makes it controlled
         changed={event => setPriceValue(event.target.value)}
         name='price'
+        id='price'
         label='Price'
       />
       <TextArea
         value={descValue || ''}
         changed={event => setDescValue(event.target.value)}
         name='desc'
+        id='desc'
         label='Description'
         rows={'8'}
       />

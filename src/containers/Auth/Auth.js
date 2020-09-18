@@ -50,6 +50,7 @@ const Auth = props => {
           type='text'
           value={name}
           name='name'
+          id='name'
           changed={e => setName(e.target.value)}
           label='Name'
         />
@@ -58,12 +59,14 @@ const Auth = props => {
         type='email'
         value={email}
         name='email'
+        id='email'
         changed={e => setEmail(e.target.value)}
         label='Email'
       />
       <Input
         type='password'
         name='password'
+        id='password'
         value={password}
         changed={e => setPassword(e.target.value)}
         label='Password'
@@ -73,6 +76,7 @@ const Auth = props => {
           type='password'
           value={confirmPassword}
           name='confirmPassword'
+          id='confirmPassword'
           changed={e => setConfirmPassword(e.target.value)}
           label='Confirm Password'
         />

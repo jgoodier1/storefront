@@ -8,6 +8,7 @@ import ProductForm from './containers/ProductForm/ProductForm';
 import Cart from './containers/Cart/Cart';
 import Checkout from './containers/Checkout/Checkout';
 import Auth from './containers/Auth/Auth';
+import Orders from './containers/Orders/Orders';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -113,6 +114,7 @@ function App() {
         render={() => <ProductForm token={token} userId={userId} />}
       />
       <Route path='/cart' component={Cart} />
+      <Route path='/orders' component={Orders} />
       <Route path='/checkout' component={Checkout} />
       <Route path='/login' render={() => <Auth login={loginHandler} />} />
       <Route path='/signup' render={() => <Auth signUp={signUpHandler} />} />

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
 
@@ -51,28 +51,14 @@ const Cart = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     const cart = JSON.parse(sessionStorage.getItem('cart'));
     console.log(cart);
     axios.post('/cart', cart).then(res => {
       setCart(res.data);
     });
+    setLoading(false);
   }, []);
-
-  const orderHandler = () => {
-    setLoading(true);
-    const orderedCart = cart;
-    axios
-      .post('/order', orderedCart)
-      .then(res => {
-        setLoading(false);
-        console.log('res', res);
-        console.log('res.data', res.data);
-      })
-      .catch(err => {
-        setLoading(false);
-        console.log(err);
-      });
-  };
 
   let renderedCart = <Spinner />;
   if (!loading) {
@@ -103,7 +89,7 @@ const Cart = () => {
       {renderedCart}
       {totalPrice && <h2>Total Price: ${totalPrice}</h2>}
       {renderedCart.length > 0 ? (
-        <StyledButton clicked={orderHandler}>Continue To Checkout</StyledButton>
+        <StyledLink to='/checkout'>Continue to Checkout</StyledLink>
       ) : (
         <h2>Cart is empty</h2>
       )}
@@ -170,10 +156,18 @@ const StyledQuant = styled.h3`
   padding-top: 0.6rem;
 `;
 
-const StyledButton = styled(Button)`
+const StyledLink = styled(Link)`
   align-self: center;
   grid-column: 2/3;
   grid-row: 1/2;
+  padding: 0.5rem;
+  font-weight: bold;
+  font-size: 1rem;
+  font-family: inherit;
+  background-color: white;
+  border: 3px solid #38689e;
+  color: #38689e;
+  text-decoration: none;
 `;
 
 // const deletedProduct = { id: props.id };
@@ -206,3 +200,19 @@ const StyledButton = styled(Button)`
 //       console.error(err);
 //     });
 // }, []);
+
+// const orderHandler = () => {
+//   setLoading(true);
+//   const orderedCart = cart;
+//   axios
+//     .post('/order', orderedCart)
+//     .then(res => {
+//       setLoading(false);
+//       console.log('res', res);
+//       console.log('res.data', res.data);
+//     })
+//     .catch(err => {
+//       setLoading(false);
+//       console.log(err);
+//     });
+// };

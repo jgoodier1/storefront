@@ -4,12 +4,14 @@ import styled from 'styled-components';
 const Input = props => {
   return (
     <div>
-      <StyledLabel htmlFor={props.name}>{props.label}</StyledLabel>
+      <StyledLabel htmlFor={props.id}>{props.label}</StyledLabel>
       <br />
       <StyledInput
         type={props.type}
         name={props.name}
+        id={props.id}
         // required={props.required}
+        checked={props.checked}
         value={props.value}
         onChange={props.changed}
       />
