@@ -1,6 +1,3 @@
-// will display props.children
-// need a backprop which can be clicked to cancel out
-// so it'll need props to determine whether or not to show it
 import React from 'react';
 import styled from 'styled-components';
 
@@ -10,12 +7,6 @@ const Backdrop = props =>
   props.show ? <StyledBackdrop onClick={props.clicked}></StyledBackdrop> : null;
 
 const Modal = props => {
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   return (
-  //     nextProps.show !== this.props.show || nextProps.children !== this.props.children
-  //   );
-  // }
-
   return (
     <>
       <Backdrop show={props.show} clicked={props.modalClosed} />

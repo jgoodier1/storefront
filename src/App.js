@@ -19,8 +19,6 @@ function App() {
 
   const history = useHistory();
 
-  console.log('showAuthModal', showAuthModal);
-
   useEffect(() => {
     console.log('useEffect [App.js]');
     const oldToken = localStorage.getItem('token');
