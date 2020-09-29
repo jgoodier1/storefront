@@ -61,7 +61,7 @@ const Cart = () => {
   }, []);
 
   let renderedCart = <Spinner />;
-  if (!loading) {
+  if (!loading && cart !== undefined) {
     renderedCart = cart.map(ci => (
       <CartItem
         key={ci.prodId}
