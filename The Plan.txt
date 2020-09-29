@@ -1,4 +1,5 @@
-- Finish the checkout - DONE (FOR REAL THIS TIME)
+- Finish the checkout 
+  - actually not done, still need more product info and the date the order was placed. KMN
 - Make an orders page
 - Add product pages, that display the full info (will need to add more product details)
 - Fix the styling for the entire site

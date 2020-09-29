@@ -28,6 +28,7 @@ const CheckoutForm = () => {
     setLoading(true);
     const userId = localStorage.getItem('userId');
     const orderedCart = JSON.parse(sessionStorage.getItem('cart'));
+    const currentDate = moment().format('LL');
     const orderData = {
       name,
       streetAddress,
@@ -38,7 +39,7 @@ const CheckoutForm = () => {
       postalCode,
       phoneNumber
     };
-    const order = { orderedCart, orderData, userId, shippingSpeed };
+    const order = { orderedCart, orderData, userId, shippingSpeed, currentDate };
     axios
       .post('/order', order)
       .then(res => {

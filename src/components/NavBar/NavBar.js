@@ -29,6 +29,7 @@ const NavItems = props => {
       {props.isLoggedIn && (
         <>
           <NavItem link='/cart'>Cart</NavItem>
+          <NavItem link='/orders'>Orders</NavItem>
           <NavItem link='/admin/add-product'>Add Product</NavItem>
           <NavItem link='/admin/products'>Admin Products</NavItem>
           <StyledLi>
