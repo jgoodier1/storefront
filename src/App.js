@@ -10,6 +10,7 @@ import Cart from './containers/Cart/Cart';
 import Checkout from './containers/Checkout/Checkout';
 import Auth from './containers/Auth/Auth';
 import Orders from './containers/Orders/Orders';
+import NotFound from './containers/NotFound/NotFound';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -130,6 +131,7 @@ function App() {
       {/* <Route path='/login' render={() => <Auth login={loginHandler} />} />
       <Route path='/signup' render={() => <Auth signUp={signUpHandler} />} /> */}
       <Route path='/' exact render={() => <h1>Welcome</h1>} />
+      <Route path='*' component={NotFound} />
     </Switch>
   );
 
