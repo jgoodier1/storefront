@@ -5,6 +5,7 @@ import axios from 'axios';
 import Products from './containers/Products/Products';
 import NavBar from './components/NavBar/NavBar';
 import ProductForm from './containers/ProductForm/ProductForm';
+import ProductPage from './containers/ProductPage/ProductPage';
 import Cart from './containers/Cart/Cart';
 import Checkout from './containers/Checkout/Checkout';
 import Auth from './containers/Auth/Auth';
@@ -14,8 +15,11 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [token, setToken] = useState(null);
   const [userId, setUserId] = useState(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const history = useHistory();
+
+  console.log('showAuthModal', showAuthModal);
 
   useEffect(() => {
     console.log('useEffect [App.js]');
@@ -52,8 +56,8 @@ function App() {
       })
       .then(res => {
         console.log(res);
+        setShowAuthModal(false);
       })
-      .then(() => history.push('/login'))
       .catch(err => {
         console.error('err', err);
       });
@@ -77,8 +81,8 @@ function App() {
         setIsLoggedIn(true);
         setToken(res.data.token);
         setUserId(res.data.userId);
+        setShowAuthModal(false);
       })
-      .then(() => history.push('/products'))
       .catch(err => {
         console.log(err);
       });
@@ -98,8 +102,17 @@ function App() {
     }, milliseconds);
   }, []); //eslint-disable-line
 
+  const showModalHandler = () => {
+    setShowAuthModal(true);
+  };
+
+  const hideModalHandler = () => {
+    setShowAuthModal(false);
+  };
+
   let routes = (
     <Switch>
+      <Route path='/products/:id' component={ProductPage} />
       <Route path='/products' component={Products} />
       <Route
         path='/admin/add-product'
@@ -116,16 +129,26 @@ function App() {
       <Route path='/cart' component={Cart} />
       <Route path='/orders' component={Orders} />
       <Route path='/checkout' component={Checkout} />
-      <Route path='/login' render={() => <Auth login={loginHandler} />} />
-      <Route path='/signup' render={() => <Auth signUp={signUpHandler} />} />
+      {/* <Route path='/login' render={() => <Auth login={loginHandler} />} />
+      <Route path='/signup' render={() => <Auth signUp={signUpHandler} />} /> */}
       <Route path='/' exact render={() => <h1>Welcome</h1>} />
     </Switch>
   );
 
   return (
     <div className='App'>
-      <NavBar isLoggedIn={isLoggedIn} logout={logoutHandler} />
+      <NavBar
+        isLoggedIn={isLoggedIn}
+        logout={logoutHandler}
+        showModal={showModalHandler}
+      />
       {routes}
+      <Auth
+        login={loginHandler}
+        signUp={signUpHandler}
+        show={showAuthModal}
+        closedModal={hideModalHandler}
+      />
     </div>
   );
 }

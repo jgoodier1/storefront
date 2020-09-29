@@ -21,8 +21,10 @@ const NavItems = props => {
       <NavItem link='/products'>Products</NavItem>
       {!props.isLoggedIn && (
         <>
-          <NavItem link='/login'>Sign In</NavItem>
-          <NavItem link='/signup'>Sign Up</NavItem>
+          <StyledLi>
+            <StyledButton onClick={props.showModal}>Sign In</StyledButton>
+          </StyledLi>
+          {/* <NavItem link='/signup'>Sign Up</NavItem> */}
           <NavItem link='/cart'>Cart</NavItem>
         </>
       )}
@@ -45,7 +47,11 @@ const NavBar = props => {
   return (
     <StyledHead>
       <nav>
-        <NavItems isLoggedIn={props.isLoggedIn} logout={props.logout} />
+        <NavItems
+          isLoggedIn={props.isLoggedIn}
+          logout={props.logout}
+          showModal={props.showModal}
+        />
       </nav>
     </StyledHead>
   );
@@ -93,6 +99,7 @@ const StyledButton = styled.button`
   border: 0;
   font-size: 1rem;
   background: #f4f4f4;
+  cursor: pointer;
 
   &:hover {
     text-decoration: underline;

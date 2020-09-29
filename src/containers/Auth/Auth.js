@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState /*, useEffect */ } from 'react';
+// import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import Button from '../../components/Button/Button';
 import { Input } from '../../components/Input/Input';
+import Modal from '../../components/Modal/Modal';
 
 //2. check to see if the inputs are valid types on the front-end
 
@@ -17,15 +18,15 @@ const Auth = props => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
 
-  const location = useLocation();
+  // const location = useLocation();
 
-  useEffect(() => {
-    if (location.pathname === '/login') {
-      setIsSignUp(false);
-    } else if (location.pathname === '/signup') {
-      setIsSignUp(true);
-    }
-  }, [location.pathname]);
+  // useEffect(() => {
+  //   if (location.pathname === '/login') {
+  //     setIsSignUp(false);
+  //   } else if (location.pathname === '/signup') {
+  //     setIsSignUp(true);
+  //   }
+  // }, [location.pathname]);
 
   const authData = {
     name,
@@ -42,47 +43,62 @@ const Auth = props => {
     }
   };
 
+  const modalClosed = () => {
+    props.closedModal();
+    setIsSignUp(false);
+  };
+
   return (
-    <StyledForm onSubmit={e => onSubmitHandler(e, authData)}>
-      {isSignUp ? <h1>Sign Up</h1> : <h1>Sign In</h1>}
-      {isSignUp && (
+    <Modal show={props.show} modalClosed={modalClosed}>
+      <StyledForm onSubmit={e => onSubmitHandler(e, authData)}>
+        <StyledButton onClick={modalClosed}>X</StyledButton>
+        {isSignUp ? <h1>Sign Up</h1> : <h1>Sign In</h1>}
+        {isSignUp && (
+          <Input
+            type='text'
+            value={name}
+            name='name'
+            id='name'
+            changed={e => setName(e.target.value)}
+            label='Name'
+          />
+        )}
         <Input
-          type='text'
-          value={name}
-          name='name'
-          id='name'
-          changed={e => setName(e.target.value)}
-          label='Name'
+          type='email'
+          value={email}
+          name='email'
+          id='email'
+          changed={e => setEmail(e.target.value)}
+          label='Email'
         />
-      )}
-      <Input
-        type='email'
-        value={email}
-        name='email'
-        id='email'
-        changed={e => setEmail(e.target.value)}
-        label='Email'
-      />
-      <Input
-        type='password'
-        name='password'
-        id='password'
-        value={password}
-        changed={e => setPassword(e.target.value)}
-        label='Password'
-      />
-      {isSignUp && (
         <Input
           type='password'
-          value={confirmPassword}
-          name='confirmPassword'
-          id='confirmPassword'
-          changed={e => setConfirmPassword(e.target.value)}
-          label='Confirm Password'
+          name='password'
+          id='password'
+          value={password}
+          changed={e => setPassword(e.target.value)}
+          label='Password'
         />
-      )}
-      <Button>Submit</Button>
-    </StyledForm>
+        {isSignUp && (
+          <Input
+            type='password'
+            value={confirmPassword}
+            name='confirmPassword'
+            id='confirmPassword'
+            changed={e => setConfirmPassword(e.target.value)}
+            label='Confirm Password'
+          />
+        )}
+        <Button>Submit</Button>
+        {!isSignUp && (
+          <p>
+            Don't have an account?{' '}
+            <StyledSwitch onClick={() => setIsSignUp(true)}>Click here</StyledSwitch> to
+            sign up
+          </p>
+        )}
+      </StyledForm>
+    </Modal>
   );
 };
 export default Auth;
@@ -92,12 +108,32 @@ const StyledForm = styled.form`
   flex-flow: column;
   align-items: center;
   justify-content: flex-end;
-  margin: 100px auto;
-  width: 500px;
+  width: auto;
   text-align: center;
   ${'' /* box-shadow: 0 2px 3px #ccc; */}
-  border: 1px solid #eee;
-  padding: 10px;
+`;
+
+const StyledButton = styled.button`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border: 0;
+  width: 60px;
+  height: 60px;
+  font-size: 1.75rem;
+  font-weight: bold;
+  background-color: white;
+  cursor: pointer;
+`;
+
+const StyledSwitch = styled.button`
+  color: #38689e;
+  border: none;
+  padding: 0;
+  background-color: white;
+  font-size: inherit;
+  font-weight: bold;
+  cursor: pointer;
 `;
 
 //1. make the form (probably want name, email, and pass for s-u, just email and pass for s-i)
