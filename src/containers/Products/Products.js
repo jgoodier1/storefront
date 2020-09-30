@@ -27,6 +27,7 @@ const Product = props => {
       .catch(err => console.log(err));
   };
 
+  // extract this
   const addToCartHandler = () => {
     let cart = JSON.parse(sessionStorage.getItem('cart')) || undefined;
     if (cart === undefined) {
@@ -78,7 +79,7 @@ const Product = props => {
 
   return (
     <StyledProductDiv>
-      <StyledTitle>{props.title}</StyledTitle>
+      <StyledAnchor href={'/products/' + props.id}>{props.title}</StyledAnchor>
       <StyledImg src={props.img} alt={props.title} />
       <StyledPrice>$ {props.price}</StyledPrice>
       {buttons}
@@ -156,7 +157,7 @@ const StyledProductDiv = styled.div`
   ${'' /* border: 4px solid #bebebe; */}
 `;
 
-const StyledTitle = styled.h3`
+const StyledAnchor = styled.a`
   font-size: 1em;
   margin: 0.5rem;
 `;
