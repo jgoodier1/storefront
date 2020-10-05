@@ -21,7 +21,6 @@ function App() {
   const history = useHistory();
 
   useEffect(() => {
-    console.log('useEffect [App.js]');
     const oldToken = localStorage.getItem('token');
     const expiryDate = localStorage.getItem('expiryDate');
     if (!oldToken || !expiryDate) {
