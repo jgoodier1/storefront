@@ -5,6 +5,7 @@ import axios from 'axios';
 
 import Spinner from '../../components/Spinner/Spinner';
 import Button from '../../components/Button/Button';
+import { addToCart } from '../../utils/addToCart';
 
 const Product = props => {
   const location = useLocation(); //might not be the best place for this
@@ -27,39 +28,9 @@ const Product = props => {
       .catch(err => console.log(err));
   };
 
-  // extract this
   const addToCartHandler = () => {
-    let cart = JSON.parse(sessionStorage.getItem('cart')) || undefined;
-    if (cart === undefined) {
-      cart = {};
-      const products = [
-        {
-          prodId: props.id,
-          quantity: 1,
-          price: props.price
-        }
-      ];
-      let subTotal = 0;
-      products.forEach(p => {
-        subTotal += p.quantity * p.price;
-      });
-      cart.products = products;
-      cart.subTotal = subTotal;
-    } else {
-      const existingProdId = cart.products.find(p => p.prodId === props.id);
-      if (!existingProdId) {
-        cart.products.push({ prodId: props.id, quantity: 1, price: props.price });
-      } else {
-        cart.products.map(p => p.prodId === props.id && p.quantity++);
-      }
-      let subTotal = 0;
-      cart.products.forEach(p => {
-        subTotal += p.quantity * p.price;
-      });
-      cart.subTotal = subTotal;
-    }
-    sessionStorage.setItem('cart', JSON.stringify(cart));
-    console.log(cart);
+    addToCart(props.id, props.price);
+    history.push('/cart');
   };
 
   let buttons = undefined;
