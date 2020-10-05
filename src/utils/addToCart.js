@@ -29,5 +29,4 @@ export function addToCart(id, price) {
     cart.subTotal = subTotal;
   }
   sessionStorage.setItem('cart', JSON.stringify(cart));
-  console.log(cart);
 }
