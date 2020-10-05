@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
 
@@ -7,33 +7,30 @@ import Spinner from '../../components/Spinner/Spinner';
 import Button from '../../components/Button/Button';
 
 const CartItem = props => {
-  const history = useHistory();
-
-  const deleteHandler = () => {
-    const cart = JSON.parse(sessionStorage.getItem('cart'));
-    if (cart === undefined) {
-      console.log('cart undefined');
-      return; // return some kind of error
-    }
-    const existingProdId = cart.products.find(p => p.prodId === props.id);
-    if (!existingProdId) {
-      console.log('no existing prod id');
-      return; // need another error
-    } else {
-      let subTotal = 0;
-      cart.products.forEach(p => {
-        subTotal += p.quantity * p.price;
-      });
-      const newCart = {
-        ...cart,
-        products: cart.products.filter(p => p.prodId !== props.id),
-        subTotal
-      };
-      console.log(newCart);
-      sessionStorage.setItem('cart', JSON.stringify(newCart));
-      setTimeout(() => history.push('/cart'), 500);
-    }
-  };
+  // const deleteHandler = () => {
+  //   const cart = JSON.parse(sessionStorage.getItem('cart'));
+  //   if (cart === undefined) {
+  //     console.log('cart undefined');
+  //     return; // return some kind of error
+  //   }
+  //   const existingProdId = cart.products.find(p => p.prodId === props.id);
+  //   if (!existingProdId) {
+  //     console.log('no existing prod id');
+  //     return; // need another error
+  //   } else {
+  //     let subTotal = 0;
+  //     cart.products.forEach(p => {
+  //       subTotal += p.quantity * p.price;
+  //     });
+  //     const newCart = {
+  //       ...cart,
+  //       products: cart.products.filter(p => p.prodId !== props.id),
+  //       subTotal
+  //     };
+  //     console.log(newCart);
+  //     sessionStorage.setItem('cart', JSON.stringify(newCart));
+  //   }
+  // };
 
   return (
     <StyledItemDiv>
@@ -41,7 +38,7 @@ const CartItem = props => {
       <StyledImage src={props.image} alt={props.title} />
       <StyledPrice>${props.price}</StyledPrice>
       <StyledQuant>Quantity: {props.quantity}</StyledQuant>
-      <Button clicked={deleteHandler}>Delete</Button>
+      <Button clicked={() => props.delete(props.id)}>Delete</Button>
     </StyledItemDiv>
   );
 };
@@ -60,6 +57,36 @@ const Cart = () => {
     setLoading(false);
   }, []);
 
+  const deleteHandler = id => {
+    setLoading(true);
+    const cart = JSON.parse(sessionStorage.getItem('cart'));
+    if (cart === undefined) {
+      console.log('cart undefined');
+      return; // return some kind of error
+    }
+    const existingProdId = cart.products.find(p => p.prodId === id);
+    if (!existingProdId) {
+      console.log('no existing prod id');
+      setLoading(false);
+      return; // need another error
+    } else {
+      let subTotal = 0;
+      cart.products.forEach(p => {
+        subTotal += p.quantity * p.price;
+      });
+      const newCart = {
+        ...cart,
+        products: cart.products.filter(p => p.prodId !== id),
+        subTotal
+      };
+      sessionStorage.setItem('cart', JSON.stringify(newCart));
+      axios.post('/cart', newCart).then(res => {
+        setCart(res.data);
+      });
+      setLoading(false);
+    }
+  };
+
   let renderedCart = <Spinner />;
   if (!loading && cart !== undefined) {
     renderedCart = cart.map(ci => (
@@ -69,12 +96,11 @@ const Cart = () => {
         price={ci.price}
         image={ci.image}
         quantity={ci.quantity}
+        delete={deleteHandler}
         id={ci.prodId}
       />
     ));
   }
-
-  console.log('renderedCart', renderedCart);
 
   let totalPrice; // should probably handle prices on back-end (or at least validate them)
   if (renderedCart.length > 0) {
