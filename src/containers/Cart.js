@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
 
-import Spinner from '../../components/Spinner/Spinner';
-import Button from '../../components/Button/Button';
+import Spinner from '../components/Spinner';
+import Button from '../components/Button';
 
 const CartItem = props => {
   // const deleteHandler = () => {

@@ -2,15 +2,15 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Switch, Route, useHistory } from 'react-router-dom';
 import axios from 'axios';
 
-import Products from './containers/Products/Products';
-import NavBar from './components/NavBar/NavBar';
-import ProductForm from './containers/ProductForm/ProductForm';
-import ProductPage from './containers/ProductPage/ProductPage';
-import Cart from './containers/Cart/Cart';
-import Checkout from './containers/Checkout/Checkout';
-import Auth from './containers/Auth/Auth';
-import Orders from './containers/Orders/Orders';
-import NotFound from './containers/NotFound/NotFound';
+import Products from './containers/Products';
+import NavBar from './components/NavBar';
+import ProductForm from './containers/ProductForm';
+import ProductPage from './containers/ProductPage';
+import Cart from './containers/Cart';
+import Checkout from './containers/Checkout';
+import Auth from './containers/Auth';
+import Orders from './containers/Orders';
+import NotFound from './containers/NotFound';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

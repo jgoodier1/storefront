@@ -3,8 +3,8 @@ import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import axios from 'axios';
 
-import { Input, TextArea } from '../../components/Input/Input';
-import Button from '../../components/Button/Button';
+import { Input, TextArea } from '../components/Input';
+import Button from '../components/Button';
 
 const ProductForm = props => {
   // const [controlsState, setControlsState] = useState({

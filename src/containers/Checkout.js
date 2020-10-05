@@ -4,9 +4,9 @@ import axios from 'axios';
 import styled from 'styled-components';
 import moment from 'moment';
 
-import { Input } from '../../components/Input/Input';
-import Button from '../../components/Button/Button';
-import Spinner from '../../components/Spinner/Spinner';
+import { Input } from '../components/Input';
+import Button from '../components/Button';
+import Spinner from '../components/Spinner';
 
 const CheckoutForm = () => {
   const [name, setName] = useState('');

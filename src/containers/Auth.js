@@ -2,9 +2,9 @@ import React, { useState /*, useEffect */ } from 'react';
 // import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
-import Button from '../../components/Button/Button';
-import { Input } from '../../components/Input/Input';
-import Modal from '../../components/Modal/Modal';
+import Button from '../components/Button';
+import { Input } from '../components/Input';
+import Modal from '../components/Modal';
 
 //2. check to see if the inputs are valid types on the front-end
 

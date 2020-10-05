@@ -3,9 +3,9 @@ import { useParams, useHistory } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
 
-import Spinner from '../../components/Spinner/Spinner';
-import Button from '../../components/Button/Button';
-import { addToCart } from '../../utils/addToCart';
+import Spinner from '../components/Spinner';
+import Button from '../components/Button';
+import { addToCart } from '../utils/addToCart';
 
 const ProductPage = props => {
   const [product, setProduct] = useState({});

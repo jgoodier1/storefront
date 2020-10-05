@@ -3,9 +3,9 @@ import { useLocation, useHistory, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import axios from 'axios';
 
-import Spinner from '../../components/Spinner/Spinner';
-import Button from '../../components/Button/Button';
-import { addToCart } from '../../utils/addToCart';
+import Spinner from '../components/Spinner';
+import Button from '../components/Button';
+import { addToCart } from '../utils/addToCart';
 
 const Product = props => {
   const location = useLocation(); //might not be the best place for this
