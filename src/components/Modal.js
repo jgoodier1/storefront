@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import classes from './Modal.module.css';
+import classes from '../css/Modal.module.css';
 
 const Backdrop = props =>
   props.show ? <StyledBackdrop onClick={props.clicked}></StyledBackdrop> : null;
