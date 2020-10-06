@@ -20,14 +20,6 @@ const Auth = props => {
 
   // const location = useLocation();
 
-  // useEffect(() => {
-  //   if (location.pathname === '/login') {
-  //     setIsSignUp(false);
-  //   } else if (location.pathname === '/signup') {
-  //     setIsSignUp(true);
-  //   }
-  // }, [location.pathname]);
-
   const authData = {
     name,
     email,
@@ -43,6 +35,7 @@ const Auth = props => {
     }
   };
 
+  // this needs to no close when there's an error after submitting
   const modalClosed = () => {
     props.closedModal();
     setIsSignUp(false);
@@ -53,6 +46,9 @@ const Auth = props => {
       <StyledForm onSubmit={e => onSubmitHandler(e, authData)}>
         <StyledButton onClick={modalClosed}>X</StyledButton>
         {isSignUp ? <h1>Sign Up</h1> : <h1>Sign In</h1>}
+        {/* shouldn't show error if they changed from signin to signup */}
+        {props.error && isSignUp && <p>There was an error</p>}
+        {props.error && !isSignUp && <p>Invalid email or password</p>}
         {isSignUp && (
           <Input
             type='text'
