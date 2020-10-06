@@ -2,6 +2,9 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
+import SearchBar from './SearchBar';
+import logo from '../images/logo.png';
+
 const NavItem = props => {
   return (
     <StyledLi>
@@ -16,8 +19,9 @@ const NavItems = props => {
   return (
     <StyledUl>
       <NavItem link='/' exact>
-        Home
+        <StyledImg src={logo} alt='logo' />
       </NavItem>
+      <SearchBar />
       <NavItem link='/products'>Products</NavItem>
       {!props.isLoggedIn && (
         <>
@@ -125,4 +129,8 @@ const StyledNavLink = styled(NavLink)`
   &.active {
     color: #2a4e77;
   }
+`;
+
+const StyledImg = styled.img`
+  height: 56px;
 `;
