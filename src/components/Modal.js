@@ -1,10 +1,8 @@
 import React from 'react';
-import styled from 'styled-components';
 
+import Backdrop from './Backdrop'
 import classes from '../css/Modal.module.css';
 
-const Backdrop = props =>
-  props.show ? <StyledBackdrop onClick={props.clicked}></StyledBackdrop> : null;
 
 const Modal = props => {
   return (
@@ -28,16 +26,6 @@ export default React.memo(
   (prevProps, nextProps) =>
     nextProps.show === prevProps.show && nextProps.children === prevProps.children
 );
-
-const StyledBackdrop = styled.div`
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  z-index: 100;
-  left: 0;
-  top: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-`;
 
 // const StlyedModal = styled.div`
 //   position: fixed;
