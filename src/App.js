@@ -18,9 +18,21 @@ function App() {
   const [userId, setUserId] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [width, setWidth] = useState(window.innerWidth)
 
   const history = useHistory();
 
+  useEffect(() => {
+    const handleResize = () => {
+      setWidth(window.innerWidth);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+  console.log(width)
+  
   useEffect(() => {
     const oldToken = localStorage.getItem('token');
     const expiryDate = localStorage.getItem('expiryDate');
@@ -145,6 +157,7 @@ function App() {
         isLoggedIn={isLoggedIn}
         logout={logoutHandler}
         showModal={showModalHandler}
+        width={width}
       />
       {routes}
       <Auth
