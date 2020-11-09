@@ -1,0 +1,31 @@
+- Finish the checkout 
+  - actually not done, still need more product info and the date the order was placed. KMN
+- Make an orders page
+- (DONE for now) Add product pages, that display the full info (will need to add more product details)
+- Fix the styling for the entire site
+- (DONE) Make a modal for the signin (and it can be used for error handling too ... maybe)
+- (DONE) Make a 404 page
+- (DONE) Fix add to cart and delete from cart, so that they either redirect or refresh
+- (DONE) Display errors when the user can't log in and any back-end request fails
+  - Set different errors for the same handlers (so if the url is wrong, the product isn't found, etc.)
+- Design the homepage 
+  - have a welcome message
+  - display `x` most recent products
+  - have a sign-up button right on the homepage (or at least highlight the one in the toolbar)
+  - if they're signed in, show their most recent order
+- Add a (functional) searchbar to the nav
+- Add payment (to the back-end)
+- Add a user page
+- Change to a PostgreSQL db at some point (no rush yet)
+- Write tests for everything on both front- and back-ends
+  - Should start writing test for all new components
+- (DONE) Reorganize the folder structure
+- DRY code as needed (really think about it when reviewing code)
+
+
+I WANT THE NAVLINK TO MAKE A MODAL SHOW UP NO MATTER WHERE ON THE SITE YOU ARE
+I DON'T WANT IT TO RERENDER THE PAGE, JUST MAKE THE MODAL VISIBLE
+THE NAVLINK DOESN'T NEED TO BE ABLE TO CHANGE THE STATE, SO IT SHOULD BE DONE IN APP.JS 
+APP.JS WILL RENDER IT AND I DON'T KNOW. NAVLINK NEEDS TO BE ABLE TO MAKE IT SHOW
+I CAN JUST GIVE IT AN ONCLICK THAT'LL MAKE IT SHOW. IT DOESN'T NEED STATE
+APP.JS WILL DO EVERYTHING.
