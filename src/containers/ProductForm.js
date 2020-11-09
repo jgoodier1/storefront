@@ -5,49 +5,16 @@ import axios from 'axios';
 
 import { Input, TextArea } from '../components/Input';
 import Button from '../components/Button';
+import Modal from '../components/Modal';
 
 const ProductForm = props => {
-  // const [controlsState, setControlsState] = useState({
-  //   title: {
-  //     elementType: 'input',
-  //     elementConfig: {
-  //       type: 'text',
-  //     },
-  //     label: 'Product Title: ',
-  //     value: '',
-  //   },
-  //   image: {
-  //     elementType: 'input',
-  //     elementConfig: {
-  //       type: 'url',
-  //     },
-  //     label: 'Image URL: ',
-  //     value: '',
-  //   },
-  //   price: {
-  //     elementType: 'input',
-  //     elementConfig: {
-  //       type: 'number',
-  //     },
-  //     label: 'Price: ',
-  //     value: '',
-  //   },
-  //   description: {
-  //     elementType: 'textarea',
-  //     elementConfig: {
-  //       name: 'description',
-  //       htmlFor: 'description',
-  //     },
-  //     label: 'Description: ',
-  //     value: '',
-  //   },
-  // });
-
   const [titleValue, setTitleValue] = useState('');
   const [imageValue, setImageValue] = useState('');
   const [priceValue, setPriceValue] = useState('');
   const [descValue, setDescValue] = useState('');
   const [editingState, setEditingState] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [error, setError] = useState('');
 
   const location = useLocation();
   const history = useHistory();
@@ -71,7 +38,10 @@ const ProductForm = props => {
           setPriceValue(res.data.price);
           setDescValue(res.data.description);
         })
-        .catch(err => console.error(err));
+        .catch(err => {
+          setError(err.response.data);
+          setShowModal(true);
+        });
     } else if (editingState === false) {
       setTitleValue('');
       setImageValue('');
@@ -100,7 +70,11 @@ const ProductForm = props => {
       .then(() => {
         history.push('/products');
       })
-      .catch(err => console.error(err));
+      .catch(err => {
+        setShowModal(true);
+        setError('An error occurred. Please try again in a moment.');
+        console.log(err.response.data);
+      });
   };
 
   const onEditSubmitHandler = event => {
@@ -125,17 +99,15 @@ const ProductForm = props => {
         history.push('/products');
       })
       .catch(err => {
-        console.error(err);
+        setShowModal(true);
+        setError('An error occurred. Please try again in a moment.');
       });
   };
 
-  // const formElementsArray = [];
-  // for (let key in controlsState) {
-  //   formElementsArray.push({
-  //     id: key,
-  //     config: controlsState[key],
-  //   });
-  // }
+  const modalClosed = () => {
+    setShowModal(false);
+    history.push('/admin/products');
+  };
 
   let form = (
     <>
@@ -176,6 +148,11 @@ const ProductForm = props => {
 
   return (
     <>
+      <Modal show={showModal} modalClosed={modalClosed}>
+        <StyledButton onClick={modalClosed}>X</StyledButton>
+        <h2>Error</h2>
+        {error}
+      </Modal>
       <StyledForm
         // action='/admin/add-product'
         // method='POST'
@@ -204,3 +181,60 @@ const StyledForm = styled.form`
   border: 1px solid #eee;
   padding: 10px;
 `;
+
+const StyledButton = styled.button`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border: 0;
+  width: 60px;
+  height: 60px;
+  font-size: 1.75rem;
+  font-weight: bold;
+  background-color: white;
+  cursor: pointer;
+`;
+
+// const [controlsState, setControlsState] = useState({
+//   title: {
+//     elementType: 'input',
+//     elementConfig: {
+//       type: 'text',
+//     },
+//     label: 'Product Title: ',
+//     value: '',
+//   },
+//   image: {
+//     elementType: 'input',
+//     elementConfig: {
+//       type: 'url',
+//     },
+//     label: 'Image URL: ',
+//     value: '',
+//   },
+//   price: {
+//     elementType: 'input',
+//     elementConfig: {
+//       type: 'number',
+//     },
+//     label: 'Price: ',
+//     value: '',
+//   },
+//   description: {
+//     elementType: 'textarea',
+//     elementConfig: {
+//       name: 'description',
+//       htmlFor: 'description',
+//     },
+//     label: 'Description: ',
+//     value: '',
+//   },
+// });
+
+// const formElementsArray = [];
+// for (let key in controlsState) {
+//   formElementsArray.push({
+//     id: key,
+//     config: controlsState[key],
+//   });
+// }

@@ -17,6 +17,7 @@ function App() {
   const [token, setToken] = useState(null);
   const [userId, setUserId] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [isError, setIsError] = useState(false);
 
   const history = useHistory();
 
@@ -40,6 +41,7 @@ function App() {
 
   const signUpHandler = (event, authData) => {
     event.preventDefault();
+    setIsError(false);
     const newUser = {
       name: authData.name,
       email: authData.email,
@@ -58,11 +60,13 @@ function App() {
       })
       .catch(err => {
         console.error('err', err);
+        setIsError(true);
       });
   };
 
   const loginHandler = (event, authData) => {
     event.preventDefault();
+    setIsError(false);
     const user = {
       email: authData.email,
       password: authData.password
@@ -83,6 +87,7 @@ function App() {
       })
       .catch(err => {
         console.log(err);
+        setIsError(true);
       });
   };
 
@@ -147,6 +152,7 @@ function App() {
         signUp={signUpHandler}
         show={showAuthModal}
         closedModal={hideModalHandler}
+        error={isError}
       />
     </div>
   );

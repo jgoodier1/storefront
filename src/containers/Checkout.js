@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
+//change moment to dayjs (it's smaller and already installed too)
 import moment from 'moment';
 
 import { Input } from '../components/Input';

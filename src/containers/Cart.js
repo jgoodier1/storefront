@@ -7,31 +7,6 @@ import Spinner from '../components/Spinner';
 import Button from '../components/Button';
 
 const CartItem = props => {
-  // const deleteHandler = () => {
-  //   const cart = JSON.parse(sessionStorage.getItem('cart'));
-  //   if (cart === undefined) {
-  //     console.log('cart undefined');
-  //     return; // return some kind of error
-  //   }
-  //   const existingProdId = cart.products.find(p => p.prodId === props.id);
-  //   if (!existingProdId) {
-  //     console.log('no existing prod id');
-  //     return; // need another error
-  //   } else {
-  //     let subTotal = 0;
-  //     cart.products.forEach(p => {
-  //       subTotal += p.quantity * p.price;
-  //     });
-  //     const newCart = {
-  //       ...cart,
-  //       products: cart.products.filter(p => p.prodId !== props.id),
-  //       subTotal
-  //     };
-  //     console.log(newCart);
-  //     sessionStorage.setItem('cart', JSON.stringify(newCart));
-  //   }
-  // };
-
   return (
     <StyledItemDiv>
       <StyledTitle>{props.title}</StyledTitle>
@@ -46,15 +21,28 @@ const CartItem = props => {
 const Cart = () => {
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  console.log(cart);
 
   useEffect(() => {
     setLoading(true);
-    const cart = JSON.parse(sessionStorage.getItem('cart'));
-    console.log(cart);
-    axios.post('/cart', cart).then(res => {
-      setCart(res.data);
-    });
-    setLoading(false);
+    let cartFromStorage = JSON.parse(sessionStorage.getItem('cart'));
+    console.log(cartFromStorage);
+    if (cartFromStorage === null) {
+      cartFromStorage = []
+    }
+    if (cartFromStorage.length !== 0) {
+      axios
+        .post('/cart', cartFromStorage)
+        .then(res => {
+          setCart(res.data);
+          setLoading(false);
+        })
+        .catch(err => {
+          setError(err.response.data.message);
+          setLoading(false);
+        });
+    }
   }, []);
 
   const deleteHandler = id => {
@@ -79,16 +67,29 @@ const Cart = () => {
         products: cart.products.filter(p => p.prodId !== id),
         subTotal
       };
-      sessionStorage.setItem('cart', JSON.stringify(newCart));
-      axios.post('/cart', newCart).then(res => {
-        setCart(res.data);
-      });
-      setLoading(false);
+      if (newCart.products.length < 1) {
+        sessionStorage.removeItem('cart');
+        setCart([]);
+      } else {
+        sessionStorage.setItem('cart', JSON.stringify(newCart));
+      }
+      axios
+        .post('/cart', newCart)
+        .then(res => {
+          setCart(res.data);
+          setLoading(false);
+          console.log(res);
+        })
+        .catch(err => {
+          setError(err.response.data.message);
+          console.log(err.response.data.message);
+          setLoading(false);
+        });
     }
   };
 
   let renderedCart = <Spinner />;
-  if (!loading && cart !== undefined) {
+  if (cart !== undefined && !loading) {
     renderedCart = cart.map(ci => (
       <CartItem
         key={ci.prodId}
@@ -100,6 +101,9 @@ const Cart = () => {
         id={ci.prodId}
       />
     ));
+  } else if (cart.length === 0) {
+    setLoading(false)
+    renderedCart = <h1>Cart is empty</h1>
   }
 
   let totalPrice; // should probably handle prices on back-end (or at least validate them)
@@ -112,12 +116,11 @@ const Cart = () => {
 
   return (
     <StyledCartDiv>
+      {error !== '' && <h2>{error}</h2>}
       {renderedCart}
       {totalPrice && <h2>Total Price: ${totalPrice}</h2>}
-      {renderedCart.length > 0 ? (
+      {renderedCart.length > 0 && (
         <StyledLink to='/checkout'>Continue to Checkout</StyledLink>
-      ) : (
-        <h2>Cart is empty</h2>
       )}
     </StyledCartDiv>
   );
@@ -241,4 +244,29 @@ const StyledLink = styled(Link)`
 //       setLoading(false);
 //       console.log(err);
 //     });
+// };
+
+// const deleteHandler = () => {
+//   const cart = JSON.parse(sessionStorage.getItem('cart'));
+//   if (cart === undefined) {
+//     console.log('cart undefined');
+//     return; // return some kind of error
+//   }
+//   const existingProdId = cart.products.find(p => p.prodId === props.id);
+//   if (!existingProdId) {
+//     console.log('no existing prod id');
+//     return; // need another error
+//   } else {
+//     let subTotal = 0;
+//     cart.products.forEach(p => {
+//       subTotal += p.quantity * p.price;
+//     });
+//     const newCart = {
+//       ...cart,
+//       products: cart.products.filter(p => p.prodId !== props.id),
+//       subTotal
+//     };
+//     console.log(newCart);
+//     sessionStorage.setItem('cart', JSON.stringify(newCart));
+//   }
 // };
