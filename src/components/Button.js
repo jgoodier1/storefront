@@ -13,12 +13,12 @@ const StyledButton = styled.button`
   font-size: 1rem;
   font-family: inherit;
   background-color: white;
-  border: 3px solid #38689e;
-  color: #38689e;
+  border: 2px solid #000;
+  color: #000;
   ${'' /* margin-right: 20px; */}
 
   &:hover {
-    background-color: #38689e;
+    background-color: #000;
     color: white;
     cursor: pointer;
   }
