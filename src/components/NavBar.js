@@ -5,86 +5,54 @@ import styled from 'styled-components';
 import SearchBar from './SearchBar';
 import logo from '../images/logo2.png';
 import shoppingCart from '../images/shopping-cart.png'
-import menu from '../images/menu.png';
 
 const NavItem = props => {
   return (
-    <StyledLi className={props.className}>
-      <StyledNavLink to={props.link} exact={props.exact}>
+    <SLi className={props.className}>
+      <SNavLink to={props.link} exact={props.exact}>
         {props.children}
-      </StyledNavLink>
-    </StyledLi>
+      </SNavLink>
+    </SLi>
   );
 };
 
 const NavItems = props => {
-  let responsiveNavItems;
-  if (props.width > 725) {
-    responsiveNavItems = (
-      <StyledUl>
-      <NavItem link='/' exact>
-        <StyledLogo src={logo} alt='logo' />
-      </NavItem>
-      <PositionedSearchBar />
-      <PositionedProducts link='/products'>Products</PositionedProducts>
-      {!props.isLoggedIn && (
-        <>
-          <PosSignInLogOut>
-            <StyledButton onClick={props.showModal}>Sign In</StyledButton>
-          </PosSignInLogOut>
-          {/* <NavItem link='/signup'>Sign Up</NavItem> */}
-        </>
-      )}
-      {props.isLoggedIn && (
-        <>
-          {/* <NavItem link='/cart'>Cart</NavItem> */}
-          <NavItem link='/orders'>Orders</NavItem>
-          {/* <NavItem link='/admin/add-product'>Add Product</NavItem>
-          <NavItem link='/admin/products'>Admin Products</NavItem> */}
-          <PosSignInLogOut>
-            <StyledButton onClick={props.logout}>Logout</StyledButton>
-          </PosSignInLogOut>
-        </>
-      )}
-      <PositionedCart link='/cart'>
-        <div>
-          <StyledCart src={shoppingCart} alt='cart'/>
-          <StyledSpan>0</StyledSpan>
-        </div>
-      </PositionedCart>
-    </StyledUl>
-    )
-  } else {
-    // need to add searchbar
-    responsiveNavItems = (
-      <StyledUl>
-        <StyledMenuDiv>
-          <StyledMenu src={menu} alt='menu' />
-        </StyledMenuDiv>
-        <ResponsiveLogo link='/' exact>
-          <StyledLogo src={logo} alt='logo' />
-        </ResponsiveLogo>
-        <PositionedCartMobile link='/cart'>
-          <div>
-            <StyledCart src={shoppingCart} alt='cart'/>
-            <StyledSpan>0</StyledSpan>
-          </div>
-        </PositionedCartMobile>
-        <SearchBar/>
-      </StyledUl>
-    )
-  }
-
   return (
-    <>
-    {responsiveNavItems}
-    </>
+    <SUl>
+        <PLogo link='/' exact>
+          <SLogo src={logo} alt='logo' />
+        </PLogo>
+        <PSearchBar />
+        <PProducts link='/products'>Products</PProducts>
+        <POrders link='/orders'>Orders</POrders>
+        {!props.isLoggedIn && (
+          <>
+            <PAuth>
+              <SButton onClick={props.showModal}>Sign In</SButton>
+            </PAuth>
+            {/* <NavItem link='/signup'>Sign Up</NavItem> */}
+          </>
+        )}
+        {props.isLoggedIn && (
+          <>
+            <PAuth>
+              <SButton onClick={props.logout}>Logout</SButton>
+            </PAuth>
+          </>
+        )}
+        <PCart link='/cart'>
+          <div>
+            <SCart src={shoppingCart} alt='cart'/>
+            <SSpan>0</SSpan>
+          </div>
+        </PCart>
+      </SUl>
   )
 };
 
 const NavBar = props => {
   return (
-    <StyledHead>
+    <SHead>
       <nav style={{width: '100%'}}>
         <NavItems
           isLoggedIn={props.isLoggedIn}
@@ -93,13 +61,13 @@ const NavBar = props => {
           width={props.width}
         />
       </nav>
-    </StyledHead>
+    </SHead>
   );
 };
 
 export default NavBar;
 
-const StyledHead = styled.header`
+const SHead = styled.header`
   height: 70px;
   width: 100%;
   ${'' /* position: fixed; */}
@@ -109,28 +77,38 @@ const StyledHead = styled.header`
   border-bottom: 1px solid black;
   justify-content: space-between;
   align-items: center;
+
+  @media (max-width: 768px) {
+    height: auto
+  }
 `;
 
-const StyledUl = styled.ul`
+const SUl = styled.ul`
   margin: 0;
   padding: 0;
   list-stlye: none;
-  ${'' /* display: flex; */}
-  ${'' /* flex-flow: row;
-  align-items: center; */}
   height: 100%;
   display: grid;
+  grid-template-areas: 'logo searchbar searchbar products orders auth cart';
+  align-items: center;
+
+  @media (max-width: 768px) {
+    grid-template-areas:  'logo logo logo auth cart' 
+                          'searchbar searchbar searchbar searchbar searchbar' 
+                          '. products . orders .'
+  }
 `;
 
-const StyledLi = styled.li`
+const SLi = styled.li`
   margin: 0;
   display: flex;
   ${'' /* height: 100%; */}
   width: auto;
   align-items: center;
+  place-self: center;
 `;
 
-const StyledButton = styled.button`
+const SButton = styled.button`
   text-decoration: none;
   color: #000;
   background: #fff;
@@ -152,7 +130,7 @@ const StyledButton = styled.button`
   }
 `;
 
-const StyledNavLink = styled(NavLink)`
+const SNavLink = styled(NavLink)`
   text-decoration: none;
   color: #000;
   height: 100%;
@@ -169,73 +147,50 @@ const StyledNavLink = styled(NavLink)`
   }
 `;
 
-const StyledLogo = styled.img`
+const SLogo = styled.img`
   height: 56px;
 `;
 
-const StyledCart = styled.img`
+const SCart = styled.img`
   height: 2rem;
 `
 
-const StyledSpan = styled.span`
-  position: absolute;
+const SSpan = styled.span`
+  ${'' /* position: absolute; */}
   background: #61e7ee;
   border-radius: 40px;
   width: 20px;
   height: 20px;
   text-align: center;
-  top: 8px;
-  right: 12px;
+  display: inline-block;
+  position: relative;
+  top: -21px;
+  right: 22px;
 `
 
-const StyledMenuDiv = styled.div`
-  position: absolute;
-  top: 19px;
-  left: 20px;
-
-  &:hover {
-    cursor: pointer;
-  }
+const PSearchBar = styled(SearchBar)`
+  grid-area: searchbar;
+  place-self: center;
 `
 
-const StyledMenu = styled.img`
-  height: 30px;
+const PLogo = styled(NavItem)`
+  grid-area: logo;
 `
 
-const PositionedSearchBar = styled(SearchBar)`
-  position: absolute;
-  left: 280px;
-  top: 10px;
+const PProducts = styled(NavItem)`
+  grid-area: products;
 `
 
-const PositionedProducts = styled(NavItem)`
-  position: absolute;
-  right: 286px;
-  top: 8px;
+const POrders = styled(NavItem)`
+  grid-area: orders;
 `
 
-const PosSignInLogOut = styled(StyledLi)`
-  position: absolute;
-  right: 138px;
-  top: 8px;
-  height: auto;
-  ${'' /* top: 0px; */}
+const PAuth = styled(SLi)`
+  grid-area: auth;
 `
 
-const PositionedCart = styled(NavItem)`
-  position: absolute;
-  right: 40px;
-  top: 0px;
-`
-const PositionedCartMobile = styled(NavItem)`
-  position: absolute;
-  right: 20px;
-  top: 0px;
-`
-
-const ResponsiveLogo = styled(NavItem)`
-  margin: auto;
+const PCart = styled(NavItem)`
+  grid-area: cart;
 `
 
 //Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
-//Icons made by <a href="http://catalinfertu.com/" title="Catalin Fertu">Catalin Fertu</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>

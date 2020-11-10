@@ -18,7 +18,7 @@ export default SearchBar;
 
 const StlyedInput = styled.input`
   height: 3rem;
-  width: 24rem;
+  width: auto;
   border: 1px solid black;
   font-size: 20px;
   color: #a8a8a8;
@@ -39,5 +39,10 @@ const StyledBttn = styled.button`
   background: #fff;
   border: 1px solid black;
   border-left: none;
-  position: absolute;
+  position: relative;
+  top: 3px;
+
+  @media (max-width: 768px) {
+    top: 4px;
+  }
 `
