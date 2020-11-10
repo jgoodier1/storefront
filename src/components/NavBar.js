@@ -70,6 +70,7 @@ const NavItems = props => {
             <StyledSpan>0</StyledSpan>
           </div>
         </PositionedCartMobile>
+        <SearchBar/>
       </StyledUl>
     )
   }
