@@ -135,7 +135,7 @@ const SNavLink = styled(NavLink)`
   color: #000;
   height: 100%;
   width: auto;
-  padding: 1rem 0.6rem;
+  padding: 1rem 0.3rem;
   font-weight: bold;
 
   &:hover {
