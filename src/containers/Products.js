@@ -29,13 +29,13 @@ const Product = props => {
   // };
 
   const addToCartHandler = () => {
-    addToCart(props.id, props.price);
+    addToCart(props.id, props.price, 1);
     history.push('/cart');
   };
 
   let buttons = undefined;
   if (location.pathname === '/products') {
-    buttons = <Button clicked={addToCartHandler}>Add To Cart</Button>;
+    buttons = <Button clicked={addToCartHandler}>ADD TO CART</Button>;
   } else if (location.pathname === '/admin/products') {
     buttons = (
       <div>
@@ -48,10 +48,16 @@ const Product = props => {
     );
   }
 
+  let shortenedDesc;
+  if (props.description.length > 100) {
+    shortenedDesc = props.description.slice(0, 100).concat('...');
+  }
+
   return (
     <StyledProductDiv>
-      <StyledAnchor href={'/products/' + props.id}>{props.title}</StyledAnchor>
       <StyledImg src={props.img} alt={props.title} />
+      <StyledAnchor href={'/products/' + props.id}>{props.title.toUpperCase()}</StyledAnchor>
+      <StyledDesc>{shortenedDesc}</StyledDesc>
       <StyledPrice>$ {props.price}</StyledPrice>
       {buttons}
     </StyledProductDiv>
@@ -122,6 +128,7 @@ const Products = props => {
         title={p.title}
         img={p.image}
         price={p.price}
+        description={p.description}
         id={p._id}
         delete={clickDeleteHandler}
       />
@@ -149,13 +156,13 @@ const StyledLink = styled(Link)`
   font-size: 1rem;
   font-family: inherit;
   background-color: white;
-  border: 3px solid #38689e;
-  color: #38689e;
-  margin-right: 20px;
+  border: 2px solid #000;
+  color: #000;
   text-decoration: none;
+  margin-right: 20px;
 
   &:hover {
-    background-color: #38689e;
+    background-color: #000;
     color: white;
     cursor: pointer;
   }
@@ -165,33 +172,72 @@ const StyledProductsDiv = styled.div`
   ${'' /* margin: 56px; */}
   margin-left: 25px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, 250px);
+  grid-template-columns: minmax(0, 1fr) 2fr minmax(0, 1fr);
+  grid-gap: 20px;
+
+  @media (max-width: 768px) {
+    margin: 0;
+  }
 `;
 
 const StyledProductDiv = styled.div`
-  ${'' /* background-color: #f4f4f4; */}
+  ${'' /* background-color: #f4f4f4;
   width: 250px;
   padding: 15px;
-  ${'' /* border: 4px solid #bebebe; */}
+  border: 4px solid #bebebe; */}
+  padding: 2.5rem 0;
+  border-bottom: 1px solid #888383;
+  display: grid;
+  ${'' /* grid-template-columns: 20rem 1fr;
+  grid-template-rows: repeat(4, 1fr); */}
+  grid-column: 2/3;
+  grid-template-areas: 'img img title'
+                      'img img desc'
+                      'img img desc'
+                      'img img price'
+                      'img img bttn'
 `;
 
 const StyledAnchor = styled.a`
   font-size: 1em;
-  margin: 0.5rem;
+  margin: 0.5rem 0;
+  ${'' /* grid-column: 2/3; */}
+  grid-area: title;
+  text-decoration:none;
+  color: #000;
+  font-weight: bold;
+  font-size: 20px;
 `;
 
 const StyledImg = styled.img`
-  height: 200px;
+  ${'' /* height: 200px; */}
+  width: 100%;
+  min-width: 10rem;
+  ${'' /* grid-column: 1/2; */}
+  ${'' /* grid-row: 1/5; */}
+  grid-area: img;
+  margin-right: 1rem;
 `;
+
+const StyledDesc = styled.p`
+  ${'' /* grid-column: 2/3; */}
+  grid-area: desc;
+  font-style: italic;
+  color: #4f4f4f;
+`
 
 const StyledPrice = styled.p`
   font-size: 1.5em;
   font-weight: bold;
   margin: 0.5rem;
+  ${'' /* grid-column: 2/3; */}
+  grid-area: price;
 `;
 
 const StyledButton = styled.button`
-  position: absolute;
+  ${'' /* grid-column: 2/3; */}
+  grid-area: bttn;
+  position: relative;
   top: 6px;
   right: 10px;
   border: 0;
