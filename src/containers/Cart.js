@@ -4,16 +4,28 @@ import axios from 'axios';
 import styled from 'styled-components';
 
 import Spinner from '../components/Spinner';
-import Button from '../components/Button';
+import Select from '../components/Select';
+// import { addToCart } from '../utils/addToCart';
 
 const CartItem = props => {
+  const [select, setSelect] = useState(props.quantity);
+
+  const options = 100;
+
+  const onSelectChange = e => {
+    setSelect(e.target.value);
+    console.log({select})
+    // need a different function since I'm editing now incrementing
+    // addToCart(props.id, props.price, select);
+  }
+
   return (
-    <StyledItemDiv>
+    <StyledItemDiv className={props.className}>
       <StyledTitle>{props.title}</StyledTitle>
       <StyledImage src={props.image} alt={props.title} />
       <StyledPrice>${props.price}</StyledPrice>
-      <StyledQuant>Quantity: {props.quantity}</StyledQuant>
-      <Button clicked={() => props.delete(props.id)}>Delete</Button>
+      <StyledSelect options={options} value={select} changed={onSelectChange} />
+      <StyledButton onClick={() => props.delete(props.id)}>remove</StyledButton>
     </StyledItemDiv>
   );
 };
@@ -116,11 +128,27 @@ const Cart = () => {
 
   return (
     <StyledCartDiv>
-      {error !== '' && <h2>{error}</h2>}
+      {error !== '' ? <StyledH2>{error}</StyledH2> : <StyledH2>Your Shopping Cart</StyledH2>}
       {renderedCart}
-      {totalPrice && <h2>Total Price: ${totalPrice}</h2>}
+      {totalPrice && 
+        <StyledOrderSummaryDiv>
+          <StyledOrderSumHead>ORDER SUMMARY</StyledOrderSumHead>
+          <StyledOSRowDiv>
+            <StyledP>Subtotal:</StyledP><StyledP>${totalPrice}</StyledP>
+          </StyledOSRowDiv>
+          <StyledOSRowDiv>
+            <StyledP>Shipping:</StyledP><StyledP>{totalPrice > 35 ? 'FREE' : 'TBD'}</StyledP>
+          </StyledOSRowDiv>
+          <StyledOSRowDiv>
+            <StyledP>Tax:</StyledP><StyledP>TBD</StyledP>
+          </StyledOSRowDiv>
+          <StyledOSRowDiv>
+            <StyledOrderSumTotal>Total Price:</StyledOrderSumTotal>
+            <StyledOrderSumTotal>${totalPrice}</StyledOrderSumTotal>
+          </StyledOSRowDiv>
+        </StyledOrderSummaryDiv>}
       {renderedCart.length > 0 && (
-        <StyledLink to='/checkout'>Continue to Checkout</StyledLink>
+        <StyledLink to='/checkout'>Proceed to Checkout</StyledLink>
       )}
     </StyledCartDiv>
   );
@@ -130,143 +158,203 @@ export default Cart;
 
 const StyledCartDiv = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 2fr 1fr;
   grid-template-rows: auto;
-  margin: 15px;
+  ${'' /* grid-template-areas:  'title . .'
+                        'cartItems cartItems totals'
+                        'cartItems cartItems totals'
+                        'cartItems cartItems totals'
+                        'cartItems cartItems totals'; */}
+  margin: 1rem 6rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    margin: 1rem 0;
+  }
 `;
+
+const StyledOrderSummaryDiv = styled.div`
+  grid-column: 2/3;
+  grid-row: 2/3;
+  background: #FFF6F0;
+  padding: 1rem;
+  width: 100%;
+  height: max-content;
+  align-self: center;
+  margin-left: 1rem;
+
+  @media (max-width: 768px) {
+    grid-column: 1/2;
+    grid-row: auto;
+    margin: 0;
+    margin-top: -2rem;
+  }
+`
+
+const StyledOSRowDiv = styled.div`
+  display: flex;
+  justify-content: space-between;
+`
+
+const StyledOrderSumHead = styled.h3`
+  margin: 0;
+`
+
+const StyledOrderSumTotal = styled.h4`
+  margin: 0;
+`
+
+const StyledP = styled.p`
+  margin: 0;
+`
+
+const StyledH2 = styled.h2`
+  margin: 0.5rem 0;
+  ${'' /* grid-area: title; */}
+`
 
 const StyledItemDiv = styled.div`
   grid-column: 1/2;
+  ${'' /* grid-area: cartItems; */}
   display: grid;
-  grid-template-columns: 200px 1fr 1fr;
-  grid-template-rows: repeat(5, auto);
+  grid-template-columns: 3fr 4fr 1fr 2fr;
+  grid-template-rows: repeat(3, 1fr);
+  ${'' /* grid-template-areas:  'img . . .'
+                        'img title quant price'
+                        'img . . bttn'; */}
   align-content: start;
   justify-content: space-between;
   padding: 1rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  border-bottom: 1px solid #888383;
   margin-bottom: 1rem;
-  background-color: white;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr 2fr;
+  }
 `;
 
 const StyledTitle = styled.h2`
+  ${'' /* grid-area: title; */}
+  grid-column: 2/3;
+  grid-row: 2/3;
   margin-right: 1rem;
   font-size: 1.2rem;
   margin: 0;
   justify-self: start;
-  grid-column: 2/3;
   align-self: start;
-  padding-top: 0.6rem;
+  ${'' /* padding-top: 0.6rem; */}
+  text-transform: uppercase;
+
+  @media (max-width: 768px) {
+    grid-column: 2/4;
+    grid-row: 1/2;
+  }
 `;
 
 const StyledImage = styled.img`
   grid-column: 1/2;
-  grid-row: 1/6;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  grid-row: 1/4;
+  ${'' /* grid-area: img; */}
   padding: 5px;
-  width: 150px;
+  width: 100%;
+  ${'' /* min-width: 300px; */}
+
+  @media (max-width: 768px) {
+    min-width: 200px;
+  }
 `;
 
 const StyledPrice = styled.h2`
+  grid-column: 4/5;
+  grid-row: 2/3;
+  ${'' /* grid-area: price; */}
   margin-right: 1rem;
   font-size: 1.2rem;
   margin: 0;
   align-self: start;
   justify-self: end;
+
+  @media (max-width: 768px) {
+    grid-column: 2/3;
+    justify-self: start;
+  }
 `;
 
-const StyledQuant = styled.h3`
-  margin-right: 1rem;
-  font-size: 1.2rem;
-  margin: 0;
+const StyledSelect= styled(Select)`
+  grid-column: 3/4;
+  grid-row: 2/3;
   justify-self: start;
-  grid-column: 2/3;
   align-self: start;
-  padding-top: 0.6rem;
-`;
+
+  @media (max-width: 768px) {
+    grid-column: 2/3;
+    grid-row: 3/4;
+  }
+`
+
+
+const StyledButton = styled.button`
+  grid-column: 4/5;
+  grid-row: 3/4;
+  place-self: end;
+  ${'' /* grid-area: bttn; */}
+  border: none;
+  color: #000;
+  font: inherit;
+  background: white;
+  width: min-content;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  @media (max-width: 768px) {
+    grid-column: 3/4;
+    align-self: start;
+  }
+`
 
 const StyledLink = styled(Link)`
-  align-self: center;
+  ${'' /* grid-area: totals; */}
   grid-column: 2/3;
-  grid-row: 1/2;
-  padding: 0.5rem;
+  grid-row: 3/4;
+  padding: 1.5rem;
+  margin-left: 1rem;
   font-weight: bold;
-  font-size: 1rem;
+  font-size: 1.5rem;
   font-family: inherit;
-  background-color: white;
-  border: 3px solid #38689e;
-  color: #38689e;
+  background: #000;
+  color: white;
   text-decoration: none;
+  text-align: center;
+  width: 100%;
+  height: max-content;
+  ${'' /* margin-right: 20px; */}
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  @media (max-width: 768px) {
+    grid-column: 1/2;
+    grid-row: auto;
+    margin: 0;
+  }
 `;
 
-// const deletedProduct = { id: props.id };
-// axios
-//   .post('cart-delete', deletedProduct)
-//   .then(res => {
-//     console.log('res.data', res.data);
-//     console.log('res', res);
-//   })
-//   .then(() => history.go(0))
-//   .catch(err => console.error(err));
+// const StyledQuant = styled.h3`
+//   grid-column: 3/4;
+//   grid-row: 2/3;
+//   ${'' /* grid-area: quant; */}
+//   margin-right: 1rem;
+//   font-size: 1.2rem;
+//   margin: 0;
+//   justify-self: start;
+//   align-self: start;
+//   ${'' /* padding-top: 0.6rem; */}
 
-// useEffect(() => {
-//   setLoading(true);
-//   axios
-//     .get('/cart')
-//     .then((res) => {
-//       const fetchedProducts = [];
-//       for (let key in res.data) {
-//         fetchedProducts.push({
-//           ...res.data[key],
-//           id: key,
-//         });
-//       }
-//       setCart(fetchedProducts);
-//       setLoading(false);
-//     })
-//     .catch((err) => {
-//       setLoading(false);
-//       console.error(err);
-//     });
-// }, []);
-
-// const orderHandler = () => {
-//   setLoading(true);
-//   const orderedCart = cart;
-//   axios
-//     .post('/order', orderedCart)
-//     .then(res => {
-//       setLoading(false);
-//       console.log('res', res);
-//       console.log('res.data', res.data);
-//     })
-//     .catch(err => {
-//       setLoading(false);
-//       console.log(err);
-//     });
-// };
-
-// const deleteHandler = () => {
-//   const cart = JSON.parse(sessionStorage.getItem('cart'));
-//   if (cart === undefined) {
-//     console.log('cart undefined');
-//     return; // return some kind of error
+//   @media (max-width: 768px) {
+//     grid-column: 2/3;
+//     grid-row: 3/4;
 //   }
-//   const existingProdId = cart.products.find(p => p.prodId === props.id);
-//   if (!existingProdId) {
-//     console.log('no existing prod id');
-//     return; // need another error
-//   } else {
-//     let subTotal = 0;
-//     cart.products.forEach(p => {
-//       subTotal += p.quantity * p.price;
-//     });
-//     const newCart = {
-//       ...cart,
-//       products: cart.products.filter(p => p.prodId !== props.id),
-//       subTotal
-//     };
-//     console.log(newCart);
-//     sessionStorage.setItem('cart', JSON.stringify(newCart));
-//   }
-// };
+// `;
