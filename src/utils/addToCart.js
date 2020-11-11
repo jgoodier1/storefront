@@ -1,11 +1,11 @@
-export function addToCart(id, price) {
+export function addToCart(id, price, quantity) {
   let cart = JSON.parse(sessionStorage.getItem('cart')) || undefined;
   if (cart === undefined) {
     cart = {};
     const products = [
       {
         prodId: id,
-        quantity: 1,
+        quantity: quantity,
         price: price
       }
     ];
@@ -18,9 +18,14 @@ export function addToCart(id, price) {
   } else {
     const existingProdId = cart.products.find(p => p.prodId === id);
     if (!existingProdId) {
-      cart.products.push({ prodId: id, quantity: 1, price: price });
+      cart.products.push({ prodId: id, quantity: +quantity, price: price });
     } else {
-      cart.products.map(p => p.prodId === id && p.quantity++);
+      cart.products.map(p => {
+       if (p.prodId === id) {
+         p.quantity += +quantity
+       } 
+       return p
+      });
     }
     let subTotal = 0;
     cart.products.forEach(p => {
