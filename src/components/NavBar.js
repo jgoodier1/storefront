@@ -25,7 +25,7 @@ const NavItems = props => {
       <PLogo link='/' exact>
         <SLogo src={logo} alt='logo' />
       </PLogo>
-      <PSearchBar />
+      <PSearchBar search={props.search} changed={props.changed} value={props.value} />
       <PProducts link='/products'>Products</PProducts>
       <POrders link='/orders'>Orders</POrders>
       {!props.isLoggedIn && (
@@ -62,6 +62,9 @@ const NavBar = props => {
           logout={props.logout}
           showModal={props.showModal}
           cartQuantity={props.cartQuantity}
+          search={props.search}
+          changed={props.changed}
+          value={props.value}
         />
       </nav>
     </SHead>

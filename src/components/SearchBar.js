@@ -1,16 +1,22 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import search from '../images/search.png'
+import search from '../images/search.png';
 
-const SearchBar = (props) => {
+const SearchBar = props => {
+  // console.log(searchValue);
   return (
-    <div className={props.className}>
-      <StlyedInput type='search' placeholder='Search...' />
+    <form className={props.className} onSubmit={e => props.search(e)}>
+      <StlyedInput
+        type='search'
+        placeholder='Search...'
+        value={props.value}
+        onChange={props.changed}
+      />
       <StyledBttn type='submit'>
-        <StyledImg src={search} alt='search'/>
+        <StyledImg src={search} alt='search' />
       </StyledBttn>
-    </div>
+    </form>
   );
 };
 
@@ -25,15 +31,15 @@ const StlyedInput = styled.input`
   padding-left: 1rem;
 
   :focus {
-    outline:none;
+    outline: none;
     color: #000;
   }
-`
+`;
 
 const StyledImg = styled.img`
   height: 25px;
   background: #fff;
-`
+`;
 const StyledBttn = styled.button`
   height: 3rem;
   background: #fff;
@@ -45,4 +51,4 @@ const StyledBttn = styled.button`
   @media (max-width: 768px) {
     top: 4px;
   }
-`
+`;

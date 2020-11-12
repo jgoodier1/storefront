@@ -12,6 +12,7 @@ import Auth from './containers/Auth';
 import Orders from './containers/Orders';
 import NotFound from './containers/NotFound';
 import CartContext from './context/cartContext';
+import Search from './containers/Search';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -21,6 +22,7 @@ function App() {
   const [isError, setIsError] = useState(false);
   const cartContext = useContext(CartContext);
   const [cartQuantityState, setCartQuantityState] = useState(cartContext.quantity);
+  const [searchValue, setSearchValue] = useState('');
 
   const history = useHistory();
 
@@ -122,6 +124,12 @@ function App() {
     setCartQuantityState(quantity.reduce((a, b) => a + b));
   };
 
+  const searchHandler = e => {
+    e.preventDefault();
+    history.push('/search?value=' + searchValue);
+    // history.push('/search');
+  };
+
   let routes = (
     <CartContext.Provider
       value={{ quantity: cartQuantityState, updateQuantity: cartQuantity }}
@@ -144,6 +152,7 @@ function App() {
         />
         <Route path='/orders' component={Orders} />
         <Route path='/checkout' component={Checkout} />
+        <Route path='/search' component={Search} />
         {/* <Route path='/login' render={() => <Auth login={loginHandler} />} />
       <Route path='/signup' render={() => <Auth signUp={signUpHandler} />} /> */}
         <Route path='/' exact render={() => <h1>Welcome</h1>} />
@@ -161,6 +170,9 @@ function App() {
           isLoggedIn={isLoggedIn}
           logout={logoutHandler}
           showModal={showModalHandler}
+          search={searchHandler}
+          changed={e => setSearchValue(e.target.value)}
+          value={searchValue}
           // cartQuantity={cartQuantity}
         />
       </CartContext.Provider>
