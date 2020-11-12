@@ -21,7 +21,6 @@ function App() {
   const [isError, setIsError] = useState(false);
   const cartContext = useContext(CartContext);
   const [cartQuantityState, setCartQuantityState] = useState(cartContext.quantity);
-  console.log(cartQuantityState);
 
   const history = useHistory();
 
@@ -124,33 +123,33 @@ function App() {
   };
 
   let routes = (
-    <Switch>
-      <CartContext.Provider
-        value={{ quantity: cartQuantityState, updateQuantity: cartQuantity }}
-      >
+    <CartContext.Provider
+      value={{ quantity: cartQuantityState, updateQuantity: cartQuantity }}
+    >
+      <Switch>
         <Route path='/products/:id' component={ProductPage} />
         <Route path='/products' component={Products} />
         <Route path='/cart' component={Cart} />
-      </CartContext.Provider>
-      <Route
-        path='/admin/add-product'
-        render={() => <ProductForm token={token} userId={userId} />}
-      />
-      <Route
-        path='/admin/products'
-        render={() => <Products token={token} userId={userId} />}
-      />
-      <Route
-        path='/admin/edit-product'
-        render={() => <ProductForm token={token} userId={userId} />}
-      />
-      <Route path='/orders' component={Orders} />
-      <Route path='/checkout' component={Checkout} />
-      {/* <Route path='/login' render={() => <Auth login={loginHandler} />} />
+        <Route
+          path='/admin/add-product'
+          render={() => <ProductForm token={token} userId={userId} />}
+        />
+        <Route
+          path='/admin/products'
+          render={() => <Products token={token} userId={userId} />}
+        />
+        <Route
+          path='/admin/edit-product'
+          render={() => <ProductForm token={token} userId={userId} />}
+        />
+        <Route path='/orders' component={Orders} />
+        <Route path='/checkout' component={Checkout} />
+        {/* <Route path='/login' render={() => <Auth login={loginHandler} />} />
       <Route path='/signup' render={() => <Auth signUp={signUpHandler} />} /> */}
-      <Route path='/' exact render={() => <h1>Welcome</h1>} />
-      <Route path='*' component={NotFound} />
-    </Switch>
+        <Route path='/' exact render={() => <h1>Welcome</h1>} />
+        <Route path='*' component={NotFound} />
+      </Switch>
+    </CartContext.Provider>
   );
 
   return (
