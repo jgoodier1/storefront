@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
@@ -7,16 +7,19 @@ import Spinner from '../components/Spinner';
 import Button from '../components/Button';
 import { addToCart } from '../utils/addToCart';
 import Select from '../components/Select';
+import CartContext from '../context/cartContext';
 
 const ProductPage = props => {
   const [product, setProduct] = useState({});
-  const [select, setSelect] = useState(1)
+  const [select, setSelect] = useState(1);
   const [loading, setLoading] = useState(false);
   let { id } = useParams();
   const history = useHistory();
+  const cartContext = useContext(CartContext);
+  console.log(cartContext);
 
   const options = 100;
-  console.log({options})
+  console.log({ options });
 
   useEffect(() => {
     setLoading(true);
@@ -33,7 +36,8 @@ const ProductPage = props => {
   }, [id]);
 
   const addToCartHandler = () => {
-    addToCart(id, product.price, select);
+    addToCart(id, product.price, select, cartContext.updateQuantity);
+    // cartContext.updateQuantity();
     history.push('/cart');
   };
 
@@ -41,8 +45,8 @@ const ProductPage = props => {
   // console.log(product);
 
   const selectChangeHandler = e => {
-    setSelect(e.target.value)
-  }
+    setSelect(e.target.value);
+  };
 
   let prod;
   if (loading) {
@@ -70,15 +74,16 @@ const StyledDiv = styled.div`
   margin: 2rem 6rem;
   width: auto;
   display: grid;
-  grid-template-areas:  'img title .' 
-                        'img price .'
-                        'img bttn bttn'
-                        'img . .'
-                        'about about about'
-                        'desc desc desc';
+  grid-template-areas:
+    'img title .'
+    'img price .'
+    'img bttn bttn'
+    'img . .'
+    'about about about'
+    'desc desc desc';
 
   @media (max-width: 768px) {
-    grid-template-areas:  'img' 'title' 'price' 'bttn' 'about' 'desc';
+    grid-template-areas: 'img' 'title' 'price' 'bttn' 'about' 'desc';
     margin: 2rem;
   }
 `;
@@ -104,7 +109,7 @@ const StyledPrice = styled.h2`
 
 const StyledH3 = styled.h3`
   grid-area: about;
-`
+`;
 
 const StyledDesc = styled.p`
   grid-area: desc;
@@ -113,7 +118,7 @@ const StyledDesc = styled.p`
 const StyledSelect = styled(Select)`
   grid-area: bttn;
   justify-self: start;
-`
+`;
 
 const StyledButton = styled(Button)`
   grid-area: bttn;

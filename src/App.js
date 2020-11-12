@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { Switch, Route, useHistory } from 'react-router-dom';
 import axios from 'axios';
 
@@ -11,6 +11,7 @@ import Checkout from './containers/Checkout';
 import Auth from './containers/Auth';
 import Orders from './containers/Orders';
 import NotFound from './containers/NotFound';
+import CartContext from './context/cartContext';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -18,9 +19,12 @@ function App() {
   const [userId, setUserId] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isError, setIsError] = useState(false);
+  const cartContext = useContext(CartContext);
+  const [cartQuantityState, setCartQuantityState] = useState(cartContext.quantity);
+  console.log(cartQuantityState);
 
   const history = useHistory();
-  
+
   useEffect(() => {
     const oldToken = localStorage.getItem('token');
     const expiryDate = localStorage.getItem('expiryDate');
@@ -113,10 +117,21 @@ function App() {
     setShowAuthModal(false);
   };
 
+  const cartQuantity = cart => {
+    // const cart = JSON.parse(sessionStorage.getItem('cart'));
+    const quantity = cart.products.map(p => p.quantity);
+    setCartQuantityState(quantity.reduce((a, b) => a + b));
+  };
+
   let routes = (
     <Switch>
-      <Route path='/products/:id' component={ProductPage} />
-      <Route path='/products' component={Products} />
+      <CartContext.Provider
+        value={{ quantity: cartQuantityState, updateQuantity: cartQuantity }}
+      >
+        <Route path='/products/:id' component={ProductPage} />
+        <Route path='/products' component={Products} />
+        <Route path='/cart' component={Cart} />
+      </CartContext.Provider>
       <Route
         path='/admin/add-product'
         render={() => <ProductForm token={token} userId={userId} />}
@@ -129,7 +144,6 @@ function App() {
         path='/admin/edit-product'
         render={() => <ProductForm token={token} userId={userId} />}
       />
-      <Route path='/cart' component={Cart} />
       <Route path='/orders' component={Orders} />
       <Route path='/checkout' component={Checkout} />
       {/* <Route path='/login' render={() => <Auth login={loginHandler} />} />
@@ -141,11 +155,16 @@ function App() {
 
   return (
     <div className='App'>
-      <NavBar
-        isLoggedIn={isLoggedIn}
-        logout={logoutHandler}
-        showModal={showModalHandler}
-      />
+      <CartContext.Provider
+        value={{ quantity: cartQuantityState, updateQuantity: cartQuantity }}
+      >
+        <NavBar
+          isLoggedIn={isLoggedIn}
+          logout={logoutHandler}
+          showModal={showModalHandler}
+          // cartQuantity={cartQuantity}
+        />
+      </CartContext.Provider>
       {routes}
       <Auth
         login={loginHandler}

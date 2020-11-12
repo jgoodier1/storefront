@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useLocation, useHistory, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import axios from 'axios';
@@ -7,8 +7,10 @@ import Spinner from '../components/Spinner';
 import Button from '../components/Button';
 import { addToCart } from '../utils/addToCart';
 import Modal from '../components/Modal';
+import CartContext from '../context/cartContext';
 
 const Product = props => {
+  const cartContext = useContext(CartContext);
   const location = useLocation(); //might not be the best place for this
   const history = useHistory();
 
@@ -29,7 +31,7 @@ const Product = props => {
   // };
 
   const addToCartHandler = () => {
-    addToCart(props.id, props.price, 1);
+    addToCart(props.id, props.price, 1, cartContext.updateQuantity);
     history.push('/cart');
   };
 
@@ -56,7 +58,9 @@ const Product = props => {
   return (
     <StyledProductDiv>
       <StyledImg src={props.img} alt={props.title} />
-      <StyledAnchor href={'/products/' + props.id}>{props.title.toUpperCase()}</StyledAnchor>
+      <StyledAnchor href={'/products/' + props.id}>
+        {props.title.toUpperCase()}
+      </StyledAnchor>
       <StyledDesc>{shortenedDesc}</StyledDesc>
       <StyledPrice>$ {props.price}</StyledPrice>
       {buttons}
@@ -191,11 +195,12 @@ const StyledProductDiv = styled.div`
   ${'' /* grid-template-columns: 20rem 1fr;
   grid-template-rows: repeat(4, 1fr); */}
   grid-column: 2/3;
-  grid-template-areas: 'img img title'
-                      'img img desc'
-                      'img img desc'
-                      'img img price'
-                      'img img bttn'
+  grid-template-areas:
+    'img img title'
+    'img img desc'
+    'img img desc'
+    'img img price'
+    'img img bttn';
 `;
 
 const StyledAnchor = styled.a`
@@ -203,7 +208,7 @@ const StyledAnchor = styled.a`
   margin: 0.5rem 0;
   ${'' /* grid-column: 2/3; */}
   grid-area: title;
-  text-decoration:none;
+  text-decoration: none;
   color: #000;
   font-weight: bold;
   font-size: 20px;
@@ -224,7 +229,7 @@ const StyledDesc = styled.p`
   grid-area: desc;
   font-style: italic;
   color: #4f4f4f;
-`
+`;
 
 const StyledPrice = styled.p`
   font-size: 1.5em;
