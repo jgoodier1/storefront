@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
 
 import Spinner from '../components/Spinner';
 import Select from '../components/Select';
-// import { addToCart } from '../utils/addToCart';
+import CartContext from '../context/cartContext';
 
 const CartItem = props => {
   const [select, setSelect] = useState(props.quantity);
@@ -14,10 +14,8 @@ const CartItem = props => {
 
   const onSelectChange = e => {
     setSelect(e.target.value);
-    console.log({select})
-    // need a different function since I'm editing now incrementing
-    // addToCart(props.id, props.price, select);
-  }
+    props.edit(props.id, e.target.value);
+  };
 
   return (
     <StyledItemDiv className={props.className}>
@@ -34,14 +32,14 @@ const Cart = () => {
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  console.log(cart);
+  const cartContext = useContext(CartContext);
 
   useEffect(() => {
     setLoading(true);
     let cartFromStorage = JSON.parse(sessionStorage.getItem('cart'));
-    console.log(cartFromStorage);
+    // console.log(cartFromStorage);
     if (cartFromStorage === null) {
-      cartFromStorage = []
+      cartFromStorage = [];
     }
     if (cartFromStorage.length !== 0) {
       axios
@@ -57,11 +55,55 @@ const Cart = () => {
     }
   }, []);
 
+  const editCartItem = (id, quantity) => {
+    setLoading(true);
+    const cart = JSON.parse(sessionStorage.getItem('cart'));
+    console.log({ cart });
+    if (cart === undefined) {
+      console.log('cart undefined');
+      setLoading(false);
+      return;
+    }
+    const prodId = cart.products.find(p => p.prodId === id);
+    if (!prodId) {
+      console.log('no product found');
+      setLoading(false);
+      return;
+    } else {
+      cart.products.map(p => {
+        if (p.prodId === id) {
+          p.quantity = +quantity;
+        }
+        return p;
+      });
+      let subTotal = 0;
+      cart.products.forEach(p => {
+        subTotal += p.quantity * p.price;
+      });
+      cart.subTotal = subTotal;
+    }
+    sessionStorage.setItem('cart', JSON.stringify(cart));
+    cartContext.updateQuantity(cart);
+    axios
+      .post('/cart', cart)
+      .then(res => {
+        setCart(res.data);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err.response.data.message);
+        console.log(err.response.data.message);
+        setLoading(false);
+      });
+  };
+
   const deleteHandler = id => {
     setLoading(true);
+    //why not cart from storage???
     const cart = JSON.parse(sessionStorage.getItem('cart'));
     if (cart === undefined) {
       console.log('cart undefined');
+      setLoading(false);
       return; // return some kind of error
     }
     const existingProdId = cart.products.find(p => p.prodId === id);
@@ -84,7 +126,9 @@ const Cart = () => {
         setCart([]);
       } else {
         sessionStorage.setItem('cart', JSON.stringify(newCart));
+        cartContext.updateQuantity(newCart);
       }
+      //why post again? just remove it from state
       axios
         .post('/cart', newCart)
         .then(res => {
@@ -110,12 +154,13 @@ const Cart = () => {
         image={ci.image}
         quantity={ci.quantity}
         delete={deleteHandler}
+        edit={editCartItem}
         id={ci.prodId}
       />
     ));
   } else if (cart.length === 0) {
-    setLoading(false)
-    renderedCart = <h1>Cart is empty</h1>
+    setLoading(false);
+    renderedCart = <h1>Cart is empty</h1>;
   }
 
   let totalPrice; // should probably handle prices on back-end (or at least validate them)
@@ -128,25 +173,33 @@ const Cart = () => {
 
   return (
     <StyledCartDiv>
-      {error !== '' ? <StyledH2>{error}</StyledH2> : <StyledH2>Your Shopping Cart</StyledH2>}
+      {error !== '' ? (
+        <StyledH2>{error}</StyledH2>
+      ) : (
+        <StyledH2>Your Shopping Cart</StyledH2>
+      )}
       {renderedCart}
-      {totalPrice && 
+      {totalPrice && (
         <StyledOrderSummaryDiv>
           <StyledOrderSumHead>ORDER SUMMARY</StyledOrderSumHead>
           <StyledOSRowDiv>
-            <StyledP>Subtotal:</StyledP><StyledP>${totalPrice}</StyledP>
+            <StyledP>Subtotal:</StyledP>
+            <StyledP>${totalPrice}</StyledP>
           </StyledOSRowDiv>
           <StyledOSRowDiv>
-            <StyledP>Shipping:</StyledP><StyledP>{totalPrice > 35 ? 'FREE' : 'TBD'}</StyledP>
+            <StyledP>Shipping:</StyledP>
+            <StyledP>{totalPrice > 35 ? 'FREE' : 'TBD'}</StyledP>
           </StyledOSRowDiv>
           <StyledOSRowDiv>
-            <StyledP>Tax:</StyledP><StyledP>TBD</StyledP>
+            <StyledP>Tax:</StyledP>
+            <StyledP>TBD</StyledP>
           </StyledOSRowDiv>
           <StyledOSRowDiv>
             <StyledOrderSumTotal>Total Price:</StyledOrderSumTotal>
             <StyledOrderSumTotal>${totalPrice}</StyledOrderSumTotal>
           </StyledOSRowDiv>
-        </StyledOrderSummaryDiv>}
+        </StyledOrderSummaryDiv>
+      )}
       {renderedCart.length > 0 && (
         <StyledLink to='/checkout'>Proceed to Checkout</StyledLink>
       )}
@@ -176,7 +229,7 @@ const StyledCartDiv = styled.div`
 const StyledOrderSummaryDiv = styled.div`
   grid-column: 2/3;
   grid-row: 2/3;
-  background: #FFF6F0;
+  background: #fff6f0;
   padding: 1rem;
   width: 100%;
   height: max-content;
@@ -189,29 +242,29 @@ const StyledOrderSummaryDiv = styled.div`
     margin: 0;
     margin-top: -2rem;
   }
-`
+`;
 
 const StyledOSRowDiv = styled.div`
   display: flex;
   justify-content: space-between;
-`
+`;
 
 const StyledOrderSumHead = styled.h3`
   margin: 0;
-`
+`;
 
 const StyledOrderSumTotal = styled.h4`
   margin: 0;
-`
+`;
 
 const StyledP = styled.p`
   margin: 0;
-`
+`;
 
 const StyledH2 = styled.h2`
   margin: 0.5rem 0;
   ${'' /* grid-area: title; */}
-`
+`;
 
 const StyledItemDiv = styled.div`
   grid-column: 1/2;
@@ -280,7 +333,7 @@ const StyledPrice = styled.h2`
   }
 `;
 
-const StyledSelect= styled(Select)`
+const StyledSelect = styled(Select)`
   grid-column: 3/4;
   grid-row: 2/3;
   justify-self: start;
@@ -290,8 +343,7 @@ const StyledSelect= styled(Select)`
     grid-column: 2/3;
     grid-row: 3/4;
   }
-`
-
+`;
 
 const StyledButton = styled.button`
   grid-column: 4/5;
@@ -312,7 +364,7 @@ const StyledButton = styled.button`
     grid-column: 3/4;
     align-self: start;
   }
-`
+`;
 
 const StyledLink = styled(Link)`
   ${'' /* grid-area: totals; */}
