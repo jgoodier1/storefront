@@ -1,8 +1,20 @@
-- Finish the checkout 
-  - actually not done, still need more product info and the date the order was placed. KMN
+- fix the checkout forms
+- look at error handling
+- add mock-data
+- make homepage
+- move to typescript
+- write tests
+
+- move to redux
+- move database to postgres
+
+
+
+- (DONE)Finish the checkout 
+  - (DONE)actually not done, still need more product info and the date the order was placed. KMN
 - Make an orders page
-- (DONE for now) Add product pages, that display the full info (will need to add more product details)
-- Fix the styling for the entire site
+- (DONE) Add product pages, that display the full info (will need to add more product details)
+- (DONE) Fix the styling for the entire site
 - (DONE) Make a modal for the signin (and it can be used for error handling too ... maybe)
 - (DONE) Make a 404 page
 - (DONE) Fix add to cart and delete from cart, so that they either redirect or refresh
@@ -13,10 +25,9 @@
   - display `x` most recent products
   - have a sign-up button right on the homepage (or at least highlight the one in the toolbar)
   - if they're signed in, show their most recent order
-- Add a (functional) searchbar to the nav
+- (DONE) Add a (functional) searchbar to the nav
 - Add payment (to the back-end)
 - Add a user page
-- Change to a PostgreSQL db at some point (no rush yet)
 - Write tests for everything on both front- and back-ends
   - Should start writing test for all new components
 - (DONE) Reorganize the folder structure
