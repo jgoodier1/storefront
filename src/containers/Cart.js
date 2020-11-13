@@ -19,7 +19,7 @@ const CartItem = props => {
 
   return (
     <StyledItemDiv className={props.className}>
-      <StyledTitle>{props.title}</StyledTitle>
+      <StyledTitle to={'/products/' + props.id}>{props.title}</StyledTitle>
       <StyledImage src={props.image} alt={props.title} />
       <StyledPrice>${props.price}</StyledPrice>
       <StyledSelect options={options} value={select} changed={onSelectChange} />
@@ -286,7 +286,7 @@ const StyledItemDiv = styled.div`
   }
 `;
 
-const StyledTitle = styled.h2`
+const StyledTitle = styled(Link)`
   ${'' /* grid-area: title; */}
   grid-column: 2/3;
   grid-row: 2/3;
@@ -297,6 +297,9 @@ const StyledTitle = styled.h2`
   align-self: start;
   ${'' /* padding-top: 0.6rem; */}
   text-transform: uppercase;
+  color: #3f6cd7;
+  text-decoration: none;
+  font-weight: bold;
 
   @media (max-width: 768px) {
     grid-column: 2/4;
