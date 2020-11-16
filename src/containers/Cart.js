@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import Spinner from '../components/Spinner';
 import Select from '../components/Select';
 import CartContext from '../context/cartContext';
+import OrderSummary from '../components/OrderSummary';
 
 const CartItem = props => {
   const [select, setSelect] = useState(props.quantity);
@@ -112,13 +113,14 @@ const Cart = () => {
       setLoading(false);
       return; // need another error
     } else {
+      const filteredCart = cart.products.filter(p => p.prodId !== id);
       let subTotal = 0;
-      cart.products.forEach(p => {
+      filteredCart.forEach(p => {
         subTotal += p.quantity * p.price;
       });
       const newCart = {
         ...cart,
-        products: cart.products.filter(p => p.prodId !== id),
+        products: filteredCart,
         subTotal
       };
       if (newCart.products.length < 1) {
@@ -163,12 +165,12 @@ const Cart = () => {
     renderedCart = <h1>Cart is empty</h1>;
   }
 
-  let totalPrice; // should probably handle prices on back-end (or at least validate them)
+  let subTotal; // should probably handle prices on back-end (or at least validate them)
   if (renderedCart.length > 0) {
     const filteredPrices = renderedCart.map(obj => obj.props.price);
     const filteredQuants = renderedCart.map(obj => obj.props.quantity);
     const oneArray = filteredPrices.map((x, index) => x * filteredQuants[index]);
-    totalPrice = oneArray.reduce((a, b) => a + b).toFixed(2);
+    subTotal = oneArray.reduce((a, b) => a + b).toFixed(2);
   }
 
   return (
@@ -179,26 +181,11 @@ const Cart = () => {
         <StyledH2>Your Shopping Cart</StyledH2>
       )}
       {renderedCart}
-      {totalPrice && (
-        <StyledOrderSummaryDiv>
-          <StyledOrderSumHead>ORDER SUMMARY</StyledOrderSumHead>
-          <StyledOSRowDiv>
-            <StyledP>Subtotal:</StyledP>
-            <StyledP>${totalPrice}</StyledP>
-          </StyledOSRowDiv>
-          <StyledOSRowDiv>
-            <StyledP>Shipping:</StyledP>
-            <StyledP>{totalPrice > 35 ? 'FREE' : 'TBD'}</StyledP>
-          </StyledOSRowDiv>
-          <StyledOSRowDiv>
-            <StyledP>Tax:</StyledP>
-            <StyledP>TBD</StyledP>
-          </StyledOSRowDiv>
-          <StyledOSRowDiv>
-            <StyledOrderSumTotal>Total Price:</StyledOrderSumTotal>
-            <StyledOrderSumTotal>${totalPrice}</StyledOrderSumTotal>
-          </StyledOSRowDiv>
-        </StyledOrderSummaryDiv>
+      {subTotal && (
+        <StyledOrderSummary
+          subTotal={subTotal}
+          shippingPrice={subTotal > 35 ? 'FREE' : 'TBD'}
+        />
       )}
       {renderedCart.length > 0 && (
         <StyledLink to='/checkout'>Proceed to Checkout</StyledLink>
@@ -226,15 +213,10 @@ const StyledCartDiv = styled.div`
   }
 `;
 
-const StyledOrderSummaryDiv = styled.div`
+const StyledOrderSummary = styled(OrderSummary)`
   grid-column: 2/3;
   grid-row: 2/3;
-  background: #fff6f0;
-  padding: 1rem;
-  width: 100%;
-  height: max-content;
   align-self: center;
-  margin-left: 1rem;
 
   @media (max-width: 768px) {
     grid-column: 1/2;
@@ -242,23 +224,6 @@ const StyledOrderSummaryDiv = styled.div`
     margin: 0;
     margin-top: -2rem;
   }
-`;
-
-const StyledOSRowDiv = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
-
-const StyledOrderSumHead = styled.h3`
-  margin: 0;
-`;
-
-const StyledOrderSumTotal = styled.h4`
-  margin: 0;
-`;
-
-const StyledP = styled.p`
-  margin: 0;
 `;
 
 const StyledH2 = styled.h2`
