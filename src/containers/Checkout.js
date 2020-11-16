@@ -3,7 +3,8 @@ import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
 //change moment to dayjs (it's smaller and already installed too)
-import moment from 'moment';
+// import moment from 'moment';
+import dayjs from 'dayjs';
 
 import { Input } from '../components/Input';
 import Button from '../components/Button';
@@ -29,7 +30,7 @@ const CheckoutForm = () => {
     setLoading(true);
     const userId = localStorage.getItem('userId');
     const orderedCart = JSON.parse(sessionStorage.getItem('cart'));
-    const currentDate = moment().format('LL');
+    const currentDate = dayjs().format('LL');
     const orderData = {
       name,
       streetAddress,
@@ -72,14 +73,14 @@ const CheckoutForm = () => {
     setShippingSpeed(e.target.value);
   };
 
-  let shippingLabelFastest = `Fastest -- Delivered By ${moment()
-    .add(2, 'days')
+  let shippingLabelFastest = `Fastest -- Delivered By ${dayjs()
+    .add(2, 'day')
     .format('LL')}`;
-  let shippingLabelNormal = `Normal -- Delivered By ${moment()
-    .add(3, 'days')
+  let shippingLabelNormal = `Normal -- Delivered By ${dayjs()
+    .add(3, 'day')
     .format('LL')}`;
-  let shippingLabelSlowest = `Slowest -- Delivered By ${moment()
-    .add(4, 'days')
+  let shippingLabelSlowest = `Slowest -- Delivered By ${dayjs()
+    .add(4, 'day')
     .format('LL')}`;
 
   let renderedForm = <Spinner />;

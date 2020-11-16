@@ -16,7 +16,6 @@ const ProductPage = props => {
   let { id } = useParams();
   const history = useHistory();
   const cartContext = useContext(CartContext);
-  console.log(cartContext);
 
   const options = 100;
   console.log({ options });
