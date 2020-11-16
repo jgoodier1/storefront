@@ -120,8 +120,12 @@ function App() {
 
   const cartQuantity = cart => {
     // const cart = JSON.parse(sessionStorage.getItem('cart'));
-    const quantity = cart.products.map(p => p.quantity);
-    setCartQuantityState(quantity.reduce((a, b) => a + b));
+    if (cart === null) {
+      setCartQuantityState(0);
+    } else {
+      const quantity = cart.products.map(p => p.quantity);
+      setCartQuantityState(quantity.reduce((a, b) => a + b));
+    }
   };
 
   const searchHandler = e => {
