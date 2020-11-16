@@ -41,11 +41,15 @@ const Order = props => {
           Total: <span>${props.price.toFixed(2)}</span>
         </StyledP>
         <StyledP onMouseEnter={popoverOpen} onMouseLeave={popoverClose}>
-          Ship To: <span>{props.address.name}</span>
+          Ship To:{' '}
+          <span>
+            {props.address.firstName} {props.address.lastName}
+          </span>
         </StyledP>
         {isShown && (
           <StyledPopoverDiv>
-            <StyledPopoverP>{props.address.name}</StyledPopoverP>
+            <StyledPopoverP>{props.address.firstName}</StyledPopoverP>
+            <StyledPopoverP>{props.address.lastName}</StyledPopoverP>
             <StyledPopoverP>{props.address.streetAddress}</StyledPopoverP>
             <StyledPopoverP>
               {props.address.city}, {props.address.province} {props.address.postalCode}
@@ -76,7 +80,7 @@ const Orders = () => {
       key={order._id}
       id={order._id}
       products={order.products}
-      price={order.subTotal}
+      price={order.totalPrice}
       date={order.createdAt}
       address={order.contactInfo}
       speed={order.shippingSpeed}
