@@ -1,28 +1,46 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Select = (props) => {
-  const range = (start, end) => {
-    let arr = []
-    for (let i = start; i <= end; i++) {
-      arr.push(i);
-    }
-    return arr
+const Select = props => {
+  let options;
+
+  if (typeof props.options === 'number') {
+    const range = (start, end) => {
+      let arr = [];
+      for (let i = start; i <= end; i++) {
+        arr.push(i);
+      }
+      return arr;
+    };
+    const optionsArray = range(1, props.options);
+    options = optionsArray.map(o => (
+      <option value={o} key={o}>
+        {o}
+      </option>
+    ));
+  } else {
+    options = props.options.map(o => (
+      <option value={o} key={o}>
+        {o}
+      </option>
+    ));
   }
-  const optionsArray =range(1, props.options)
-  const options = optionsArray.map(o =>  <option value={o} key={o}>{o}</option>)
-  // console.log(props)
 
   return (
-      <StlyedDiv className={props.className}>
-        <StyledSelect name='quantity' id='quantity' value={props.value} onChange={props.changed}>
-          {options}
-        </StyledSelect>
-      </StlyedDiv>
-  )
-}
+    <StlyedDiv className={props.className}>
+      <StyledSelect
+        name='quantity'
+        id='quantity'
+        value={props.value}
+        onChange={props.changed}
+      >
+        {options}
+      </StyledSelect>
+    </StlyedDiv>
+  );
+};
 
-export default Select
+export default Select;
 
 const StlyedDiv = styled.div`
   display: grid;
@@ -39,7 +57,7 @@ const StlyedDiv = styled.div`
   background-color: #fff;
 
   :after {
-    content: "";
+    content: '';
     width: 0.8em;
     height: 0.5em;
     background-color: #000;
@@ -47,7 +65,7 @@ const StlyedDiv = styled.div`
     grid-area: select;
     justify-self: end;
   }
-`
+`;
 
 const StyledSelect = styled.select`
   appearance: none;
@@ -61,4 +79,4 @@ const StyledSelect = styled.select`
   cursor: inherit;
   line-height: inherit;
   grid-area: select;
-`
+`;
