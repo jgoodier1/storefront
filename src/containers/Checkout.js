@@ -14,7 +14,7 @@ import CartContext from '../context/cartContext';
 
 dayjs.extend(localizedFormat);
 
-const Checkout = () => {
+const Checkout = props => {
   // make sure they're logged in first!!!!
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -99,11 +99,6 @@ const Checkout = () => {
     setShippingSpeed(e.target.value);
   };
 
-  let shippingLabelFast = `Fast -- Delivered By ${dayjs().add(3, 'day').format('LL')}`;
-  let shippingLabelNormal = `Normal -- Delivered By ${dayjs()
-    .add(4, 'day')
-    .format('LL')}`;
-
   const subTotal = cart.subTotal;
   let tax;
   switch (province) {
@@ -164,6 +159,11 @@ const Checkout = () => {
     shippingPrice = SHIPPING_PRICE[1].toFixed(2);
     totalPrice += +shippingPrice;
   }
+
+  let shippingLabelFast = `$10 -- Delivered By ${dayjs().add(3, 'day').format('LL')}`;
+  let shippingLabelNormal = `${
+    subTotal > 35 ? 'FREE' : '$5'
+  } -- Delivered By ${dayjs().add(4, 'day').format('LL')}`;
 
   let renderedForm = <Spinner />;
   if (!loading && !stepTwo) {
@@ -246,7 +246,7 @@ const Checkout = () => {
       <>
         {/* <h2>Select a shipping speed</h2> */}
         <StyledForm>
-          <Input
+          {/* <Input
             type='radio'
             name='shipping'
             id='fast'
@@ -263,28 +263,63 @@ const Checkout = () => {
             label={shippingLabelNormal}
             checked={shippingSpeed === 'normal'}
             changed={shippingSpeedChangeHandler}
-          />
+          /> */}
+          <StyledRadioDiv>
+            <input
+              type='radio'
+              name='shipping'
+              id='fast'
+              value='fast'
+              checked={shippingSpeed === 'fast'}
+              onChange={shippingSpeedChangeHandler}
+            />
+            <label htmlFor='fast'>{shippingLabelFast}</label>
+          </StyledRadioDiv>
+          <StyledRadioDiv>
+            <input
+              type='radio'
+              name='shipping'
+              id='normal'
+              value='normal'
+              checked={shippingSpeed === 'normal'}
+              onChange={shippingSpeedChangeHandler}
+            />
+            <label htmlFor='normal'>{shippingLabelNormal}</label>
+          </StyledRadioDiv>
         </StyledForm>
       </>
     );
   }
 
+  const notAuth = (
+    <>
+      <h2 style={{ placeSelf: 'center' }}>Please sign in to continue</h2>
+      <StyledAuthBttn clicked={props.showModal}>Sign In</StyledAuthBttn>
+    </>
+  );
+
   return (
     <StyledMain>
-      <h2>{!stepTwo ? 'Shipping Address' : 'Shipping Speed'}</h2>
-      {renderedForm}
-      <StyledOrderSummary
-        totalPrice={totalPrice.toFixed(2)}
-        tax={tax.toFixed(2)}
-        subTotal={subTotal.toFixed(2)}
-        shippingPrice={shippingPrice}
-      />
-      <StyledBttnDiv>
-        <StyledButton clicked={!stepTwo ? setStepTwoTrue : e => orderHandler(e)}>
-          {!stepTwo ? 'Continue' : 'Place Order'}
-        </StyledButton>
-        <StyledButton clicked={cancelHandler}>Cancel</StyledButton>
-      </StyledBttnDiv>
+      {props.isLoggedIn ? (
+        <>
+          <h2>{!stepTwo ? 'Shipping Address' : 'Shipping Speed'}</h2>
+          {renderedForm}
+          <StyledOrderSummary
+            totalPrice={totalPrice.toFixed(2)}
+            tax={tax.toFixed(2)}
+            subTotal={subTotal.toFixed(2)}
+            shippingPrice={shippingPrice}
+          />
+          <StyledBttnDiv>
+            <StyledButton clicked={!stepTwo ? setStepTwoTrue : e => orderHandler(e)}>
+              {!stepTwo ? 'Continue' : 'Place Order'}
+            </StyledButton>
+            <StyledButton clicked={cancelHandler}>Cancel</StyledButton>
+          </StyledBttnDiv>
+        </>
+      ) : (
+        notAuth
+      )}
     </StyledMain>
   );
 };
@@ -314,9 +349,11 @@ const StyledForm = styled.form`
   grid-row: 2/5;
   display: grid;
   grid-template-columns: 1fr 1fr;
+  grid-template-rows: 4rem;
   grid-gap: 10px;
   ${'' /* margin: 100px auto; */}
   max-width: max-content;
+  height: max-content;
   text-align: left;
   border: 1px solid #eee;
   padding: 10px;
@@ -454,4 +491,16 @@ const StyledButton = styled(Button)`
 
   @media (max-width: 768px) {
   }
+`;
+
+const StyledRadioDiv = styled.div`
+  grid-column: 1/3;
+  height: max-content;
+`;
+
+const StyledAuthBttn = styled(Button)`
+  grid-row: 2;
+  width: max-content;
+  padding: 1rem;
+  place-self: center;
 `;

@@ -154,8 +154,12 @@ function App() {
           path='/admin/edit-product'
           render={() => <ProductForm token={token} userId={userId} />}
         />
-        <Route path='/orders' component={Orders} />
-        <Route path='/checkout' component={Checkout} />
+        <Route path='/orders'>
+          <Orders isLoggedIn={isLoggedIn} showModal={showModalHandler} />
+        </Route>
+        <Route path='/checkout'>
+          <Checkout isLoggedIn={isLoggedIn} showModal={showModalHandler} />
+        </Route>
         <Route path='/search' component={Search} />
         {/* <Route path='/login' render={() => <Auth login={loginHandler} />} />
       <Route path='/signup' render={() => <Auth signUp={signUpHandler} />} /> */}

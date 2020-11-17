@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
+import Button from '../components/Button';
 
 const Order = props => {
   //put state here because it would show for every order
@@ -30,6 +31,12 @@ const Order = props => {
   ));
 
   const dateOrdered = dayjs(props.date).format('MMM DD, YYYY');
+  let deliveryDate;
+  if (props.speed === 'fast') {
+    deliveryDate = dayjs(dateOrdered).add(3, 'day').format('MMM DD, YYYY');
+  } else if (props.speed === 'normal') {
+    deliveryDate = dayjs(dateOrdered).add(4, 'day').format('MMM DD, YYYY');
+  }
 
   return (
     <StyledOrderDiv>
@@ -59,21 +66,30 @@ const Order = props => {
           </StyledPopoverDiv>
         )}
       </StyledTopBarDiv>
-      <StyledH2>Expected Delivery: Nov 20, 2020</StyledH2>
+      <StyledH2>Expected Delivery: {deliveryDate}</StyledH2>
       {renderedOrder}
     </StyledOrderDiv>
   );
 };
 
-const Orders = () => {
+const Orders = props => {
   const [allOrders, setAllOrders] = useState([]);
+
+  console.log(props.showModal);
 
   useEffect(() => {
     const userId = localStorage.getItem('userId');
     axios.post('/orders', { userId }).then(res => {
       setAllOrders(res.data);
     });
-  }, []);
+  }, [props.isLoggedIn]);
+
+  const notAuth = (
+    <>
+      <StyledAuthH2>Please sign in to continue</StyledAuthH2>
+      <StyledAuthBttn clicked={props.showModal}>Sign In</StyledAuthBttn>
+    </>
+  );
 
   const renderedOrders = allOrders.map(order => (
     <Order
@@ -89,8 +105,14 @@ const Orders = () => {
 
   return (
     <StyledOrdersDiv>
-      <h1>Your Orders</h1>
-      <StyledRendedOrdersDiv>{renderedOrders}</StyledRendedOrdersDiv>
+      {props.isLoggedIn ? (
+        <>
+          <h1 style={{ justifySelf: 'center' }}>Your Orders</h1>
+          <StyledRendedOrdersDiv>{renderedOrders}</StyledRendedOrdersDiv>
+        </>
+      ) : (
+        notAuth
+      )}
     </StyledOrdersDiv>
   );
 };
@@ -195,30 +217,15 @@ const StyledQty = styled.p`
   width: max-content;
 `;
 
-// const StyledLink = styled(Link)`
-//   ${'' /* grid-area: totals; */}
-//   grid-column: 2/3;
-//   grid-row: 3/4;
-//   padding: 1.5rem;
-//   margin-left: 1rem;
-//   font-weight: bold;
-//   font-size: 1.5rem;
-//   font-family: inherit;
-//   background: #000;
-//   color: white;
-//   text-decoration: none;
-//   text-align: center;
-//   width: 100%;
-//   height: max-content;
-//   ${'' /* margin-right: 20px; */}
+const StyledAuthH2 = styled.h2`
+  grid-column: 2/3;
+  place-self: center;
+  width: max-content;
+`;
 
-//   &:hover {
-//     cursor: pointer;
-//   }
-
-//   @media (max-width: 768px) {
-//     grid-column: 1/2;
-//     grid-row: auto;
-//     margin: 0;
-//   }
-// `;
+const StyledAuthBttn = styled(Button)`
+  grid-column: 2/3;
+  width: max-content;
+  padding: 1rem;
+  place-self: center;
+`;
