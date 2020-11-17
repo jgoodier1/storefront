@@ -18,8 +18,9 @@ const Product = props => {
 
   let buttons = undefined;
   if (location.pathname === '/products') {
-    buttons = <Button clicked={addToCartHandler}>ADD TO CART</Button>;
+    buttons = <StyledBttn clicked={addToCartHandler}>ADD TO CART</StyledBttn>;
   } else if (location.pathname === '/admin/products') {
+    // not really using these
     buttons = (
       <div>
         <StyledLink to={{ pathname: '/admin/edit-product', search: '?id=' + props.id }}>
@@ -34,6 +35,8 @@ const Product = props => {
   let shortenedDesc;
   if (props.description.length > 100) {
     shortenedDesc = props.description.slice(0, 100).concat('...');
+  } else {
+    shortenedDesc = props.description;
   }
 
   return (
@@ -51,6 +54,7 @@ const Product = props => {
 
 export default Product;
 
+// not really using this
 const StyledLink = styled(Link)`
   padding: 0.5rem;
   font-weight: bold;
@@ -70,22 +74,29 @@ const StyledLink = styled(Link)`
 `;
 
 const StyledProductDiv = styled.div`
+  grid-column: 2/3;
   padding: 2.5rem 0;
   border-bottom: 1px solid #888383;
   display: grid;
-  grid-column: 2/3;
-  grid-template-areas:
+  ${'' /* grid-template-areas:
     'img img title'
     'img img desc'
     'img img desc'
     'img img price'
-    'img img bttn';
+    'img img bttn'; */}
+  grid-template-columns: 400px 1fr;
+  grid-gap: 20px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+  }
 `;
 
 const StyledAnchor = styled(Link)`
+  ${'' /* grid-area: title; */}
+  grid-column: 2/3;
   font-size: 1em;
   margin: 0.5rem 0;
-  grid-area: title;
   text-decoration: none;
   color: #000;
   font-weight: bold;
@@ -93,21 +104,33 @@ const StyledAnchor = styled(Link)`
 `;
 
 const StyledImg = styled.img`
+  ${'' /* grid-area: img; */}
+  grid-column: 1/2;
+  grid-row: 1/6;
   width: 100%;
   min-width: 10rem;
-  grid-area: img;
+  max-width: 400px;
   margin-right: 1rem;
 `;
 
 const StyledDesc = styled.p`
-  grid-area: desc;
+  ${'' /* grid-area: desc; */}
+  grid-column: 2/3;
+  grid-row: 2/4;
   font-style: italic;
   color: #4f4f4f;
 `;
 
 const StyledPrice = styled.p`
+  ${'' /* grid-area: price; */}
+  grid-column: 2/3;
+  grid-row: 4/5;
   font-size: 1.5em;
   font-weight: bold;
   margin: 0.5rem;
-  grid-area: price;
+`;
+
+const StyledBttn = styled(Button)`
+  grid-column: 2/3;
+  grid-row: 5/6;
 `;
