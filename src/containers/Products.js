@@ -95,7 +95,7 @@ export default Products;
 
 const StyledProductsDiv = styled.div`
   ${'' /* margin: 56px; */}
-  margin-left: 25px;
+  ${'' /* margin-left: 25px; */}
   display: grid;
   grid-template-columns: minmax(0, 1fr) 2fr minmax(0, 1fr);
   grid-gap: 20px;
