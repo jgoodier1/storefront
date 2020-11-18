@@ -79,9 +79,12 @@ const Orders = props => {
 
   useEffect(() => {
     const userId = localStorage.getItem('userId');
-    axios.post('/orders', { userId }).then(res => {
-      setAllOrders(res.data);
-    });
+    axios
+      .post('/orders', { userId })
+      .then(res => {
+        setAllOrders(res.data);
+      })
+      .catch(err => console.error(err));
   }, [props.isLoggedIn]);
 
   const notAuth = (

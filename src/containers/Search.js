@@ -11,9 +11,13 @@ const Search = () => {
   const value = new URLSearchParams(useLocation().search).get('value');
 
   useEffect(() => {
-    axios.get(`/search?value=${value}`).then(res => {
-      setResults(res.data);
-    });
+    axios
+      .get(`/search?value=${value}`)
+      .then(res => {
+        console.log(res.data);
+        setResults(res.data);
+      })
+      .catch(err => console.error(err));
   }, [value]);
 
   let renderedResults;
