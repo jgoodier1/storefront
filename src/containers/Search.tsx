@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import Product from '../components/Product';
 
 const Search = () => {
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState<any[]>([]);
 
   const value = new URLSearchParams(useLocation().search).get('value');
 
@@ -26,7 +26,7 @@ const Search = () => {
       <Product
         key={r._id}
         title={r.title}
-        img={r.image}
+        image={r.image}
         price={r.price}
         description={r.description}
         id={r._id}

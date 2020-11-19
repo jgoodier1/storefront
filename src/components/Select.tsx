@@ -1,11 +1,18 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Select = props => {
+interface SelectProps {
+  options: number | string[];
+  changed: (e: React.FormEvent<HTMLSelectElement>) => void;
+  value?: number;
+  className?: string;
+}
+
+const Select = (props: SelectProps) => {
   let options;
 
   if (typeof props.options === 'number') {
-    const range = (start, end) => {
+    const range = (start: number, end: number) => {
       let arr = [];
       for (let i = start; i <= end; i++) {
         arr.push(i);

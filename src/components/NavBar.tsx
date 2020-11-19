@@ -7,7 +7,32 @@ import CartContext from '../context/cartContext';
 import logo from '../images/logo2.png';
 import shoppingCart from '../images/shopping-cart.png';
 
-const NavItem = props => {
+interface NavItemProps {
+  children: React.ReactNode;
+  link: string;
+  exact?: boolean;
+  className?: string;
+}
+
+interface NavItemsProps {
+  isLoggedIn: boolean;
+  logout: () => void;
+  showModal: () => void;
+  search: (e: React.FormEvent<HTMLFormElement>) => void;
+  changed: (e: React.FormEvent<HTMLInputElement>) => void;
+  value: string;
+}
+
+interface NavBarProps {
+  isLoggedIn: boolean;
+  logout: () => void;
+  showModal: () => void;
+  search: (e: React.FormEvent<HTMLFormElement>) => void;
+  changed: (e: React.FormEvent<HTMLInputElement>) => void;
+  value: string;
+}
+
+const NavItem = (props: NavItemProps) => {
   return (
     <SLi className={props.className}>
       <SNavLink to={props.link} exact={props.exact}>
@@ -17,7 +42,7 @@ const NavItem = props => {
   );
 };
 
-const NavItems = props => {
+const NavItems = (props: NavItemsProps) => {
   const cartContext = useContext(CartContext);
 
   return (
@@ -53,7 +78,7 @@ const NavItems = props => {
   );
 };
 
-const NavBar = props => {
+const NavBar = (props: NavBarProps) => {
   return (
     <SHead>
       <nav style={{ width: '100%' }}>
@@ -61,7 +86,6 @@ const NavBar = props => {
           isLoggedIn={props.isLoggedIn}
           logout={props.logout}
           showModal={props.showModal}
-          cartQuantity={props.cartQuantity}
           search={props.search}
           changed={props.changed}
           value={props.value}

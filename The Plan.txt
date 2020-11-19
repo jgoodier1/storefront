@@ -1,6 +1,6 @@
-- fix the checkout forms
+- (DONE) fix the checkout forms
 - look at error handling
-- add mock-data
+- (DONE) add mock-data
 - make homepage
 - move to typescript
 - write tests
@@ -9,6 +9,7 @@
 - move database to postgres
 
 
+Need it to look like ICart. Can't put placeholder because I don't want
 
 - (DONE)Finish the checkout 
   - (DONE)actually not done, still need more product info and the date the order was placed. KMN

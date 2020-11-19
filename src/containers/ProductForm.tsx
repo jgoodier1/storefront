@@ -7,7 +7,7 @@ import { Input, TextArea } from '../components/Input';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
 
-const ProductForm = props => {
+const ProductForm = () => {
   const [titleValue, setTitleValue] = useState('');
   const [imageValue, setImageValue] = useState('');
   const [priceValue, setPriceValue] = useState('');
@@ -50,7 +50,7 @@ const ProductForm = props => {
     }
   }, [location.search, editingState]); //eslint-disable-line
 
-  const onAddSubmitHandler = event => {
+  const onAddSubmitHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const newProduct = {
@@ -77,7 +77,7 @@ const ProductForm = props => {
       });
   };
 
-  const onEditSubmitHandler = event => {
+  const onEditSubmitHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const updatedProduct = {
@@ -116,13 +116,17 @@ const ProductForm = props => {
         value={titleValue || ''} // the || makes it controlled
         name='title'
         id='title'
-        changed={event => setTitleValue(event.target.value)}
+        changed={(event: React.FormEvent<HTMLInputElement>) =>
+          setTitleValue(event.currentTarget.value)
+        }
         label='Title'
       />
       <Input
         type='text'
         value={imageValue || ''} // the || makes it controlled
-        changed={event => setImageValue(event.target.value)}
+        changed={(event: React.FormEvent<HTMLInputElement>) =>
+          setImageValue(event.currentTarget.value)
+        }
         name='imageurl'
         id='imageurl'
         label='Image URL'
@@ -130,14 +134,18 @@ const ProductForm = props => {
       <Input
         type='number'
         value={priceValue || ''} // the || makes it controlled
-        changed={event => setPriceValue(event.target.value)}
+        changed={(event: React.FormEvent<HTMLInputElement>) =>
+          setPriceValue(event.currentTarget.value)
+        }
         name='price'
         id='price'
         label='Price'
       />
       <TextArea
         value={descValue || ''}
-        changed={event => setDescValue(event.target.value)}
+        changed={(event: React.FormEvent<HTMLTextAreaElement>) =>
+          setDescValue(event.currentTarget.value)
+        }
         name='desc'
         id='desc'
         label='Description'

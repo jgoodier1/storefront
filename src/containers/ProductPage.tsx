@@ -9,11 +9,16 @@ import { addToCart } from '../utils/addToCart';
 import Select from '../components/Select';
 import CartContext from '../context/cartContext';
 
-const ProductPage = props => {
-  const [product, setProduct] = useState({});
+const ProductPage = () => {
+  const [product, setProduct] = useState({
+    price: 0,
+    title: '',
+    image: '',
+    description: ''
+  });
   const [select, setSelect] = useState(1);
   const [loading, setLoading] = useState(false);
-  let { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const history = useHistory();
   const cartContext = useContext(CartContext);
 
@@ -43,8 +48,8 @@ const ProductPage = props => {
   // It calls this twice everytime
   // console.log(product);
 
-  const selectChangeHandler = e => {
-    setSelect(e.target.value);
+  const selectChangeHandler = (e: React.FormEvent<HTMLSelectElement>) => {
+    setSelect(+e.currentTarget.value);
   };
 
   let prod;

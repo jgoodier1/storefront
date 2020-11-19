@@ -1,7 +1,28 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Input = props => {
+interface InputProps {
+  id: string;
+  label: string;
+  type: string;
+  name: string;
+  value: string;
+  changed: (e: React.FormEvent<HTMLInputElement>) => void;
+  checked?: boolean;
+  className?: string;
+}
+
+interface TextAreaProps {
+  name: string;
+  label: string;
+  id: string;
+  value: string;
+  changed: (e: React.FormEvent<HTMLTextAreaElement>) => void;
+  rows: string;
+  className?: string;
+}
+
+const Input = (props: InputProps) => {
   return (
     <div className={props.className}>
       <StyledLabel htmlFor={props.id}>{props.label}</StyledLabel>
@@ -19,7 +40,7 @@ const Input = props => {
   );
 };
 
-const TextArea = props => {
+const TextArea = (props: TextAreaProps) => {
   return (
     <div className={props.className}>
       <StyledLabel htmlFor={props.name}>{props.label}</StyledLabel>
@@ -28,8 +49,9 @@ const TextArea = props => {
         // required={props.required}
         value={props.value}
         onChange={props.changed}
-        rows={props.rows}
+        rows={+props.rows}
         name={props.name}
+        id={props.id}
       />
     </div>
   );

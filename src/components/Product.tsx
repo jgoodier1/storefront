@@ -2,11 +2,20 @@ import React, { useContext } from 'react';
 import { useLocation, useHistory, Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import Button from '../components/Button';
+import Button from './Button';
 import { addToCart } from '../utils/addToCart';
 import CartContext from '../context/cartContext';
 
-const Product = props => {
+interface ProductProps {
+  id: string;
+  price: number;
+  description: string;
+  title: string;
+  image: string;
+  delete?: (id: string) => void;
+}
+
+const Product = (props: ProductProps) => {
   const cartContext = useContext(CartContext);
   const location = useLocation(); //might not be the best place for this
   const history = useHistory();
@@ -14,6 +23,10 @@ const Product = props => {
   const addToCartHandler = () => {
     addToCart(props.id, props.price, 1, cartContext.updateQuantity);
     history.push('/cart');
+  };
+
+  const deleteHandler = () => {
+    if (props.delete) props.delete(props.id);
   };
 
   let buttons = undefined;
@@ -27,7 +40,7 @@ const Product = props => {
           Edit
         </StyledLink>
         {/* <Button clicked={clickEditHandler}>Edit</Button> */}
-        <Button clicked={() => props.delete(props.id)}>Delete</Button>
+        <Button clicked={deleteHandler}>Delete</Button>
       </div>
     );
   }
@@ -41,7 +54,7 @@ const Product = props => {
 
   return (
     <StyledProductDiv>
-      <StyledImg src={props.img} alt={props.title} />
+      <StyledImg src={props.image} alt={props.title} />
       <StyledAnchor to={'/products/' + props.id}>
         {props.title.toUpperCase()}
       </StyledAnchor>

@@ -14,7 +14,12 @@ import CartContext from '../context/cartContext';
 
 dayjs.extend(localizedFormat);
 
-const Checkout = props => {
+interface CheckoutProps {
+  isLoggedIn: boolean;
+  showModal: () => void;
+}
+
+const Checkout = (props: CheckoutProps) => {
   // make sure they're logged in first!!!!
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -49,10 +54,10 @@ const Checkout = props => {
   ];
   const SHIPPING_PRICE = [10, 5];
 
-  const cart = JSON.parse(sessionStorage.getItem('cart'));
+  const cart = JSON.parse(sessionStorage.getItem('cart')!);
   console.log(cart);
 
-  const orderHandler = e => {
+  const orderHandler = (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setLoading(true);
     const userId = localStorage.getItem('userId');
@@ -95,8 +100,8 @@ const Checkout = props => {
     setStepTwo(true);
   };
 
-  const shippingSpeedChangeHandler = e => {
-    setShippingSpeed(e.target.value);
+  const shippingSpeedChangeHandler = (e: React.FormEvent<HTMLInputElement>) => {
+    setShippingSpeed(e.currentTarget.value);
   };
 
   const subTotal = cart.subTotal;
@@ -176,7 +181,9 @@ const Checkout = props => {
             value={firstName}
             name='firstName'
             id='firstName'
-            changed={e => setFirstName(e.target.value)}
+            changed={(e: React.FormEvent<HTMLInputElement>) =>
+              setFirstName(e.currentTarget.value)
+            }
             label='First Name*'
           />
           <StyledLastName
@@ -184,7 +191,9 @@ const Checkout = props => {
             value={lastName}
             name='lastName'
             id='lastName'
-            changed={e => setLastName(e.target.value)}
+            changed={(e: React.FormEvent<HTMLInputElement>) =>
+              setLastName(e.currentTarget.value)
+            }
             label='Last Name*'
           />
           <StyledAddress1
@@ -192,7 +201,9 @@ const Checkout = props => {
             value={streetAddress}
             name='streetAddress'
             id='streetAddress'
-            changed={e => setStreetAddress(e.target.value)}
+            changed={(e: React.FormEvent<HTMLInputElement>) =>
+              setStreetAddress(e.currentTarget.value)
+            }
             label='Street Address 1*'
           />
           <StyledAddress2
@@ -200,7 +211,9 @@ const Checkout = props => {
             value={streetAddressTwo}
             name='streetAddressTwo'
             id='streetAddressTwo'
-            changed={e => setStreetAddressTwo(e.target.value)}
+            changed={(e: React.FormEvent<HTMLInputElement>) =>
+              setStreetAddressTwo(e.currentTarget.value)
+            }
             label='Street Address 2'
           />
           <StyledCity
@@ -208,14 +221,18 @@ const Checkout = props => {
             value={city}
             name='city'
             id='city'
-            changed={e => setCity(e.target.value)}
+            changed={(e: React.FormEvent<HTMLInputElement>) =>
+              setCity(e.currentTarget.value)
+            }
             label='City*'
           />
           <StyledProvince htmlFor='provinces'>
             Province*
             <StyledSelect
               options={PROVINCES}
-              changed={e => setProvince(e.target.value)}
+              changed={(e: React.FormEvent<HTMLSelectElement>) =>
+                setProvince(e.currentTarget.value)
+              }
               // name='provinces'
             />
           </StyledProvince>
@@ -227,7 +244,9 @@ const Checkout = props => {
             value={postalCode}
             name='postalCode'
             id='postalCode'
-            changed={e => setPostalCode(e.target.value)}
+            changed={(e: React.FormEvent<HTMLInputElement>) =>
+              setPostalCode(e.currentTarget.value)
+            }
             label='Postal Code*'
           />
           <StyledPhoneNumber
@@ -235,7 +254,9 @@ const Checkout = props => {
             value={phoneNumber}
             name='phoneNumber'
             id='phoneNumber'
-            changed={e => setPhoneNumber(e.target.value)}
+            changed={(e: React.FormEvent<HTMLInputElement>) =>
+              setPhoneNumber(e.currentTarget.value)
+            }
             label='Primary Phone Number*'
           />
         </StyledForm>
@@ -271,7 +292,9 @@ const Checkout = props => {
               id='fast'
               value='fast'
               checked={shippingSpeed === 'fast'}
-              onChange={shippingSpeedChangeHandler}
+              onChange={(e: React.FormEvent<HTMLInputElement>) =>
+                shippingSpeedChangeHandler(e)
+              }
             />
             <label htmlFor='fast'>{shippingLabelFast}</label>
           </StyledRadioDiv>
@@ -282,7 +305,9 @@ const Checkout = props => {
               id='normal'
               value='normal'
               checked={shippingSpeed === 'normal'}
-              onChange={shippingSpeedChangeHandler}
+              onChange={(e: React.FormEvent<HTMLInputElement>) =>
+                shippingSpeedChangeHandler(e)
+              }
             />
             <label htmlFor='normal'>{shippingLabelNormal}</label>
           </StyledRadioDiv>
@@ -311,7 +336,13 @@ const Checkout = props => {
             shippingPrice={shippingPrice}
           />
           <StyledBttnDiv>
-            <StyledButton clicked={!stepTwo ? setStepTwoTrue : e => orderHandler(e)}>
+            <StyledButton
+              clicked={
+                !stepTwo
+                  ? setStepTwoTrue
+                  : (e: React.FormEvent<HTMLButtonElement>) => orderHandler(e)
+              }
+            >
               {!stepTwo ? 'Continue' : 'Place Order'}
             </StyledButton>
             <StyledButton clicked={cancelHandler}>Cancel</StyledButton>

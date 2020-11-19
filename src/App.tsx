@@ -14,10 +14,26 @@ import NotFound from './containers/NotFound';
 import CartContext from './context/cartContext';
 import Search from './containers/Search';
 
+interface IAuthData {
+  email: string;
+  password: string;
+  name?: string;
+  confirmPassword?: string;
+}
+
+interface ICart {
+  products: {
+    prodId: string;
+    price: number;
+    quantity: number;
+  }[];
+  subTotal: number;
+}
+
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [token, setToken] = useState(null);
-  const [userId, setUserId] = useState(null);
+  // const [token, setToken] = useState<string | null>(null);
+  // const [userId, setUserId] = useState<string | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isError, setIsError] = useState(false);
   const cartContext = useContext(CartContext);
@@ -36,15 +52,18 @@ function App() {
       logoutHandler();
       return;
     }
-    const userId = localStorage.getItem('userId');
+    // const userId = localStorage.getItem('userId');
     const remainingMilliseconds = new Date(expiryDate).getTime() - new Date().getTime();
-    setToken(oldToken);
-    setUserId(userId);
+    // setToken(oldToken);
+    // setUserId(userId);
     setAutoLogout(remainingMilliseconds);
     setIsLoggedIn(true);
   }, []); //eslint-disable-line
 
-  const signUpHandler = (event, authData) => {
+  const signUpHandler = (
+    event: React.FormEvent<HTMLFormElement>,
+    authData: IAuthData
+  ) => {
     event.preventDefault();
     setIsError(false);
     const newUser = {
@@ -69,7 +88,7 @@ function App() {
       });
   };
 
-  const loginHandler = (event, authData) => {
+  const loginHandler = (event: React.FormEvent<HTMLFormElement>, authData: IAuthData) => {
     event.preventDefault();
     setIsError(false);
     const user = {
@@ -82,12 +101,14 @@ function App() {
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('userId', res.data.userId);
         const remainingMilliseconds = 60 * 60 * 1000;
-        const expiryDate = new Date(new Date().getTime() + remainingMilliseconds);
+        const expiryDate = new Date(
+          new Date().getTime() + remainingMilliseconds
+        ).toString();
         localStorage.setItem('expiryDate', expiryDate);
         setAutoLogout(remainingMilliseconds);
         setIsLoggedIn(true);
-        setToken(res.data.token);
-        setUserId(res.data.userId);
+        // setToken(res.data.token);
+        // setUserId(res.data.userId);
         setShowAuthModal(false);
       })
       .catch(err => {
@@ -118,21 +139,24 @@ function App() {
     setShowAuthModal(false);
   };
 
-  const cartQuantity = cart => {
-    // const cart = JSON.parse(sessionStorage.getItem('cart'));
+  const cartQuantity = (cart: ICart) => {
+    // const cart = JSON.parse(sessionStorage.getItem('cart')!);
     if (cart === null) {
       setCartQuantityState(0);
     } else {
       const quantity = cart.products.map(p => p.quantity);
-      setCartQuantityState(quantity.reduce((a, b) => a + b));
+      setCartQuantityState(quantity.reduce((a: number, b: number) => a + b));
     }
   };
 
-  const searchHandler = e => {
+  const searchHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     history.push('/search?value=' + searchValue);
     // history.push('/search');
   };
+
+  const onSearchChange = (e: React.FormEvent<HTMLInputElement>) =>
+    setSearchValue(e.currentTarget.value);
 
   let routes = (
     <CartContext.Provider
@@ -142,18 +166,9 @@ function App() {
         <Route path='/products/:id' component={ProductPage} />
         <Route path='/products' component={Products} />
         <Route path='/cart' component={Cart} />
-        <Route
-          path='/admin/add-product'
-          render={() => <ProductForm token={token} userId={userId} />}
-        />
-        <Route
-          path='/admin/products'
-          render={() => <Products token={token} userId={userId} />}
-        />
-        <Route
-          path='/admin/edit-product'
-          render={() => <ProductForm token={token} userId={userId} />}
-        />
+        <Route path='/admin/add-product' render={() => <ProductForm />} />
+        <Route path='/admin/products' render={() => <Products />} />
+        <Route path='/admin/edit-product' render={() => <ProductForm />} />
         <Route path='/orders'>
           <Orders isLoggedIn={isLoggedIn} showModal={showModalHandler} />
         </Route>
@@ -179,9 +194,8 @@ function App() {
           logout={logoutHandler}
           showModal={showModalHandler}
           search={searchHandler}
-          changed={e => setSearchValue(e.target.value)}
+          changed={onSearchChange}
           value={searchValue}
-          // cartQuantity={cartQuantity}
         />
       </CartContext.Provider>
       {routes}

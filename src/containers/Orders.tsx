@@ -5,7 +5,42 @@ import styled from 'styled-components';
 import dayjs from 'dayjs';
 import Button from '../components/Button';
 
-const Order = props => {
+interface OrderProps {
+  key: number;
+  id: string;
+  products: [
+    {
+      _id: number;
+      prodId: {
+        _id: number;
+        title: string;
+        image: string;
+      };
+      price: number;
+      quantity: number;
+    }
+  ];
+  price: number;
+  date: number;
+  address: {
+    firstName: string;
+    lastName: string;
+    streetAddress: string;
+    city: string;
+    province: string;
+    country: string;
+    postalCode: string;
+    phoneNumber: string;
+  };
+  speed: string;
+}
+
+interface OrdersProps {
+  showModal: () => void;
+  isLoggedIn: boolean;
+}
+
+const Order = (props: OrderProps) => {
   //put state here because it would show for every order
   const [isShown, setIsShown] = useState(false);
 
@@ -72,8 +107,8 @@ const Order = props => {
   );
 };
 
-const Orders = props => {
-  const [allOrders, setAllOrders] = useState([]);
+const Orders = (props: OrdersProps) => {
+  const [allOrders, setAllOrders] = useState<any[]>([]);
 
   console.log(props.showModal);
 

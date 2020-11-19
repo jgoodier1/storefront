@@ -8,14 +8,42 @@ import Select from '../components/Select';
 import CartContext from '../context/cartContext';
 import OrderSummary from '../components/OrderSummary';
 
-const CartItem = props => {
+interface CartItemProps {
+  quantity: number;
+  edit: (id: string, quantity: number) => void;
+  delete: (id: string) => void;
+  id: string;
+  title: string;
+  image: string;
+  price: number;
+  className?: string;
+}
+
+interface ICartStorage {
+  products: {
+    prodId: string;
+    price: number;
+    quantity: number;
+  }[];
+  subTotal: number;
+}
+
+interface ICart {
+  prodId: string;
+  title: string;
+  image: string;
+  price: number;
+  quantity: number;
+}
+
+const CartItem = (props: CartItemProps) => {
   const [select, setSelect] = useState(props.quantity);
 
   const options = 100;
 
-  const onSelectChange = e => {
-    setSelect(e.target.value);
-    props.edit(props.id, e.target.value);
+  const onSelectChange = (e: React.FormEvent<HTMLSelectElement>) => {
+    setSelect(+e.currentTarget.value);
+    props.edit(props.id, +e.currentTarget.value);
   };
 
   return (
@@ -30,14 +58,14 @@ const CartItem = props => {
 };
 
 const Cart = () => {
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState<ICart[] | null>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const cartContext = useContext(CartContext);
 
   useEffect(() => {
     setLoading(true);
-    let cartFromStorage = JSON.parse(sessionStorage.getItem('cart'));
+    let cartFromStorage = JSON.parse(sessionStorage.getItem('cart')!);
     // console.log(cartFromStorage);
     if (cartFromStorage === null) {
       cartFromStorage = [];
@@ -56,9 +84,9 @@ const Cart = () => {
     }
   }, []);
 
-  const editCartItem = (id, quantity) => {
+  const editCartItem = (id: string, quantity: number) => {
     setLoading(true);
-    const cart = JSON.parse(sessionStorage.getItem('cart'));
+    const cart: ICartStorage = JSON.parse(sessionStorage.getItem('cart')!);
     console.log({ cart });
     if (cart === undefined) {
       console.log('cart undefined');
@@ -98,10 +126,10 @@ const Cart = () => {
       });
   };
 
-  const deleteHandler = id => {
+  const deleteHandler = (id: string) => {
     setLoading(true);
     //why not cart from storage???
-    const cart = JSON.parse(sessionStorage.getItem('cart'));
+    const cart: ICartStorage = JSON.parse(sessionStorage.getItem('cart')!);
     if (cart === undefined) {
       console.log('cart undefined');
       setLoading(false);
@@ -146,9 +174,9 @@ const Cart = () => {
     }
   };
 
-  let renderedCart = <Spinner />;
-  if (cart !== undefined && !loading) {
-    renderedCart = cart.map(ci => (
+  let renderedCart: JSX.Element | JSX.Element[] = <Spinner />;
+  if (cart !== null && !loading) {
+    renderedCart = cart.map((ci: ICart) => (
       <CartItem
         key={ci.prodId}
         title={ci.title}
@@ -160,17 +188,19 @@ const Cart = () => {
         id={ci.prodId}
       />
     ));
-  } else if (cart.length === 0) {
+  } else if (cart === null || cart.length === 0) {
     setLoading(false);
     renderedCart = <h1>Cart is empty</h1>;
   }
 
   let subTotal; // should probably handle prices on back-end (or at least validate them)
-  if (renderedCart.length > 0) {
-    const filteredPrices = renderedCart.map(obj => obj.props.price);
-    const filteredQuants = renderedCart.map(obj => obj.props.quantity);
-    const oneArray = filteredPrices.map((x, index) => x * filteredQuants[index]);
-    subTotal = oneArray.reduce((a, b) => a + b).toFixed(2);
+  if (cart !== null && cart.length > 0) {
+    const filteredPrices = cart.map(p => p.price);
+    const filteredQuants = cart.map(p => p.quantity);
+    const oneArray = filteredPrices.map(
+      (x: number, index: number) => x * filteredQuants[index]
+    );
+    subTotal = +oneArray.reduce((a: number, b: number) => a + b).toFixed(2);
   }
 
   return (
@@ -187,7 +217,7 @@ const Cart = () => {
           shippingPrice={subTotal > 35 ? 'FREE' : 'TBD'}
         />
       )}
-      {renderedCart.length > 0 && (
+      {(renderedCart as []).length > 0 && (
         <StyledLink to='/checkout'>Proceed to Checkout</StyledLink>
       )}
     </StyledCartDiv>

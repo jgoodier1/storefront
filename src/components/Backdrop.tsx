@@ -1,7 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Backdrop = props =>
+interface BackdropProps {
+  show: boolean;
+  clicked: () => void;
+}
+
+const Backdrop = (props: BackdropProps) =>
   props.show ? <StyledBackdrop onClick={props.clicked}></StyledBackdrop> : null;
 
 export default Backdrop;

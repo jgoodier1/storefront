@@ -3,7 +3,14 @@ import styled from 'styled-components';
 
 import search from '../images/search.png';
 
-const SearchBar = props => {
+interface SearchBarProps {
+  search: (e: React.FormEvent<HTMLFormElement>) => void;
+  value: string;
+  changed: (e: React.FormEvent<HTMLInputElement>) => void;
+  className?: string;
+}
+
+const SearchBar = (props: SearchBarProps) => {
   // console.log(searchValue);
   return (
     <form className={props.className} onSubmit={e => props.search(e)}>

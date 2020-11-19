@@ -1,7 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const OrderSummary = props => {
+interface OrderSummaryProps {
+  subTotal: number;
+  shippingPrice: string;
+  tax?: string;
+  totalPrice?: string;
+  className?: string;
+}
+
+const OrderSummary = (props: OrderSummaryProps) => {
   return (
     <StyledDiv className={props.className}>
       <StyledH3>ORDER SUMMARY</StyledH3>

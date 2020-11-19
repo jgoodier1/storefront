@@ -1,7 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Button = props => {
+interface ButtonProps {
+  children: React.ReactNode;
+  clicked?: (e: React.FormEvent<HTMLButtonElement>) => void;
+  type?: 'button' | 'submit' | 'reset';
+  className?: string;
+}
+
+const Button = (props: ButtonProps) => {
   return (
     <StyledButton className={props.className} onClick={props.clicked} type={props.type}>
       {props.children}

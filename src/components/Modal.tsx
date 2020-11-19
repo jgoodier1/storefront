@@ -1,10 +1,15 @@
 import React from 'react';
 
-import Backdrop from './Backdrop'
+import Backdrop from './Backdrop';
 import classes from '../css/Modal.module.css';
 
+interface ModalProps {
+  show: boolean;
+  modalClosed: () => void;
+  children: React.ReactNode;
+}
 
-const Modal = props => {
+const Modal = (props: ModalProps) => {
   return (
     <>
       <Backdrop show={props.show} clicked={props.modalClosed} />

@@ -7,8 +7,8 @@ import Product from '../components/Product';
 import Spinner from '../components/Spinner';
 import Modal from '../components/Modal';
 
-const Products = props => {
-  const [products, setProducts] = useState([]);
+const Products = () => {
+  const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState('');
@@ -37,7 +37,7 @@ const Products = props => {
       });
   }, []);
 
-  const clickDeleteHandler = id => {
+  const clickDeleteHandler = (id: string) => {
     console.log(id);
     const deletedProduct = { id: id };
     axios
@@ -63,13 +63,13 @@ const Products = props => {
     }
   };
 
-  let renderedProducts = <Spinner />;
+  let renderedProducts: JSX.Element | JSX.Element[] = <Spinner />;
   if (!loading) {
     renderedProducts = products.map(p => (
       <Product
         key={p._id}
         title={p.title}
-        img={p.image}
+        image={p.image}
         price={p.price}
         description={p.description}
         id={p._id}
@@ -81,7 +81,7 @@ const Products = props => {
 
   return (
     <StyledProductsDiv>
-      <Modal show={showModal}>
+      <Modal show={showModal} modalClosed={modalClosed}>
         <StyledButton onClick={modalClosed}>X</StyledButton>
         Error <br />
         {error}

@@ -6,12 +6,22 @@ import Button from '../components/Button';
 import { Input } from '../components/Input';
 import Modal from '../components/Modal';
 
-//2. check to see if the inputs are valid types on the front-end
+interface IAuthData {
+  email: string;
+  password: string;
+  name?: string;
+  confirmPassword?: string;
+}
 
-//6. if fail, keep the form with the submitted info and display an error message saying what happened
-//9. make a 'forgot your password' button
+interface AuthProps {
+  signUp: (arg0: React.FormEvent<HTMLFormElement>, arg1: IAuthData) => void;
+  login: (arg0: React.FormEvent<HTMLFormElement>, arg1: IAuthData) => void;
+  closedModal: () => void;
+  show: boolean;
+  error: boolean;
+}
 
-const Auth = props => {
+const Auth = (props: AuthProps) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -27,7 +37,10 @@ const Auth = props => {
     confirmPassword
   };
 
-  const onSubmitHandler = (event, authData) => {
+  const onSubmitHandler = (
+    event: React.FormEvent<HTMLFormElement>,
+    authData: IAuthData
+  ) => {
     if (isSignUp) {
       props.signUp(event, authData);
     } else if (!isSignUp) {
@@ -55,7 +68,9 @@ const Auth = props => {
             value={name}
             name='name'
             id='name'
-            changed={e => setName(e.target.value)}
+            changed={(e: React.FormEvent<HTMLInputElement>) =>
+              setName(e.currentTarget.value)
+            }
             label='Name'
           />
         )}
@@ -64,7 +79,9 @@ const Auth = props => {
           value={email}
           name='email'
           id='email'
-          changed={e => setEmail(e.target.value)}
+          changed={(e: React.FormEvent<HTMLInputElement>) =>
+            setEmail(e.currentTarget.value)
+          }
           label='Email'
         />
         <Input
@@ -72,7 +89,9 @@ const Auth = props => {
           name='password'
           id='password'
           value={password}
-          changed={e => setPassword(e.target.value)}
+          changed={(e: React.FormEvent<HTMLInputElement>) =>
+            setPassword(e.currentTarget.value)
+          }
           label='Password'
         />
         {isSignUp && (
@@ -81,7 +100,9 @@ const Auth = props => {
             value={confirmPassword}
             name='confirmPassword'
             id='confirmPassword'
-            changed={e => setConfirmPassword(e.target.value)}
+            changed={(e: React.FormEvent<HTMLInputElement>) =>
+              setConfirmPassword(e.currentTarget.value)
+            }
             label='Confirm Password'
           />
         )}
@@ -138,3 +159,8 @@ const StyledSwitch = styled.button`
 //5. if success, redirect somewhere (depending on where they came from)
 //7. store cookies or session on the browser if logged in
 //8. create a logout button that removes the cookies/session
+
+//2. check to see if the inputs are valid types on the front-end
+
+//6. if fail, keep the form with the submitted info and display an error message saying what happened
+//9. make a 'forgot your password' button
