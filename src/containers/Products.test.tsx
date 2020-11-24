@@ -5,6 +5,7 @@ import { render, screen, waitForElementToBeRemoved } from '@testing-library/reac
 import Products from './Products';
 
 jest.mock('axios');
+// maybe try testing the buttons too? maybe not here
 
 describe('Products', () => {
   const products = [
@@ -31,12 +32,12 @@ describe('Products', () => {
     axios.get.mockImplementationOnce(() => Promise.resolve({ data: products }));
 
     render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={['/products']}>
         <Products />
       </MemoryRouter>
     );
     await waitForElementToBeRemoved(() => screen.getByText(/loading/i));
-    // screen.debug();
+    screen.debug();
 
     expect(await screen.findByText(/water/i)).toBeInTheDocument();
   });
