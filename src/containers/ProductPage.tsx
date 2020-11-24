@@ -63,7 +63,7 @@ const ProductPage = () => {
         <StyledImage src={product.image} alt={product.title} />
         <StyledH3>ABOUT</StyledH3>
         <StyledDesc>{product.description}</StyledDesc>
-        <StyledSelect options={options} changed={selectChangeHandler} />
+        <StyledSelect name='quantity' options={options} changed={selectChangeHandler} />
         <StyledButton clicked={addToCartHandler}>Add to Cart</StyledButton>
       </>
     );

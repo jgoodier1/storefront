@@ -51,7 +51,12 @@ const CartItem = (props: CartItemProps) => {
       <StyledTitle to={'/products/' + props.id}>{props.title}</StyledTitle>
       <StyledImage src={props.image} alt={props.title} />
       <StyledPrice>${props.price}</StyledPrice>
-      <StyledSelect options={options} value={select} changed={onSelectChange} />
+      <StyledSelect
+        name='quantity'
+        options={options}
+        value={select}
+        changed={onSelectChange}
+      />
       <StyledButton onClick={() => props.delete(props.id)}>remove</StyledButton>
     </StyledItemDiv>
   );
@@ -230,11 +235,13 @@ const StyledCartDiv = styled.div`
   display: grid;
   grid-template-columns: 2fr 1fr;
   grid-template-rows: auto;
-  ${'' /* grid-template-areas:  'title . .'
+  ${
+    '' /* grid-template-areas:  'title . .'
                         'cartItems cartItems totals'
                         'cartItems cartItems totals'
                         'cartItems cartItems totals'
-                        'cartItems cartItems totals'; */}
+                        'cartItems cartItems totals'; */
+  }
   margin: 1rem 6rem;
 
   @media (max-width: 768px) {
@@ -267,9 +274,11 @@ const StyledItemDiv = styled.div`
   display: grid;
   grid-template-columns: 3fr 4fr 1fr 2fr;
   grid-template-rows: repeat(3, 1fr);
-  ${'' /* grid-template-areas:  'img . . .'
+  ${
+    '' /* grid-template-areas:  'img . . .'
                         'img title quant price'
-                        'img . . bttn'; */}
+                        'img . . bttn'; */
+  }
   align-content: start;
   justify-content: space-between;
   padding: 1rem;
