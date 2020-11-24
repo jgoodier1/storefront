@@ -1,41 +1,90 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import axios from 'axios';
 
 import Product from '../components/Product';
 import Spinner from '../components/Spinner';
 import Modal from '../components/Modal';
+import Paginator from '../components/Paginator';
 
-const Products = () => {
+const Products: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
+  const [page, setPage] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState('');
 
   const history = useHistory();
-  const location = useLocation();
+
+  const urlPageValue = new URLSearchParams(useLocation().search).get('page');
 
   useEffect(() => {
+    let effectGetURL: string;
+    if (urlPageValue !== null && typeof +urlPageValue === 'number') {
+      effectGetURL = `/products?page=${urlPageValue}`;
+      setPage(+urlPageValue); // the cause of the problem
+    } else {
+      effectGetURL = '/products';
+    }
     setLoading(true);
     axios
-      .get('/products')
+      .get(effectGetURL)
       .then(res => {
         const fetchedProducts = [];
-        for (let key in res.data) {
+        for (let key in res.data.products) {
           fetchedProducts.push({
-            ...res.data[key],
+            ...res.data.products[key],
             id: key
           });
         }
         setProducts(fetchedProducts);
+        setTotalItems(res.data.totalItems);
         setLoading(false);
       })
       .catch(err => {
         setShowModal(true);
         setError('Cannot find products');
+        setLoading(false);
       });
-  }, []);
+  }, [urlPageValue]);
+
+  const loadPosts = (direction: 'next' | 'previous') => {
+    setLoading(true);
+    let localPage: number;
+    if (direction === 'next') {
+      setPage(prevState => {
+        return prevState + 1;
+      });
+      localPage = page + 1;
+    } else {
+      setPage(prevState => {
+        return prevState - 1;
+      });
+      localPage = page - 1;
+    }
+    axios
+      .get(`/products?page=${localPage}`)
+      .then(res => {
+        const fetchedProducts = [];
+        for (let key in res.data.products) {
+          fetchedProducts.push({
+            ...res.data.products[key],
+            id: key
+          });
+        }
+        setProducts(fetchedProducts);
+        setTotalItems(res.data.totalItems);
+        setLoading(false);
+        history.push(`/products?page=${localPage}`);
+      })
+      .catch(err => {
+        setShowModal(true);
+        setError('Cannot find products');
+        setLoading(false);
+      });
+  };
 
   const clickDeleteHandler = (id: string) => {
     console.log(id);
@@ -58,9 +107,9 @@ const Products = () => {
 
   const modalClosed = () => {
     setShowModal(false);
-    if (location.pathname === '/products') {
-      history.push('/');
-    }
+    // if (location.pathname === '/products') {
+    history.push('/');
+    // }
   };
 
   let renderedProducts: JSX.Element | JSX.Element[] = <Spinner />;
@@ -87,6 +136,12 @@ const Products = () => {
         {error}
       </Modal>
       {renderedProducts}
+      <StyledPaginator
+        next={() => loadPosts('next')}
+        previous={() => loadPosts('previous')}
+        page={page}
+        finalPage={Math.ceil(totalItems / 10)}
+      />
     </StyledProductsDiv>
   );
 };
@@ -118,6 +173,10 @@ const StyledButton = styled.button`
   font-weight: bold;
   background-color: white;
   cursor: pointer;
+`;
+
+const StyledPaginator = styled(Paginator)`
+  grid-column: 2/3;
 `;
 
 // old add-to-cart
