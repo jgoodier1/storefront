@@ -18,18 +18,18 @@ interface NavItemsProps {
   isLoggedIn: boolean;
   logout: () => void;
   showModal: () => void;
-  search: (e: React.FormEvent<HTMLFormElement>) => void;
-  changed: (e: React.FormEvent<HTMLInputElement>) => void;
-  value: string;
+  search: (values: MySearchFormValues) => void;
 }
 
 interface NavBarProps {
   isLoggedIn: boolean;
   logout: () => void;
   showModal: () => void;
-  search: (e: React.FormEvent<HTMLFormElement>) => void;
-  changed: (e: React.FormEvent<HTMLInputElement>) => void;
-  value: string;
+  search: (values: MySearchFormValues) => void;
+}
+
+interface MySearchFormValues {
+  search: string;
 }
 
 const NavItem = (props: NavItemProps) => {
@@ -50,7 +50,7 @@ const NavItems = (props: NavItemsProps) => {
       <PLogo link='/' exact>
         <SLogo src={logo} alt='logo' />
       </PLogo>
-      <PSearchBar search={props.search} changed={props.changed} value={props.value} />
+      <PSearchBar search={props.search} />
       <PProducts link='/products'>Products</PProducts>
       <POrders link='/orders'>Orders</POrders>
       {!props.isLoggedIn && (
@@ -87,8 +87,6 @@ const NavBar = (props: NavBarProps) => {
           logout={props.logout}
           showModal={props.showModal}
           search={props.search}
-          changed={props.changed}
-          value={props.value}
         />
       </nav>
     </SHead>

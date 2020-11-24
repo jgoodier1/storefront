@@ -1,9 +1,10 @@
-import React, { useState /*, useEffect */ } from 'react';
-// import { useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useFormik } from 'formik';
 import styled from 'styled-components';
+import * as Yup from 'yup';
 
-import Button from '../components/Button';
 import { Input } from '../components/Input';
+import Button from '../components/Button';
 import Modal from '../components/Modal';
 
 interface IAuthData {
@@ -14,39 +15,59 @@ interface IAuthData {
 }
 
 interface AuthProps {
-  signUp: (arg0: React.FormEvent<HTMLFormElement>, arg1: IAuthData) => void;
-  login: (arg0: React.FormEvent<HTMLFormElement>, arg1: IAuthData) => void;
+  signUp: (arg1: IAuthData) => void;
+  login: (arg1: IAuthData) => void;
   closedModal: () => void;
   show: boolean;
   error: boolean;
 }
 
-const Auth = (props: AuthProps) => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+const Auth: React.FC<AuthProps> = props => {
   const [isSignUp, setIsSignUp] = useState(false);
 
-  // const location = useLocation();
+  const signUpSchema = Yup.object().shape({
+    name: Yup.string()
+      .min(2, 'Too short! Name has to be between 2 and 50 characters')
+      .max(50, 'Too long! Name has to be between 2 and 50 characters')
+      .required('Name is required'),
+    email: Yup.string().email().required('Email is required!'),
+    password: Yup.string()
+      .min(5, 'Too short! Password must be between 5 and 20 characters')
+      .max(20, 'Too long! Password must be between 5 and 20 characters')
+      .required('Password is required'),
+    confirmPassword: Yup.string().required('Please confirm your password')
+    // .oneOf([Yup.ref('password'), null], "Passwords don't match")
+  });
 
-  const authData = {
-    name,
-    email,
-    password,
-    confirmPassword
-  };
+  const loginSchema = Yup.object().shape({
+    email: Yup.string().email().required('Email is required!'),
+    password: Yup.string()
+      .min(5, 'Too short! Password must be between 5 and 20 characters')
+      .max(20, 'Too long! Password must be between 5 and 20 characters')
+      .required('Password is required')
+  });
 
-  const onSubmitHandler = (
-    event: React.FormEvent<HTMLFormElement>,
-    authData: IAuthData
-  ) => {
-    if (isSignUp) {
-      props.signUp(event, authData);
-    } else if (!isSignUp) {
-      props.login(event, authData);
-    }
-  };
+  const validationSchema = isSignUp ? signUpSchema : loginSchema;
+
+  const formik = useFormik({
+    initialValues: {
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: ''
+    },
+    onSubmit(values, actions) {
+      console.log({ values, actions });
+      if (isSignUp) {
+        props.signUp(values);
+        actions.resetForm();
+      } else if (!isSignUp) {
+        props.login(values);
+        actions.resetForm();
+      }
+    },
+    validationSchema
+  });
 
   // this needs to no close when there's an error after submitting
   const modalClosed = () => {
@@ -56,55 +77,70 @@ const Auth = (props: AuthProps) => {
 
   return (
     <Modal show={props.show} modalClosed={modalClosed}>
-      <StyledForm onSubmit={e => onSubmitHandler(e, authData)}>
-        <StyledButton onClick={modalClosed}>X</StyledButton>
+      <StyledForm onSubmit={formik.handleSubmit}>
+        <StyledButton onClick={modalClosed} type='button'>
+          X
+        </StyledButton>
         {isSignUp ? <h1>Sign Up</h1> : <h1>Sign In</h1>}
-        {/* shouldn't show error if they changed from signin to signup */}
-        {props.error && isSignUp && <p>There was an error</p>}
-        {props.error && !isSignUp && <p>Invalid email or password</p>}
         {isSignUp && (
-          <Input
-            type='text'
-            value={name}
-            name='name'
-            id='name'
-            changed={(e: React.FormEvent<HTMLInputElement>) =>
-              setName(e.currentTarget.value)
-            }
-            label='Name'
-          />
+          <>
+            <Input
+              id='name'
+              name='name'
+              label='Name'
+              type='text'
+              value={formik.values.name}
+              changed={formik.handleChange}
+              onBlur={formik.handleBlur}
+            />
+            {formik.errors.name && formik.touched.name ? (
+              <div>{formik.errors.name}</div>
+            ) : null}
+          </>
         )}
-        <Input
-          type='email'
-          value={email}
-          name='email'
-          id='email'
-          changed={(e: React.FormEvent<HTMLInputElement>) =>
-            setEmail(e.currentTarget.value)
-          }
-          label='Email'
-        />
-        <Input
-          type='password'
-          name='password'
-          id='password'
-          value={password}
-          changed={(e: React.FormEvent<HTMLInputElement>) =>
-            setPassword(e.currentTarget.value)
-          }
-          label='Password'
-        />
-        {isSignUp && (
+        <>
           <Input
-            type='password'
-            value={confirmPassword}
-            name='confirmPassword'
-            id='confirmPassword'
-            changed={(e: React.FormEvent<HTMLInputElement>) =>
-              setConfirmPassword(e.currentTarget.value)
-            }
-            label='Confirm Password'
+            id='email'
+            name='email'
+            label='Email'
+            type='email'
+            value={formik.values.email}
+            changed={formik.handleChange}
+            onBlur={formik.handleBlur}
           />
+          {formik.errors.email && formik.touched.email ? (
+            <div>{formik.errors.email}</div>
+          ) : null}
+        </>
+        <>
+          <Input
+            id='password'
+            name='password'
+            label='Password'
+            type='password'
+            value={formik.values.password}
+            changed={formik.handleChange}
+            onBlur={formik.handleBlur}
+          />
+          {formik.errors.password && formik.touched.password ? (
+            <div>{formik.errors.password}</div>
+          ) : null}
+        </>
+        {isSignUp && (
+          <>
+            <Input
+              id='confirmPassword'
+              name='confirmPassword'
+              label='Confirm Passsword'
+              type='password'
+              value={formik.values.confirmPassword}
+              changed={formik.handleChange}
+              onBlur={formik.handleBlur}
+            />
+            {formik.errors.confirmPassword && formik.touched.confirmPassword ? (
+              <div>{formik.errors.confirmPassword}</div>
+            ) : null}
+          </>
         )}
         <Button>Submit</Button>
         {!isSignUp && (

@@ -1,5 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
+import { useFormik } from 'formik';
+import * as yup from 'yup';
 import axios from 'axios';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
@@ -19,22 +21,73 @@ interface CheckoutProps {
   showModal: () => void;
 }
 
+interface MyFormValues {
+  firstName: string;
+  lastName: string;
+  streetAddress: string;
+  streetAddressTwo: string;
+  city: string;
+  province: string;
+  postalCode: string;
+  phoneNumber: string;
+}
+
 const Checkout = (props: CheckoutProps) => {
-  // make sure they're logged in first!!!!
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [streetAddress, setStreetAddress] = useState('');
-  const [streetAddressTwo, setStreetAddressTwo] = useState('');
-  const [city, setCity] = useState('');
-  const [province, setProvince] = useState('');
-  const [postalCode, setPostalCode] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
   const [loading, setLoading] = useState(false);
   const [stepTwo, setStepTwo] = useState(false);
   const [shippingSpeed, setShippingSpeed] = useState('normal');
+  const [formValues, setFormValues] = useState({});
 
   const context = useContext(CartContext);
   const history = useHistory();
+
+  const checkoutSchema = yup.object().shape({
+    firstName: yup.string().trim().required('First Name is required').max(20).min(2),
+    lastName: yup.string().trim().required('Last Name is required').max(20).min(2),
+    streetAddress: yup
+      .string()
+      .trim()
+      .required('Street Address is required')
+      .max(50)
+      .min(2),
+    // .matches(streetRegex, 'Street Address is not Valid'), // validate as adress somehow
+    streetAddress2: yup.string().trim().max(20).min(2),
+    city: yup.string().trim().min(2).max(50).required('City is required'),
+    province: yup.string().trim().required('Province is required'),
+    postalCode: yup
+      .string()
+      .trim()
+      .required('Postal Code is required')
+      .matches(
+        /([ABCEGHJKLMNPRSTVXY][0-9][ABCEGHJKLMNPRSTVWXYZ]) ?([0-9][ABCEGHJKLMNPRSTVWXYZ][0-9])/,
+        'Postal Code is not valid'
+      ),
+    phoneNumber: yup
+      .string()
+      .trim()
+      .required('Phone Number is required')
+      .matches(
+        /^(?:\([2-9]\d{2}\) ?|[2-9]\d{2}(?:-?| ?))[2-9]\d{2}[- ]?\d{4}$/,
+        'Phone Number is not valid'
+      )
+  });
+
+  const formik = useFormik({
+    initialValues: {
+      firstName: '',
+      lastName: '',
+      streetAddress: '',
+      streetAddressTwo: '',
+      city: '',
+      province: '',
+      postalCode: '',
+      phoneNumber: ''
+    },
+    onSubmit(values) {
+      !stepTwo ? setStepTwoTrue(values) : orderHandler();
+    },
+    validationSchema: checkoutSchema
+  });
 
   const PROVINCES = [
     '',
@@ -55,26 +108,13 @@ const Checkout = (props: CheckoutProps) => {
   const SHIPPING_PRICE = [10, 5];
 
   const cart = JSON.parse(sessionStorage.getItem('cart')!);
-  console.log(cart);
 
-  const orderHandler = (e: React.FormEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+  const orderHandler = () => {
     setLoading(true);
     const userId = localStorage.getItem('userId');
     // not actually using currentDate on back-end, just using Mongo timestampss
     // const currentDate = new Date();
-    const orderData = {
-      firstName,
-      lastName,
-      streetAddress,
-      streetAddressTwo,
-      city,
-      province,
-      country: 'Canada',
-      postalCode,
-      phoneNumber
-    };
-    const order = { cart, orderData, userId, shippingSpeed, totalPrice };
+    const order = { cart, orderData: formValues, userId, shippingSpeed, totalPrice };
     axios
       .post('/order', order)
       .then(res => {
@@ -95,8 +135,8 @@ const Checkout = (props: CheckoutProps) => {
     history.push('/cart');
   };
 
-  const setStepTwoTrue = () => {
-    // check to see that everything is valid
+  const setStepTwoTrue = (values: MyFormValues) => {
+    setFormValues(values);
     setStepTwo(true);
   };
 
@@ -106,7 +146,8 @@ const Checkout = (props: CheckoutProps) => {
 
   const subTotal = cart.subTotal;
   let tax;
-  switch (province) {
+
+  switch (formik.values.province) {
     case 'Alberta':
       tax = subTotal * 0.05;
       break;
@@ -174,66 +215,60 @@ const Checkout = (props: CheckoutProps) => {
   if (!loading && !stepTwo) {
     renderedForm = (
       <>
-        {/* <h2>Shipping Address</h2> */}
-        <StyledForm>
+        <StyledForm onSubmit={formik.handleSubmit}>
           <StyledFirstName
             type='text'
-            value={firstName}
             name='firstName'
             id='firstName'
-            changed={(e: React.FormEvent<HTMLInputElement>) =>
-              setFirstName(e.currentTarget.value)
-            }
             label='First Name*'
+            changed={formik.handleChange}
+            value={formik.values.firstName}
+            onBlur={formik.handleBlur}
           />
           <StyledLastName
             type='text'
-            value={lastName}
             name='lastName'
             id='lastName'
-            changed={(e: React.FormEvent<HTMLInputElement>) =>
-              setLastName(e.currentTarget.value)
-            }
             label='Last Name*'
+            changed={formik.handleChange}
+            value={formik.values.lastName}
+            onBlur={formik.handleBlur}
           />
           <StyledAddress1
             type='text'
-            value={streetAddress}
             name='streetAddress'
             id='streetAddress'
-            changed={(e: React.FormEvent<HTMLInputElement>) =>
-              setStreetAddress(e.currentTarget.value)
-            }
             label='Street Address 1*'
+            changed={formik.handleChange}
+            value={formik.values.streetAddress}
+            onBlur={formik.handleBlur}
           />
           <StyledAddress2
             type='text'
-            value={streetAddressTwo}
             name='streetAddressTwo'
             id='streetAddressTwo'
-            changed={(e: React.FormEvent<HTMLInputElement>) =>
-              setStreetAddressTwo(e.currentTarget.value)
-            }
             label='Street Address 2'
+            changed={formik.handleChange}
+            value={formik.values.streetAddressTwo}
+            onBlur={formik.handleBlur}
           />
           <StyledCity
             type='text'
-            value={city}
             name='city'
             id='city'
-            changed={(e: React.FormEvent<HTMLInputElement>) =>
-              setCity(e.currentTarget.value)
-            }
             label='City*'
+            changed={formik.handleChange}
+            value={formik.values.city}
+            onBlur={formik.handleBlur}
           />
-          <StyledProvince htmlFor='provinces'>
+          <StyledProvince htmlFor='province'>
             Province*
             <StyledSelect
               options={PROVINCES}
-              changed={(e: React.FormEvent<HTMLSelectElement>) =>
-                setProvince(e.currentTarget.value)
-              }
-              // name='provinces'
+              name='province'
+              value={formik.values.province}
+              changed={formik.handleChange}
+              // onBlur here?
             />
           </StyledProvince>
           <StyledCountry>
@@ -241,50 +276,54 @@ const Checkout = (props: CheckoutProps) => {
           </StyledCountry>
           <StyledPostalCode
             type='text'
-            value={postalCode}
             name='postalCode'
             id='postalCode'
-            changed={(e: React.FormEvent<HTMLInputElement>) =>
-              setPostalCode(e.currentTarget.value)
-            }
             label='Postal Code*'
+            changed={formik.handleChange}
+            value={formik.values.postalCode}
+            onBlur={formik.handleBlur}
           />
           <StyledPhoneNumber
             type='text'
-            value={phoneNumber}
             name='phoneNumber'
             id='phoneNumber'
-            changed={(e: React.FormEvent<HTMLInputElement>) =>
-              setPhoneNumber(e.currentTarget.value)
-            }
             label='Primary Phone Number*'
+            changed={formik.handleChange}
+            value={formik.values.phoneNumber}
+            onBlur={formik.handleBlur}
           />
+          <StyledButton>Continue</StyledButton>
+          {formik.errors.firstName && formik.touched.firstName ? (
+            <div>{formik.errors.firstName}</div>
+          ) : null}
+          {formik.errors.lastName && formik.touched.lastName ? (
+            <div>{formik.errors.lastName}</div>
+          ) : null}
+          {formik.errors.streetAddress && formik.touched.streetAddress ? (
+            <div>{formik.errors.streetAddress}</div>
+          ) : null}
+          {formik.errors.streetAddressTwo && formik.touched.streetAddressTwo ? (
+            <div>{formik.errors.streetAddressTwo}</div>
+          ) : null}
+          {formik.errors.city && formik.touched.city ? (
+            <div>{formik.errors.city}</div>
+          ) : null}
+          {formik.errors.province && formik.touched.province ? (
+            <div>{formik.errors.province}</div>
+          ) : null}
+          {formik.errors.postalCode && formik.touched.postalCode ? (
+            <div>{formik.errors.postalCode}</div>
+          ) : null}
+          {formik.errors.phoneNumber && formik.touched.phoneNumber ? (
+            <div>{formik.errors.phoneNumber}</div>
+          ) : null}
         </StyledForm>
       </>
     );
   } else if (!loading && stepTwo) {
     renderedForm = (
       <>
-        {/* <h2>Select a shipping speed</h2> */}
-        <StyledForm>
-          {/* <Input
-            type='radio'
-            name='shipping'
-            id='fast'
-            value='fast'
-            label={shippingLabelFast}
-            checked={shippingSpeed === 'fast'}
-            changed={shippingSpeedChangeHandler}
-          />
-          <Input
-            type='radio'
-            name='shipping'
-            id='normal'
-            value='normal'
-            label={shippingLabelNormal}
-            checked={shippingSpeed === 'normal'}
-            changed={shippingSpeedChangeHandler}
-          /> */}
+        <StyledForm onSubmit={formik.handleSubmit}>
           <StyledRadioDiv>
             <input
               type='radio'
@@ -311,6 +350,7 @@ const Checkout = (props: CheckoutProps) => {
             />
             <label htmlFor='normal'>{shippingLabelNormal}</label>
           </StyledRadioDiv>
+          <StyledButton>Place Your Order</StyledButton>
         </StyledForm>
       </>
     );
@@ -336,15 +376,9 @@ const Checkout = (props: CheckoutProps) => {
             shippingPrice={shippingPrice}
           />
           <StyledBttnDiv>
-            <StyledButton
-              clicked={
-                !stepTwo
-                  ? setStepTwoTrue
-                  : (e: React.FormEvent<HTMLButtonElement>) => orderHandler(e)
-              }
-            >
+            {/* <StyledButton type='submit'>
               {!stepTwo ? 'Continue' : 'Place Order'}
-            </StyledButton>
+            </StyledButton> */}
             <StyledButton clicked={cancelHandler}>Cancel</StyledButton>
           </StyledBttnDiv>
         </>

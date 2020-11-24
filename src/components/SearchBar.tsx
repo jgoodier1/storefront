@@ -1,24 +1,43 @@
 import React from 'react';
+import { useFormik } from 'formik';
+import * as yup from 'yup';
 import styled from 'styled-components';
 
 import search from '../images/search.png';
 
 interface SearchBarProps {
-  search: (e: React.FormEvent<HTMLFormElement>) => void;
-  value: string;
-  changed: (e: React.FormEvent<HTMLInputElement>) => void;
+  search: (values: MySearchFormValues) => void;
   className?: string;
 }
 
+interface MySearchFormValues {
+  search: string;
+}
+
 const SearchBar = (props: SearchBarProps) => {
-  // console.log(searchValue);
+  const validationSchema = yup.object().shape({
+    search: yup.string().required().min(1)
+  });
+
+  const formik = useFormik({
+    initialValues: {
+      search: ''
+    },
+    validationSchema,
+    onSubmit(values: MySearchFormValues) {
+      props.search(values);
+    }
+  });
+
   return (
-    <form className={props.className} onSubmit={e => props.search(e)}>
+    <form className={props.className} onSubmit={formik.handleSubmit}>
       <StlyedInput
         type='search'
         placeholder='Search...'
-        value={props.value}
-        onChange={props.changed}
+        id='search'
+        name='search'
+        value={formik.values.search}
+        onChange={formik.handleChange}
       />
       <StyledBttn type='submit'>
         <StyledImg src={search} alt='search' />

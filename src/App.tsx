@@ -30,6 +30,10 @@ interface ICart {
   subTotal: number;
 }
 
+interface MySearchFormValues {
+  search: string;
+}
+
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   // const [token, setToken] = useState<string | null>(null);
@@ -38,7 +42,6 @@ function App() {
   const [isError, setIsError] = useState(false);
   const cartContext = useContext(CartContext);
   const [cartQuantityState, setCartQuantityState] = useState(cartContext.quantity);
-  const [searchValue, setSearchValue] = useState('');
 
   const history = useHistory();
 
@@ -61,16 +64,17 @@ function App() {
   }, []); //eslint-disable-line
 
   const signUpHandler = (
-    event: React.FormEvent<HTMLFormElement>,
-    authData: IAuthData
+    // event: React.FormEvent<HTMLFormElement>,
+    // authData: IAuthData
+    values: IAuthData
   ) => {
-    event.preventDefault();
+    // event.preventDefault();
     setIsError(false);
     const newUser = {
-      name: authData.name,
-      email: authData.email,
-      password: authData.password,
-      confirmPassword: authData.confirmPassword
+      name: values.name,
+      email: values.email,
+      password: values.password,
+      confirmPassword: values.confirmPassword
     };
     axios
       .post('/signup', newUser, {
@@ -88,8 +92,11 @@ function App() {
       });
   };
 
-  const loginHandler = (event: React.FormEvent<HTMLFormElement>, authData: IAuthData) => {
-    event.preventDefault();
+  const loginHandler = (
+    // event: React.FormEvent<HTMLFormElement>,
+    authData: IAuthData
+  ) => {
+    // event.preventDefault();
     setIsError(false);
     const user = {
       email: authData.email,
@@ -149,14 +156,10 @@ function App() {
     }
   };
 
-  const searchHandler = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    history.push('/search?value=' + searchValue);
+  const searchHandler = (values: MySearchFormValues) => {
+    history.push('/search?value=' + values.search);
     // history.push('/search');
   };
-
-  const onSearchChange = (e: React.FormEvent<HTMLInputElement>) =>
-    setSearchValue(e.currentTarget.value);
 
   let routes = (
     <CartContext.Provider
@@ -194,8 +197,6 @@ function App() {
           logout={logoutHandler}
           showModal={showModalHandler}
           search={searchHandler}
-          changed={onSearchChange}
-          value={searchValue}
         />
       </CartContext.Provider>
       {routes}

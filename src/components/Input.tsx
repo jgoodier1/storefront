@@ -6,8 +6,9 @@ interface InputProps {
   label: string;
   type: string;
   name: string;
-  value: string;
-  changed: (e: React.FormEvent<HTMLInputElement>) => void;
+  value?: string;
+  changed?: (e: React.FormEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FormEvent<HTMLInputElement>) => void;
   checked?: boolean;
   className?: string;
 }
@@ -35,6 +36,7 @@ const Input = (props: InputProps) => {
         checked={props.checked}
         value={props.value}
         onChange={props.changed}
+        onBlur={props.onBlur}
       />
     </div>
   );
