@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
+
+import Modal from '../components/Modal';
 import Button from '../components/Button';
 
 interface OrderProps {
@@ -109,18 +111,34 @@ const Order = (props: OrderProps) => {
 
 const Orders = (props: OrdersProps) => {
   const [allOrders, setAllOrders] = useState<any[]>([]);
+  const [error, setError] = useState('');
+  const [errModal, setErrModal] = useState(false);
 
-  console.log(props.showModal);
+  const history = useHistory();
 
   useEffect(() => {
-    const userId = localStorage.getItem('userId');
-    axios
-      .post('/orders', { userId })
-      .then(res => {
-        setAllOrders(res.data);
-      })
-      .catch(err => console.error(err));
+    if (props.isLoggedIn) {
+      const userId = localStorage.getItem('userId');
+      axios
+        .post('/orders', { userId })
+        .then(res => {
+          setAllOrders(res.data);
+          setErrModal(false);
+          setError('');
+          // console.log(res.data);
+        })
+        .catch(err => {
+          // console.error(err);
+          setErrModal(true);
+          setError('Cannot load orders, please try again');
+        });
+    } else return;
   }, [props.isLoggedIn]);
+
+  const modalClosed = () => {
+    setErrModal(false);
+    history.push('/');
+  };
 
   const notAuth = (
     <>
@@ -144,10 +162,17 @@ const Orders = (props: OrdersProps) => {
   return (
     <StyledOrdersDiv>
       {props.isLoggedIn ? (
-        <>
-          <h1 style={{ justifySelf: 'center' }}>Your Orders</h1>
-          <StyledRendedOrdersDiv>{renderedOrders}</StyledRendedOrdersDiv>
-        </>
+        errModal ? (
+          <Modal show={errModal} modalClosed={modalClosed}>
+            <StyledButton onClick={modalClosed}>X</StyledButton>
+            {error}
+          </Modal>
+        ) : (
+          <>
+            <h1 style={{ justifySelf: 'center' }}>Your Orders</h1>
+            <StyledRendedOrdersDiv>{renderedOrders}</StyledRendedOrdersDiv>
+          </>
+        )
       ) : (
         notAuth
       )}
@@ -266,4 +291,18 @@ const StyledAuthBttn = styled(Button)`
   width: max-content;
   padding: 1rem;
   place-self: center;
+`;
+
+const StyledButton = styled.button`
+  grid-area: bttn;
+  position: relative;
+  top: 6px;
+  right: 10px;
+  border: 0;
+  width: 60px;
+  height: 60px;
+  font-size: 1.75rem;
+  font-weight: bold;
+  background-color: white;
+  cursor: pointer;
 `;
