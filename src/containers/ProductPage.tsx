@@ -3,11 +3,12 @@ import { useParams, useHistory } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
 
+import { addToCart } from '../utils/addToCart';
+import CartContext from '../context/cartContext';
 import Spinner from '../components/Spinner';
 import Button from '../components/Button';
-import { addToCart } from '../utils/addToCart';
 import Select from '../components/Select';
-import CartContext from '../context/cartContext';
+import Modal from '../components/Modal';
 
 const ProductPage = () => {
   const [product, setProduct] = useState({
@@ -18,13 +19,15 @@ const ProductPage = () => {
   });
   const [select, setSelect] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
   const cartContext = useContext(CartContext);
 
   const options = 100;
-  console.log({ options });
 
+  // maybe conditionally pass in info from props so that it doesn't have to fetch everytime
+  // can pass in the data from the products page and search too (maybe not cart or order???)
   useEffect(() => {
     setLoading(true);
     axios
@@ -36,6 +39,7 @@ const ProductPage = () => {
       .catch(err => {
         console.log(err);
         setLoading(false);
+        setShowModal(true);
       });
   }, [id]);
 
@@ -50,6 +54,11 @@ const ProductPage = () => {
 
   const selectChangeHandler = (e: React.FormEvent<HTMLSelectElement>) => {
     setSelect(+e.currentTarget.value);
+  };
+
+  const modalClosed = () => {
+    setShowModal(false);
+    history.push('/');
   };
 
   let prod;
@@ -69,7 +78,18 @@ const ProductPage = () => {
     );
   }
 
-  return <StyledDiv>{prod}</StyledDiv>;
+  return (
+    <StyledDiv>
+      {showModal ? (
+        <Modal show={showModal} modalClosed={modalClosed}>
+          <StyledXButton onClick={modalClosed}>X</StyledXButton>
+          Cannot find product, please try again
+        </Modal>
+      ) : (
+        <>{prod}</>
+      )}
+    </StyledDiv>
+  );
 };
 
 export default ProductPage;
@@ -128,4 +148,17 @@ const StyledButton = styled(Button)`
   grid-area: bttn;
   justify-self: center;
   padding: 0 2rem;
+`;
+
+const StyledXButton = styled.button`
+  position: relative;
+  top: 6px;
+  right: 10px;
+  border: 0;
+  width: 60px;
+  height: 60px;
+  font-size: 1.75rem;
+  font-weight: bold;
+  background-color: white;
+  cursor: pointer;
 `;
