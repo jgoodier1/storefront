@@ -20,6 +20,8 @@ const Products: React.FC = () => {
 
   const urlPageValue = new URLSearchParams(useLocation().search).get('page');
 
+  // console.log(useLocation().search);
+
   useEffect(() => {
     let effectGetURL: string;
     if (urlPageValue !== null && typeof +urlPageValue === 'number') {
@@ -130,18 +132,23 @@ const Products: React.FC = () => {
 
   return (
     <StyledProductsDiv>
-      <Modal show={showModal} modalClosed={modalClosed}>
-        <StyledButton onClick={modalClosed}>X</StyledButton>
-        Error <br />
-        {error}
-      </Modal>
-      {renderedProducts}
-      <StyledPaginator
-        next={() => loadPosts('next')}
-        previous={() => loadPosts('previous')}
-        page={page}
-        finalPage={Math.ceil(totalItems / 10)}
-      />
+      {showModal ? (
+        <Modal show={showModal} modalClosed={modalClosed}>
+          <StyledButton onClick={modalClosed}>X</StyledButton>
+          Error <br />
+          {error}
+        </Modal>
+      ) : (
+        <>
+          {renderedProducts}
+          <StyledPaginator
+            next={() => loadPosts('next')}
+            previous={() => loadPosts('previous')}
+            page={page}
+            finalPage={Math.ceil(totalItems / 10)}
+          />
+        </>
+      )}
     </StyledProductsDiv>
   );
 };
