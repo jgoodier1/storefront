@@ -13,6 +13,7 @@ import Spinner from '../components/Spinner';
 import Select from '../components/Select';
 import OrderSummary from '../components/OrderSummary';
 import CartContext from '../context/cartContext';
+import Modal from '../components/Modal';
 
 dayjs.extend(localizedFormat);
 
@@ -32,12 +33,14 @@ interface MyFormValues {
   phoneNumber: string;
 }
 
-const Checkout = (props: CheckoutProps) => {
-  const [loading, setLoading] = useState(false);
+const Checkout: React.FC<CheckoutProps> = props => {
+  // const [loading, setLoading] = useState(false);
+  const [compState, setCompState] = useState<'Loading' | 'Rendered' | 'Error'>(
+    'Rendered'
+  );
   const [stepTwo, setStepTwo] = useState(false);
   const [shippingSpeed, setShippingSpeed] = useState('normal');
   const [formValues, setFormValues] = useState({});
-
   const context = useContext(CartContext);
   const history = useHistory();
 
@@ -110,7 +113,7 @@ const Checkout = (props: CheckoutProps) => {
   const cart = JSON.parse(sessionStorage.getItem('cart')!);
 
   const orderHandler = () => {
-    setLoading(true);
+    setCompState('Loading');
     const userId = localStorage.getItem('userId');
     // not actually using currentDate on back-end, just using Mongo timestampss
     // const currentDate = new Date();
@@ -118,14 +121,14 @@ const Checkout = (props: CheckoutProps) => {
     axios
       .post('/order', order)
       .then(res => {
-        setLoading(false);
+        setCompState('Rendered');
         setStepTwo(false);
         context.updateQuantity(null);
         sessionStorage.removeItem('cart');
         history.push('/');
       })
       .catch(err => {
-        setLoading(false);
+        setCompState('Error');
         console.log(err);
       });
   };
@@ -212,146 +215,139 @@ const Checkout = (props: CheckoutProps) => {
   } -- Delivered By ${dayjs().add(4, 'day').format('LL')}`;
 
   let renderedForm = <Spinner />;
-  if (!loading && !stepTwo) {
+  if (compState === 'Rendered' && !stepTwo) {
     renderedForm = (
       <>
-        <StyledForm onSubmit={formik.handleSubmit}>
-          <StyledFirstName
-            type='text'
-            name='firstName'
-            id='firstName'
-            label='First Name*'
+        <StyledFirstName
+          type='text'
+          name='firstName'
+          id='firstName'
+          label='First Name*'
+          changed={formik.handleChange}
+          value={formik.values.firstName}
+          onBlur={formik.handleBlur}
+        />
+        <StyledLastName
+          type='text'
+          name='lastName'
+          id='lastName'
+          label='Last Name*'
+          changed={formik.handleChange}
+          value={formik.values.lastName}
+          onBlur={formik.handleBlur}
+        />
+        <StyledAddress1
+          type='text'
+          name='streetAddress'
+          id='streetAddress'
+          label='Street Address 1*'
+          changed={formik.handleChange}
+          value={formik.values.streetAddress}
+          onBlur={formik.handleBlur}
+        />
+        <StyledAddress2
+          type='text'
+          name='streetAddressTwo'
+          id='streetAddressTwo'
+          label='Street Address 2'
+          changed={formik.handleChange}
+          value={formik.values.streetAddressTwo}
+          onBlur={formik.handleBlur}
+        />
+        <StyledCity
+          type='text'
+          name='city'
+          id='city'
+          label='City*'
+          changed={formik.handleChange}
+          value={formik.values.city}
+          onBlur={formik.handleBlur}
+        />
+        <StyledProvince htmlFor='province'>
+          Province*
+          <StyledSelect
+            options={PROVINCES}
+            name='province'
+            value={formik.values.province}
             changed={formik.handleChange}
-            value={formik.values.firstName}
-            onBlur={formik.handleBlur}
+            // onBlur here?
           />
-          <StyledLastName
-            type='text'
-            name='lastName'
-            id='lastName'
-            label='Last Name*'
-            changed={formik.handleChange}
-            value={formik.values.lastName}
-            onBlur={formik.handleBlur}
-          />
-          <StyledAddress1
-            type='text'
-            name='streetAddress'
-            id='streetAddress'
-            label='Street Address 1*'
-            changed={formik.handleChange}
-            value={formik.values.streetAddress}
-            onBlur={formik.handleBlur}
-          />
-          <StyledAddress2
-            type='text'
-            name='streetAddressTwo'
-            id='streetAddressTwo'
-            label='Street Address 2'
-            changed={formik.handleChange}
-            value={formik.values.streetAddressTwo}
-            onBlur={formik.handleBlur}
-          />
-          <StyledCity
-            type='text'
-            name='city'
-            id='city'
-            label='City*'
-            changed={formik.handleChange}
-            value={formik.values.city}
-            onBlur={formik.handleBlur}
-          />
-          <StyledProvince htmlFor='province'>
-            Province*
-            <StyledSelect
-              options={PROVINCES}
-              name='province'
-              value={formik.values.province}
-              changed={formik.handleChange}
-              // onBlur here?
-            />
-          </StyledProvince>
-          <StyledCountry>
-            Country* <StyledSpan>Canada</StyledSpan>
-          </StyledCountry>
-          <StyledPostalCode
-            type='text'
-            name='postalCode'
-            id='postalCode'
-            label='Postal Code*'
-            changed={formik.handleChange}
-            value={formik.values.postalCode}
-            onBlur={formik.handleBlur}
-          />
-          <StyledPhoneNumber
-            type='text'
-            name='phoneNumber'
-            id='phoneNumber'
-            label='Primary Phone Number*'
-            changed={formik.handleChange}
-            value={formik.values.phoneNumber}
-            onBlur={formik.handleBlur}
-          />
-          <StyledButton>Continue</StyledButton>
-          {formik.errors.firstName && formik.touched.firstName ? (
-            <div>{formik.errors.firstName}</div>
-          ) : null}
-          {formik.errors.lastName && formik.touched.lastName ? (
-            <div>{formik.errors.lastName}</div>
-          ) : null}
-          {formik.errors.streetAddress && formik.touched.streetAddress ? (
-            <div>{formik.errors.streetAddress}</div>
-          ) : null}
-          {formik.errors.streetAddressTwo && formik.touched.streetAddressTwo ? (
-            <div>{formik.errors.streetAddressTwo}</div>
-          ) : null}
-          {formik.errors.city && formik.touched.city ? (
-            <div>{formik.errors.city}</div>
-          ) : null}
-          {formik.errors.province && formik.touched.province ? (
-            <div>{formik.errors.province}</div>
-          ) : null}
-          {formik.errors.postalCode && formik.touched.postalCode ? (
-            <div>{formik.errors.postalCode}</div>
-          ) : null}
-          {formik.errors.phoneNumber && formik.touched.phoneNumber ? (
-            <div>{formik.errors.phoneNumber}</div>
-          ) : null}
-        </StyledForm>
+        </StyledProvince>
+        <StyledCountry>
+          Country* <StyledSpan>Canada</StyledSpan>
+        </StyledCountry>
+        <StyledPostalCode
+          type='text'
+          name='postalCode'
+          id='postalCode'
+          label='Postal Code*'
+          changed={formik.handleChange}
+          value={formik.values.postalCode}
+          onBlur={formik.handleBlur}
+        />
+        <StyledPhoneNumber
+          type='text'
+          name='phoneNumber'
+          id='phoneNumber'
+          label='Primary Phone Number*'
+          changed={formik.handleChange}
+          value={formik.values.phoneNumber}
+          onBlur={formik.handleBlur}
+        />
+
+        {formik.errors.firstName && formik.touched.firstName ? (
+          <p>{formik.errors.firstName}</p>
+        ) : null}
+        {formik.errors.lastName && formik.touched.lastName ? (
+          <p>{formik.errors.lastName}</p>
+        ) : null}
+        {formik.errors.streetAddress && formik.touched.streetAddress ? (
+          <p>{formik.errors.streetAddress}</p>
+        ) : null}
+        {formik.errors.streetAddressTwo && formik.touched.streetAddressTwo ? (
+          <p>{formik.errors.streetAddressTwo}</p>
+        ) : null}
+        {formik.errors.city && formik.touched.city ? <p>{formik.errors.city}</p> : null}
+        {formik.errors.province && formik.touched.province ? (
+          <p>{formik.errors.province}</p>
+        ) : null}
+        {formik.errors.postalCode && formik.touched.postalCode ? (
+          <p>{formik.errors.postalCode}</p>
+        ) : null}
+        {formik.errors.phoneNumber && formik.touched.phoneNumber ? (
+          <p>{formik.errors.phoneNumber}</p>
+        ) : null}
       </>
     );
-  } else if (!loading && stepTwo) {
+  } else if (compState === 'Rendered' && stepTwo) {
     renderedForm = (
       <>
-        <StyledForm onSubmit={formik.handleSubmit}>
-          <StyledRadioDiv>
-            <input
-              type='radio'
-              name='shipping'
-              id='fast'
-              value='fast'
-              checked={shippingSpeed === 'fast'}
-              onChange={(e: React.FormEvent<HTMLInputElement>) =>
-                shippingSpeedChangeHandler(e)
-              }
-            />
-            <label htmlFor='fast'>{shippingLabelFast}</label>
-          </StyledRadioDiv>
-          <StyledRadioDiv>
-            <input
-              type='radio'
-              name='shipping'
-              id='normal'
-              value='normal'
-              checked={shippingSpeed === 'normal'}
-              onChange={(e: React.FormEvent<HTMLInputElement>) =>
-                shippingSpeedChangeHandler(e)
-              }
-            />
-            <label htmlFor='normal'>{shippingLabelNormal}</label>
-          </StyledRadioDiv>
-          <StyledButton>Place Your Order</StyledButton>
-        </StyledForm>
+        <StyledRadioDiv>
+          <input
+            type='radio'
+            name='shipping'
+            id='fast'
+            value='fast'
+            checked={shippingSpeed === 'fast'}
+            onChange={(e: React.FormEvent<HTMLInputElement>) =>
+              shippingSpeedChangeHandler(e)
+            }
+          />
+          <label htmlFor='fast'>{shippingLabelFast}</label>
+        </StyledRadioDiv>
+        <StyledRadioDiv>
+          <input
+            type='radio'
+            name='shipping'
+            id='normal'
+            value='normal'
+            checked={shippingSpeed === 'normal'}
+            onChange={(e: React.FormEvent<HTMLInputElement>) =>
+              shippingSpeedChangeHandler(e)
+            }
+          />
+          <label htmlFor='normal'>{shippingLabelNormal}</label>
+        </StyledRadioDiv>
       </>
     );
   }
@@ -365,22 +361,27 @@ const Checkout = (props: CheckoutProps) => {
 
   return (
     <StyledMain>
+      {compState === 'Error' && (
+        <Modal show={compState === 'Error'}>Cannot place order. Please try again.</Modal>
+      )}
       {props.isLoggedIn ? (
         <>
-          <h2>{!stepTwo ? 'Shipping Address' : 'Shipping Speed'}</h2>
-          {renderedForm}
-          <StyledOrderSummary
-            totalPrice={totalPrice.toFixed(2)}
-            tax={tax.toFixed(2)}
-            subTotal={subTotal.toFixed(2)}
-            shippingPrice={shippingPrice}
-          />
-          <StyledBttnDiv>
-            {/* <StyledButton type='submit'>
-              {!stepTwo ? 'Continue' : 'Place Order'}
-            </StyledButton> */}
-            <StyledButton clicked={cancelHandler}>Cancel</StyledButton>
-          </StyledBttnDiv>
+          <h1>{!stepTwo ? 'Shipping Address' : 'Shipping Speed'}</h1>
+          <StyledForm onSubmit={formik.handleSubmit}>
+            {renderedForm}
+            <StyledOrderSummary
+              totalPrice={totalPrice.toFixed(2)}
+              tax={tax.toFixed(2)}
+              subTotal={subTotal.toFixed(2)}
+              shippingPrice={shippingPrice}
+            />
+            <StyledBttnDiv>
+              <StyledButton type='submit'>
+                {!stepTwo ? 'Continue' : 'Place Order'}
+              </StyledButton>
+              <StyledButton clicked={cancelHandler}>Cancel</StyledButton>
+            </StyledBttnDiv>
+          </StyledForm>
         </>
       ) : (
         notAuth
@@ -403,24 +404,20 @@ const StyledMain = styled.main`
   }
 `;
 
-const StyledOrderSummary = styled(OrderSummary)`
-  ${'' /* grid-column: 2/3; */}
-  align-self: start;
-  margin: 0;
-`;
-
 const StyledForm = styled.form`
   grid-column: 1/2;
   grid-row: 2/5;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 20rem);
+  ${'' /* grid-template-columns: 1fr 1fr; */}
   grid-template-rows: 4rem;
   grid-gap: 10px;
-  ${'' /* margin: 100px auto; */}
+  ${'' /* margin: 100px auto;
+  border: 1px solid #eee;
+ */}
   max-width: max-content;
   height: max-content;
   text-align: left;
-  border: 1px solid #eee;
   padding: 10px;
 
   @media (max-width: 768px) {
@@ -487,6 +484,11 @@ const StyledProvince = styled.label`
 
 const StyledSelect = styled(Select)`
   border: 1px solid #000;
+  width: 20rem;
+
+  @media (max-width: 768px) {
+    width: auto;
+  }
 `;
 
 const StyledPostalCode = styled(Input)`
@@ -531,16 +533,33 @@ const StyledPhoneNumber = styled(Input)`
   }
 `;
 
-const StyledBttnDiv = styled.div`
-  grid-column: 2/3;
-  grid-row: 3/4;
-  display: flex;
-  flex-flow: column;
+const StyledOrderSummary = styled(OrderSummary)`
+  grid-column: 3/4;
+  grid-row: 1/4;
+  align-self: start;
+  margin-left: 1rem;
 
   @media (max-width: 768px) {
     grid-column: 1/2;
-    grid-row: 6/7;
+    grid-row: 10/11;
+    align-self: center;
+    margin: 0;
+  }
+`;
+
+const StyledBttnDiv = styled.div`
+  grid-column: 3/4;
+  grid-row: 3/8;
+  display: flex;
+  flex-flow: column;
+  margin-left: 1rem;
+  margin-top: 3rem;
+
+  @media (max-width: 768px) {
+    grid-column: 1/2;
+    grid-row: 11/12;
     align-items: center;
+    margin: 0;
   }
 `;
 
