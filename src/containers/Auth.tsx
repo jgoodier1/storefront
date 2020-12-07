@@ -70,17 +70,14 @@ const Auth: React.FC<AuthProps> = props => {
   });
 
   // this needs to no close when there's an error after submitting
-  const modalClosed = () => {
-    props.closedModal();
-    setIsSignUp(false);
-  };
+  // const modalClosed = () => {
+  //   props.closedModal();
+  //   setIsSignUp(false);
+  // };
 
   return (
-    <Modal show={props.show} modalClosed={modalClosed}>
+    <Modal show={props.show}>
       <StyledForm onSubmit={formik.handleSubmit}>
-        <StyledButton onClick={modalClosed} type='button'>
-          X
-        </StyledButton>
         {isSignUp ? <h1>Sign Up</h1> : <h1>Sign In</h1>}
         {isSignUp && (
           <>
@@ -166,18 +163,18 @@ const StyledForm = styled.form`
   ${'' /* box-shadow: 0 2px 3px #ccc; */}
 `;
 
-const StyledButton = styled.button`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  border: 0;
-  width: 60px;
-  height: 60px;
-  font-size: 1.75rem;
-  font-weight: bold;
-  background-color: white;
-  cursor: pointer;
-`;
+// const StyledButton = styled.button`
+//   position: absolute;
+//   top: 10px;
+//   right: 10px;
+//   border: 0;
+//   width: 60px;
+//   height: 60px;
+//   font-size: 1.75rem;
+//   font-weight: bold;
+//   background-color: white;
+//   cursor: pointer;
+// `;
 
 const StyledSwitch = styled.button`
   color: #38689e;
