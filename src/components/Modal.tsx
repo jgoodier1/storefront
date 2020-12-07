@@ -1,18 +1,26 @@
 import React from 'react';
+import styled from 'styled-components';
 
 import Backdrop from './Backdrop';
 import classes from '../css/Modal.module.css';
+import { useHistory } from 'react-router-dom';
 
 interface ModalProps {
   show: boolean;
-  modalClosed: () => void;
+  // modalClosed: () => void;
   children: React.ReactNode;
 }
 
-const Modal = (props: ModalProps) => {
+const Modal: React.FC<ModalProps> = props => {
+  const history = useHistory();
+
+  const modalClosed = () => {
+    history.push('/');
+  };
+
   return (
     <>
-      <Backdrop show={props.show} clicked={props.modalClosed} />
+      <Backdrop show={props.show} clicked={modalClosed} />
       <div
         className={classes.Modal}
         style={{
@@ -20,6 +28,7 @@ const Modal = (props: ModalProps) => {
           opacity: props.show ? '1' : '0'
         }}
       >
+        <StyledXButton onClick={modalClosed}>X</StyledXButton>
         {props.children}
       </div>
     </>
@@ -31,6 +40,19 @@ export default React.memo(
   (prevProps, nextProps) =>
     nextProps.show === prevProps.show && nextProps.children === prevProps.children
 );
+
+const StyledXButton = styled.button`
+  position: relative;
+  top: 6px;
+  right: 10px;
+  border: 0;
+  width: 60px;
+  height: 60px;
+  font-size: 1.75rem;
+  font-weight: bold;
+  background-color: white;
+  cursor: pointer;
+`;
 
 // const StlyedModal = styled.div`
 //   position: fixed;
