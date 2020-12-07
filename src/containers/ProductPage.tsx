@@ -10,7 +10,7 @@ import Button from '../components/Button';
 import Select from '../components/Select';
 import Modal from '../components/Modal';
 
-const ProductPage = () => {
+const ProductPage: React.FC = () => {
   const [product, setProduct] = useState({
     price: 0,
     title: '',
@@ -18,8 +18,9 @@ const ProductPage = () => {
     description: ''
   });
   const [select, setSelect] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const [compState, setCompState] = useState<'Loading' | 'Rendered' | 'Error'>(
+    'Rendered'
+  );
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
   const cartContext = useContext(CartContext);
@@ -29,17 +30,16 @@ const ProductPage = () => {
   // maybe conditionally pass in info from props so that it doesn't have to fetch everytime
   // can pass in the data from the products page and search too (maybe not cart or order???)
   useEffect(() => {
-    setLoading(true);
+    setCompState('Loading');
     axios
       .get('/products/' + id)
       .then(res => {
         setProduct(res.data);
-        setLoading(false);
+        setCompState('Rendered');
       })
       .catch(err => {
         console.log(err);
-        setLoading(false);
-        setShowModal(true);
+        setCompState('Error');
       });
   }, [id]);
 
@@ -49,22 +49,14 @@ const ProductPage = () => {
     history.push('/cart');
   };
 
-  // It calls this twice everytime
-  // console.log(product);
-
   const selectChangeHandler = (e: React.FormEvent<HTMLSelectElement>) => {
     setSelect(+e.currentTarget.value);
   };
 
-  const modalClosed = () => {
-    setShowModal(false);
-    history.push('/');
-  };
-
   let prod;
-  if (loading) {
+  if (compState === 'Loading') {
     prod = <Spinner />;
-  } else if (!loading) {
+  } else if (compState === 'Rendered') {
     prod = (
       <>
         <StyledTitle>{product.title}</StyledTitle>
@@ -79,22 +71,19 @@ const ProductPage = () => {
   }
 
   return (
-    <StyledDiv>
-      {showModal ? (
-        <Modal show={showModal} modalClosed={modalClosed}>
-          <StyledXButton onClick={modalClosed}>X</StyledXButton>
-          Cannot find product, please try again
-        </Modal>
+    <StyledMain>
+      {compState === 'Error' ? (
+        <Modal show={compState === 'Error'}>Cannot find product, please try again</Modal>
       ) : (
         <>{prod}</>
       )}
-    </StyledDiv>
+    </StyledMain>
   );
 };
 
 export default ProductPage;
 
-const StyledDiv = styled.div`
+const StyledMain = styled.main`
   margin: 2rem 6rem;
   width: auto;
   display: grid;
@@ -148,17 +137,4 @@ const StyledButton = styled(Button)`
   grid-area: bttn;
   justify-self: center;
   padding: 0 2rem;
-`;
-
-const StyledXButton = styled.button`
-  position: relative;
-  top: 6px;
-  right: 10px;
-  border: 0;
-  width: 60px;
-  height: 60px;
-  font-size: 1.75rem;
-  font-weight: bold;
-  background-color: white;
-  cursor: pointer;
 `;

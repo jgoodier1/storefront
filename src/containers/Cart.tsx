@@ -7,6 +7,7 @@ import Spinner from '../components/Spinner';
 import Select from '../components/Select';
 import CartContext from '../context/cartContext';
 import OrderSummary from '../components/OrderSummary';
+import Modal from '../components/Modal';
 
 interface CartItemProps {
   quantity: number;
@@ -36,7 +37,8 @@ interface ICart {
   quantity: number;
 }
 
-const CartItem = (props: CartItemProps) => {
+const CartItem: React.FC<CartItemProps> = props => {
+  console.log(props);
   const [select, setSelect] = useState(props.quantity);
 
   const options = 100;
@@ -62,14 +64,17 @@ const CartItem = (props: CartItemProps) => {
   );
 };
 
-const Cart = () => {
+const Cart: React.FC = () => {
   const [cart, setCart] = useState<ICart[] | null>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [compState, setCompState] = useState<'Loading' | 'Rendered' | 'Error'>(
+    'Rendered'
+  );
   const cartContext = useContext(CartContext);
 
+  console.log(compState);
+
   useEffect(() => {
-    setLoading(true);
+    setCompState('Loading');
     let cartFromStorage = JSON.parse(sessionStorage.getItem('cart')!);
     // console.log(cartFromStorage);
     if (cartFromStorage === null) {
@@ -80,28 +85,28 @@ const Cart = () => {
         .post('/cart', cartFromStorage)
         .then(res => {
           setCart(res.data);
-          setLoading(false);
+          setCompState('Rendered');
         })
         .catch(err => {
-          setError(err.response.data.message);
-          setLoading(false);
+          setCompState('Error');
+          console.error(err.response.data.message);
         });
     }
   }, []);
 
   const editCartItem = (id: string, quantity: number) => {
-    setLoading(true);
+    setCompState('Loading');
     const cart: ICartStorage = JSON.parse(sessionStorage.getItem('cart')!);
     console.log({ cart });
     if (cart === undefined) {
       console.log('cart undefined');
-      setLoading(false);
+      setCompState('Rendered');
       return;
     }
     const prodId = cart.products.find(p => p.prodId === id);
     if (!prodId) {
       console.log('no product found');
-      setLoading(false);
+      setCompState('Rendered');
       return;
     } else {
       cart.products.map(p => {
@@ -122,28 +127,27 @@ const Cart = () => {
       .post('/cart', cart)
       .then(res => {
         setCart(res.data);
-        setLoading(false);
+        setCompState('Rendered');
       })
       .catch(err => {
-        setError(err.response.data.message);
-        console.log(err.response.data.message);
-        setLoading(false);
+        console.error(err.response.data.message);
+        setCompState('Error');
       });
   };
 
   const deleteHandler = (id: string) => {
-    setLoading(true);
+    setCompState('Loading');
     //why not cart from storage???
     const cart: ICartStorage = JSON.parse(sessionStorage.getItem('cart')!);
     if (cart === undefined) {
       console.log('cart undefined');
-      setLoading(false);
+      setCompState('Rendered');
       return; // return some kind of error
     }
     const existingProdId = cart.products.find(p => p.prodId === id);
     if (!existingProdId) {
       console.log('no existing prod id');
-      setLoading(false);
+      setCompState('Rendered');
       return; // need another error
     } else {
       const filteredCart = cart.products.filter(p => p.prodId !== id);
@@ -163,24 +167,22 @@ const Cart = () => {
         sessionStorage.setItem('cart', JSON.stringify(newCart));
         cartContext.updateQuantity(newCart);
       }
-      //why post again? just remove it from state
       axios
         .post('/cart', newCart)
         .then(res => {
           setCart(res.data);
-          setLoading(false);
+          setCompState('Rendered');
           console.log(res);
         })
         .catch(err => {
-          setError(err.response.data.message);
-          console.log(err.response.data.message);
-          setLoading(false);
+          console.error(err.response.data.message);
+          setCompState('Error');
         });
     }
   };
 
   let renderedCart: JSX.Element | JSX.Element[] = <Spinner />;
-  if (cart !== null && !loading) {
+  if (cart !== null && compState === 'Rendered') {
     renderedCart = cart.map((ci: ICart) => (
       <CartItem
         key={ci.prodId}
@@ -194,7 +196,7 @@ const Cart = () => {
       />
     ));
   } else if (cart === null || cart.length === 0) {
-    setLoading(false);
+    // setCompState('Rendered');
     renderedCart = <h1>Cart is empty</h1>;
   }
 
@@ -209,12 +211,12 @@ const Cart = () => {
   }
 
   return (
-    <StyledCartDiv>
-      {error !== '' ? (
-        <StyledH2>{error}</StyledH2>
-      ) : (
-        <StyledH2>Your Shopping Cart</StyledH2>
+    <StyledMain>
+      {compState === 'Error' && (
+        <Modal show={compState === 'Error'}>An error occurred. Please try again</Modal>
       )}
+
+      <h1>Your Shopping Cart</h1>
       {renderedCart}
       {subTotal && (
         <StyledOrderSummary
@@ -225,23 +227,16 @@ const Cart = () => {
       {(renderedCart as []).length > 0 && (
         <StyledLink to='/checkout'>Proceed to Checkout</StyledLink>
       )}
-    </StyledCartDiv>
+    </StyledMain>
   );
 };
 
 export default Cart;
 
-const StyledCartDiv = styled.div`
+const StyledMain = styled.main`
   display: grid;
   grid-template-columns: 2fr 1fr;
   grid-template-rows: auto;
-  ${
-    '' /* grid-template-areas:  'title . .'
-                        'cartItems cartItems totals'
-                        'cartItems cartItems totals'
-                        'cartItems cartItems totals'
-                        'cartItems cartItems totals'; */
-  }
   margin: 1rem 6rem;
 
   @media (max-width: 768px) {
@@ -263,22 +258,11 @@ const StyledOrderSummary = styled(OrderSummary)`
   }
 `;
 
-const StyledH2 = styled.h2`
-  margin: 0.5rem 0;
-  ${'' /* grid-area: title; */}
-`;
-
 const StyledItemDiv = styled.div`
   grid-column: 1/2;
-  ${'' /* grid-area: cartItems; */}
   display: grid;
   grid-template-columns: 3fr 4fr 1fr 2fr;
   grid-template-rows: repeat(3, 1fr);
-  ${
-    '' /* grid-template-areas:  'img . . .'
-                        'img title quant price'
-                        'img . . bttn'; */
-  }
   align-content: start;
   justify-content: space-between;
   padding: 1rem;
@@ -291,7 +275,6 @@ const StyledItemDiv = styled.div`
 `;
 
 const StyledTitle = styled(Link)`
-  ${'' /* grid-area: title; */}
   grid-column: 2/3;
   grid-row: 2/3;
   margin-right: 1rem;
@@ -299,7 +282,6 @@ const StyledTitle = styled(Link)`
   margin: 0;
   justify-self: start;
   align-self: start;
-  ${'' /* padding-top: 0.6rem; */}
   text-transform: uppercase;
   color: #3f6cd7;
   text-decoration: none;
@@ -314,7 +296,6 @@ const StyledTitle = styled(Link)`
 const StyledImage = styled.img`
   grid-column: 1/2;
   grid-row: 1/4;
-  ${'' /* grid-area: img; */}
   padding: 5px;
   width: 100%;
   ${'' /* min-width: 300px; */}
@@ -327,7 +308,6 @@ const StyledImage = styled.img`
 const StyledPrice = styled.h2`
   grid-column: 4/5;
   grid-row: 2/3;
-  ${'' /* grid-area: price; */}
   margin-right: 1rem;
   font-size: 1.2rem;
   margin: 0;
@@ -356,7 +336,6 @@ const StyledButton = styled.button`
   grid-column: 4/5;
   grid-row: 3/4;
   place-self: end;
-  ${'' /* grid-area: bttn; */}
   border: none;
   color: #000;
   font: inherit;
@@ -374,7 +353,6 @@ const StyledButton = styled.button`
 `;
 
 const StyledLink = styled(Link)`
-  ${'' /* grid-area: totals; */}
   grid-column: 2/3;
   grid-row: 3/4;
   padding: 1.5rem;
@@ -400,20 +378,3 @@ const StyledLink = styled(Link)`
     margin: 0;
   }
 `;
-
-// const StyledQuant = styled.h3`
-//   grid-column: 3/4;
-//   grid-row: 2/3;
-//   ${'' /* grid-area: quant; */}
-//   margin-right: 1rem;
-//   font-size: 1.2rem;
-//   margin: 0;
-//   justify-self: start;
-//   align-self: start;
-//   ${'' /* padding-top: 0.6rem; */}
-
-//   @media (max-width: 768px) {
-//     grid-column: 2/3;
-//     grid-row: 3/4;
-//   }
-// `;

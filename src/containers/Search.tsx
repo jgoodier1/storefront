@@ -4,24 +4,36 @@ import axios from 'axios';
 import styled from 'styled-components';
 
 import Product from '../components/Product';
+import Spinner from '../components/Spinner';
+import Modal from '../components/Modal';
 
-const Search = () => {
+const Search: React.FC = () => {
   const [results, setResults] = useState<any[]>([]);
+  const [compState, setCompState] = useState<'Loading' | 'Rendered' | 'Error'>(
+    'Rendered'
+  );
 
   const value = new URLSearchParams(useLocation().search).get('value');
 
   useEffect(() => {
+    setCompState('Loading');
     axios
       .get(`/search?value=${value}`)
       .then(res => {
         console.log(res.data);
         setResults(res.data);
+        setCompState('Rendered');
       })
-      .catch(err => console.error(err));
+      .catch(err => {
+        setCompState('Error');
+        console.error(err);
+      });
   }, [value]);
 
   let renderedResults;
-  if (results !== undefined) {
+  if (compState === 'Loading') {
+    renderedResults = <Spinner />;
+  } else if (compState === 'Rendered' && results !== undefined) {
     renderedResults = results.map(r => (
       <Product
         key={r._id}
@@ -33,22 +45,25 @@ const Search = () => {
       />
     ));
   }
-  console.log(results.length);
+
   return (
-    <StyledDiv>
+    <StyledMain>
+      {compState === 'Error' && (
+        <Modal show={compState === 'Error'}>Search Failed. Please try again.</Modal>
+      )}
       {results.length !== 1 ? (
         <StyledH1>{results.length} Results Found</StyledH1>
       ) : (
         <StyledH1>{results.length} Result Found</StyledH1>
       )}
       {renderedResults}
-    </StyledDiv>
+    </StyledMain>
   );
 };
 
 export default Search;
 
-const StyledDiv = styled.div`
+const StyledMain = styled.main`
   ${'' /* margin: 56px; */}
   margin-left: 25px;
   display: grid;

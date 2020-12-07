@@ -14,7 +14,7 @@ interface MyFormValues {
   description: string;
 }
 
-const ProductForm = () => {
+const ProductForm: React.FC = () => {
   const [initialValues, setInitailValues] = useState({
     title: '',
     image: '',
@@ -22,8 +22,9 @@ const ProductForm = () => {
     description: ''
   });
   const [editingState, setEditingState] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [error, setError] = useState('');
+  const [compState, setCompState] = useState<'Loading' | 'Rendered' | 'Error'>(
+    'Rendered'
+  );
 
   const location = useLocation();
   const history = useHistory();
@@ -40,10 +41,12 @@ const ProductForm = () => {
 
   useEffect(() => {
     if (editingState) {
+      setCompState('Loading');
       axios
         .get('/admin/edit-product' + location.search)
         .then(res => {
           // console.log(res.data);
+          setCompState('Rendered');
           setInitailValues({
             title: res.data.title,
             image: res.data.image,
@@ -55,9 +58,8 @@ const ProductForm = () => {
           // initialValues.price = res.data.price;
           // initialValues.description = res.data.description;
         })
-        .catch(err => {
-          setError(err.response.data);
-          setShowModal(true);
+        .catch(() => {
+          setCompState('Error');
         });
     } else if (editingState === false) {
       // setTitleValue('');
@@ -67,11 +69,8 @@ const ProductForm = () => {
     }
   }, [location.search, editingState]); //eslint-disable-line
 
-  const onAddSubmitHandler = (
-    /*event: React.FormEvent<HTMLFormElement>*/ values: MyFormValues
-  ) => {
-    // event.preventDefault();
-
+  const onAddSubmitHandler = (values: MyFormValues) => {
+    setCompState('Loading');
     const newProduct = {
       title: values.title,
       image: values.image,
@@ -83,6 +82,7 @@ const ProductForm = () => {
         headers: { Authorization: 'bearer ' + localStorage.getItem('token') }
       })
       .then(res => {
+        setCompState('Rendered');
         console.log('Axios res', res);
         console.log('Axios res.data', res.data);
       })
@@ -90,17 +90,13 @@ const ProductForm = () => {
         history.push('/products');
       })
       .catch(err => {
-        setShowModal(true);
-        setError('An error occurred. Please try again in a moment.');
+        setCompState('Error');
         console.log(err.response.data);
       });
   };
 
-  const onEditSubmitHandler = (
-    /*event: React.FormEvent<HTMLFormElement>*/ values: MyFormValues
-  ) => {
-    // event.preventDefault();
-
+  const onEditSubmitHandler = (values: MyFormValues) => {
+    setCompState('Loading');
     const updatedProduct = {
       title: values.title,
       image: values.image,
@@ -113,6 +109,7 @@ const ProductForm = () => {
         headers: { Authorization: 'bearer ' + localStorage.getItem('token') }
       })
       .then(res => {
+        setCompState('Rendered');
         console.log('Axios res', res);
         console.log('Axios res.data', res.data);
       })
@@ -120,23 +117,19 @@ const ProductForm = () => {
         history.push('/products');
       })
       .catch(err => {
-        setShowModal(true);
-        setError('An error occurred. Please try again in a moment.');
+        setCompState('Error');
+        console.error(err);
       });
-  };
-
-  const modalClosed = () => {
-    setShowModal(false);
-    history.push('/admin/products');
   };
 
   return (
     <>
-      <Modal show={showModal} modalClosed={modalClosed}>
-        <StyledButton onClick={modalClosed}>X</StyledButton>
-        <h2>Error</h2>
-        {error}
-      </Modal>
+      {compState === 'Error' && (
+        <Modal show={compState === 'Error'}>
+          <h2>Error</h2>
+          An error occurred. Please try again in a moment
+        </Modal>
+      )}
       <Formik
         initialValues={initialValues}
         // onSubmit={ values => {
@@ -176,19 +169,6 @@ const StyledForm = styled(Form)`
   ${'' /* box-shadow: 0 2px 3px #ccc; */}
   border: 1px solid #eee;
   padding: 10px;
-`;
-
-const StyledButton = styled.button`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  border: 0;
-  width: 60px;
-  height: 60px;
-  font-size: 1.75rem;
-  font-weight: bold;
-  background-color: white;
-  cursor: pointer;
 `;
 
 // const [controlsState, setControlsState] = useState({

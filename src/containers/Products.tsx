@@ -12,15 +12,13 @@ const Products: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [page, setPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [error, setError] = useState('');
+  const [compState, setCompState] = useState<'Loading' | 'Rendered' | 'Error'>(
+    'Rendered'
+  );
 
   const history = useHistory();
 
   const urlPageValue = new URLSearchParams(useLocation().search).get('page');
-
-  // console.log(useLocation().search);
 
   useEffect(() => {
     let effectGetURL: string;
@@ -30,7 +28,7 @@ const Products: React.FC = () => {
     } else {
       effectGetURL = '/products';
     }
-    setLoading(true);
+    setCompState('Loading');
     axios
       .get(effectGetURL)
       .then(res => {
@@ -43,17 +41,15 @@ const Products: React.FC = () => {
         }
         setProducts(fetchedProducts);
         setTotalItems(res.data.totalItems);
-        setLoading(false);
+        setCompState('Rendered');
       })
       .catch(err => {
-        setShowModal(true);
-        setError('Cannot find products');
-        setLoading(false);
+        setCompState('Error');
       });
   }, [urlPageValue]);
 
   const loadPosts = (direction: 'next' | 'previous') => {
-    setLoading(true);
+    setCompState('Loading');
     let localPage: number;
     if (direction === 'next') {
       setPage(prevState => {
@@ -78,44 +74,37 @@ const Products: React.FC = () => {
         }
         setProducts(fetchedProducts);
         setTotalItems(res.data.totalItems);
-        setLoading(false);
+        setCompState('Rendered');
         history.push(`/products?page=${localPage}`);
       })
       .catch(err => {
-        setShowModal(true);
-        setError('Cannot find products');
-        setLoading(false);
+        setCompState('Error');
+        console.error(err.response.data);
       });
   };
 
   const clickDeleteHandler = (id: string) => {
     console.log(id);
     const deletedProduct = { id: id };
+    setCompState('Loading');
     axios
       .post('/delete-product/', deletedProduct, {
         headers: { Authorization: 'bearer ' + localStorage.getItem('token') }
       })
       .then(res => {
         console.log('Delete res.data', res.data);
+        setCompState('Rendered');
       })
       .then(() => {
         history.push('/products');
       })
       .catch(err => {
-        setShowModal(true);
-        setError(err.response.data);
+        setCompState('Error');
       });
   };
 
-  const modalClosed = () => {
-    setShowModal(false);
-    // if (location.pathname === '/products') {
-    history.push('/');
-    // }
-  };
-
   let renderedProducts: JSX.Element | JSX.Element[] = <Spinner />;
-  if (!loading) {
+  if (compState === 'Rendered') {
     renderedProducts = products.map(p => (
       <Product
         key={p._id}
@@ -131,12 +120,11 @@ const Products: React.FC = () => {
   // console.log(renderedProducts);
 
   return (
-    <StyledProductsDiv>
-      {showModal ? (
-        <Modal show={showModal} modalClosed={modalClosed}>
-          <StyledButton onClick={modalClosed}>X</StyledButton>
+    <StyledMain>
+      {compState === 'Error' ? (
+        <Modal show={compState === 'Error'}>
           Error <br />
-          {error}
+          Cannot find products. Please try again in a moment.
         </Modal>
       ) : (
         <>
@@ -149,13 +137,13 @@ const Products: React.FC = () => {
           />
         </>
       )}
-    </StyledProductsDiv>
+    </StyledMain>
   );
 };
 
 export default Products;
 
-const StyledProductsDiv = styled.div`
+const StyledMain = styled.main`
   ${'' /* margin: 56px; */}
   ${'' /* margin-left: 25px; */}
   display: grid;
@@ -167,36 +155,6 @@ const StyledProductsDiv = styled.div`
   }
 `;
 
-const StyledButton = styled.button`
-  ${'' /* grid-column: 2/3; */}
-  grid-area: bttn;
-  position: relative;
-  top: 6px;
-  right: 10px;
-  border: 0;
-  width: 60px;
-  height: 60px;
-  font-size: 1.75rem;
-  font-weight: bold;
-  background-color: white;
-  cursor: pointer;
-`;
-
 const StyledPaginator = styled(Paginator)`
   grid-column: 2/3;
 `;
-
-// old add-to-cart
-// const product = { id: props.id, userId: localStorage.getItem('userId') };
-// axios
-//   .post('/cart', product)
-//   .then((res) => {
-//     console.log('Cart res', res);
-//     console.log('Cart res.data', res.data);
-//   })
-//   .then(() => {
-//     history.push('/');
-//   })
-//   .catch((err) => {
-//     console.error(err);
-//   });

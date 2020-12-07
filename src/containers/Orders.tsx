@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
 
 import Modal from '../components/Modal';
 import Button from '../components/Button';
+import Spinner from '../components/Spinner';
 
 interface OrderProps {
   key: number;
@@ -42,7 +43,7 @@ interface OrdersProps {
   isLoggedIn: boolean;
 }
 
-const Order = (props: OrderProps) => {
+const Order: React.FC<OrderProps> = props => {
   //put state here because it would show for every order
   const [isShown, setIsShown] = useState(false);
 
@@ -109,36 +110,29 @@ const Order = (props: OrderProps) => {
   );
 };
 
-const Orders = (props: OrdersProps) => {
+const Orders: React.FC<OrdersProps> = props => {
   const [allOrders, setAllOrders] = useState<any[]>([]);
-  const [error, setError] = useState('');
-  const [errModal, setErrModal] = useState(false);
-
-  const history = useHistory();
+  const [compState, setCompState] = useState<'Loading' | 'Rendered' | 'Error'>(
+    'Rendered'
+  );
 
   useEffect(() => {
     if (props.isLoggedIn) {
+      setCompState('Loading');
       const userId = localStorage.getItem('userId');
       axios
         .post('/orders', { userId })
         .then(res => {
           setAllOrders(res.data);
-          setErrModal(false);
-          setError('');
+          setCompState('Rendered');
           // console.log(res.data);
         })
         .catch(err => {
           // console.error(err);
-          setErrModal(true);
-          setError('Cannot load orders, please try again');
+          setCompState('Error');
         });
     } else return;
   }, [props.isLoggedIn]);
-
-  const modalClosed = () => {
-    setErrModal(false);
-    history.push('/');
-  };
 
   const notAuth = (
     <>
@@ -147,26 +141,28 @@ const Orders = (props: OrdersProps) => {
     </>
   );
 
-  const renderedOrders = allOrders.map(order => (
-    <Order
-      key={order._id}
-      id={order._id}
-      products={order.products}
-      price={order.totalPrice}
-      date={order.createdAt}
-      address={order.contactInfo}
-      speed={order.shippingSpeed}
-    />
-  ));
+  let renderedOrders;
+  if (compState === 'Loading') {
+    renderedOrders = <Spinner />;
+  } else if (compState === 'Rendered') {
+    renderedOrders = allOrders.map(order => (
+      <Order
+        key={order._id}
+        id={order._id}
+        products={order.products}
+        price={order.totalPrice}
+        date={order.createdAt}
+        address={order.contactInfo}
+        speed={order.shippingSpeed}
+      />
+    ));
+  }
 
   return (
-    <StyledOrdersDiv>
+    <StyledMain>
       {props.isLoggedIn ? (
-        errModal ? (
-          <Modal show={errModal} modalClosed={modalClosed}>
-            <StyledButton onClick={modalClosed}>X</StyledButton>
-            {error}
-          </Modal>
+        compState === 'Error' ? (
+          <Modal show={compState === 'Error'}>Cannot load orders, please try again</Modal>
         ) : (
           <>
             <h1 style={{ justifySelf: 'center' }}>Your Orders</h1>
@@ -176,13 +172,13 @@ const Orders = (props: OrdersProps) => {
       ) : (
         notAuth
       )}
-    </StyledOrdersDiv>
+    </StyledMain>
   );
 };
 
 export default Orders;
 
-const StyledOrdersDiv = styled.div`
+const StyledMain = styled.main`
   display: grid;
   grid-template-columns: minmax(0, 1fr) 2fr minmax(0, 1fr);
   grid-gap: 15px 0;
@@ -291,18 +287,4 @@ const StyledAuthBttn = styled(Button)`
   width: max-content;
   padding: 1rem;
   place-self: center;
-`;
-
-const StyledButton = styled.button`
-  grid-area: bttn;
-  position: relative;
-  top: 6px;
-  right: 10px;
-  border: 0;
-  width: 60px;
-  height: 60px;
-  font-size: 1.75rem;
-  font-weight: bold;
-  background-color: white;
-  cursor: pointer;
 `;
