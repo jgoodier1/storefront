@@ -12,7 +12,7 @@ interface SelectProps {
   className?: string;
 }
 
-const Select = (props: SelectProps) => {
+const Select: React.FC<SelectProps> = props => {
   let options;
 
   if (typeof props.options === 'number') {

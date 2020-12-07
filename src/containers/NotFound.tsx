@@ -1,10 +1,10 @@
 import React from 'react';
 
-const NotFound = () => {
+const NotFound: React.FC = () => {
   return (
-    <div>
+    <main>
       <h1>This Page Does Not Exist :O</h1>
-    </div>
+    </main>
   );
 };
 

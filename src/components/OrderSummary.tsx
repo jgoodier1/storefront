@@ -9,9 +9,9 @@ interface OrderSummaryProps {
   className?: string;
 }
 
-const OrderSummary = (props: OrderSummaryProps) => {
+const OrderSummary: React.FC<OrderSummaryProps> = props => {
   return (
-    <StyledDiv className={props.className}>
+    <StyledSection className={props.className}>
       <StyledH3>ORDER SUMMARY</StyledH3>
       <StyledRowDiv>
         <StyledP>Subtotal:</StyledP>
@@ -29,13 +29,13 @@ const OrderSummary = (props: OrderSummaryProps) => {
         <StyledTotal>Total Price:</StyledTotal>
         <StyledTotal>${props.totalPrice ? props.totalPrice : props.subTotal}</StyledTotal>
       </StyledRowDiv>
-    </StyledDiv>
+    </StyledSection>
   );
 };
 
 export default OrderSummary;
 
-const StyledDiv = styled.div`
+const StyledSection = styled.section`
   grid-column: 2/3;
   grid-row: 2/3;
   align-self: center;

@@ -32,7 +32,7 @@ interface MySearchFormValues {
   search: string;
 }
 
-const NavItem = (props: NavItemProps) => {
+const NavItem: React.FC<NavItemProps> = props => {
   return (
     <SLi className={props.className}>
       <SNavLink to={props.link} exact={props.exact}>
@@ -42,7 +42,7 @@ const NavItem = (props: NavItemProps) => {
   );
 };
 
-const NavItems = (props: NavItemsProps) => {
+const NavItems: React.FC<NavItemsProps> = props => {
   const cartContext = useContext(CartContext);
 
   return (
@@ -78,7 +78,7 @@ const NavItems = (props: NavItemsProps) => {
   );
 };
 
-const NavBar = (props: NavBarProps) => {
+const NavBar: React.FC<NavBarProps> = props => {
   return (
     <SHead>
       <nav style={{ width: '100%' }}>

@@ -14,7 +14,7 @@ interface MySearchFormValues {
   search: string;
 }
 
-const SearchBar = (props: SearchBarProps) => {
+const SearchBar: React.FC<SearchBarProps> = props => {
   const validationSchema = yup.object().shape({
     search: yup.string().required().min(1)
   });

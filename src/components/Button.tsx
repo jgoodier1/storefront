@@ -8,7 +8,7 @@ interface ButtonProps {
   className?: string;
 }
 
-const Button = (props: ButtonProps) => {
+const Button: React.FC<ButtonProps> = props => {
   return (
     <StyledButton className={props.className} onClick={props.clicked} type={props.type}>
       {props.children}

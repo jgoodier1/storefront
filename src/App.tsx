@@ -13,6 +13,7 @@ import Orders from './containers/Orders';
 import NotFound from './containers/NotFound';
 import CartContext from './context/cartContext';
 import Search from './containers/Search';
+import Home from './containers/Home';
 
 interface IAuthData {
   email: string;
@@ -34,7 +35,7 @@ interface MySearchFormValues {
   search: string;
 }
 
-function App() {
+const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   // const [token, setToken] = useState<string | null>(null);
   // const [userId, setUserId] = useState<string | null>(null);
@@ -181,14 +182,14 @@ function App() {
         <Route path='/search' component={Search} />
         {/* <Route path='/login' render={() => <Auth login={loginHandler} />} />
       <Route path='/signup' render={() => <Auth signUp={signUpHandler} />} /> */}
-        <Route path='/' exact render={() => <h1>Welcome</h1>} />
+        <Route path='/' exact component={Home} />
         <Route path='*' component={NotFound} />
       </Switch>
     </CartContext.Provider>
   );
 
   return (
-    <div className='App'>
+    <div>
       <CartContext.Provider
         value={{ quantity: cartQuantityState, updateQuantity: cartQuantity }}
       >
@@ -209,6 +210,6 @@ function App() {
       />
     </div>
   );
-}
+};
 
 export default App;

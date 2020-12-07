@@ -23,7 +23,7 @@ interface TextAreaProps {
   className?: string;
 }
 
-const Input = (props: InputProps) => {
+const Input: React.FC<InputProps> = props => {
   return (
     <div className={props.className}>
       <StyledLabel htmlFor={props.id}>{props.label}</StyledLabel>
@@ -42,7 +42,7 @@ const Input = (props: InputProps) => {
   );
 };
 
-const TextArea = (props: TextAreaProps) => {
+const TextArea: React.FC<TextAreaProps> = props => {
   return (
     <div className={props.className}>
       <StyledLabel htmlFor={props.name}>{props.label}</StyledLabel>

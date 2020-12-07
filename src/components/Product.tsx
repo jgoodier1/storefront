@@ -15,7 +15,7 @@ interface ProductProps {
   delete?: (id: string) => void;
 }
 
-const Product = (props: ProductProps) => {
+const Product: React.FC<ProductProps> = props => {
   const cartContext = useContext(CartContext);
   const location = useLocation(); //might not be the best place for this
   const history = useHistory();
@@ -91,12 +91,6 @@ const StyledProductDiv = styled.div`
   padding: 2.5rem 0;
   border-bottom: 1px solid #888383;
   display: grid;
-  ${'' /* grid-template-areas:
-    'img img title'
-    'img img desc'
-    'img img desc'
-    'img img price'
-    'img img bttn'; */}
   grid-template-columns: 400px 1fr;
   grid-gap: 20px;
 
@@ -106,7 +100,6 @@ const StyledProductDiv = styled.div`
 `;
 
 const StyledAnchor = styled(Link)`
-  ${'' /* grid-area: title; */}
   grid-column: 2/3;
   font-size: 1em;
   margin: 0.5rem 0;
@@ -117,7 +110,6 @@ const StyledAnchor = styled(Link)`
 `;
 
 const StyledImg = styled.img`
-  ${'' /* grid-area: img; */}
   grid-column: 1/2;
   grid-row: 1/6;
   width: 100%;
@@ -127,7 +119,6 @@ const StyledImg = styled.img`
 `;
 
 const StyledDesc = styled.p`
-  ${'' /* grid-area: desc; */}
   grid-column: 2/3;
   grid-row: 2/4;
   font-style: italic;
@@ -135,7 +126,6 @@ const StyledDesc = styled.p`
 `;
 
 const StyledPrice = styled.p`
-  ${'' /* grid-area: price; */}
   grid-column: 2/3;
   grid-row: 4/5;
   font-size: 1.5em;
