@@ -56,20 +56,12 @@ const App: React.FC = () => {
       logoutHandler();
       return;
     }
-    // const userId = localStorage.getItem('userId');
     const remainingMilliseconds = new Date(expiryDate).getTime() - new Date().getTime();
-    // setToken(oldToken);
-    // setUserId(userId);
     setAutoLogout(remainingMilliseconds);
     setIsLoggedIn(true);
   }, []); //eslint-disable-line
 
-  const signUpHandler = (
-    // event: React.FormEvent<HTMLFormElement>,
-    // authData: IAuthData
-    values: IAuthData
-  ) => {
-    // event.preventDefault();
+  const signUpHandler = (values: IAuthData) => {
     setIsError(false);
     const newUser = {
       name: values.name,
@@ -84,20 +76,14 @@ const App: React.FC = () => {
         }
       })
       .then(res => {
-        console.log(res);
         setShowAuthModal(false);
       })
       .catch(err => {
-        console.error('err', err);
         setIsError(true);
       });
   };
 
-  const loginHandler = (
-    // event: React.FormEvent<HTMLFormElement>,
-    authData: IAuthData
-  ) => {
-    // event.preventDefault();
+  const loginHandler = (authData: IAuthData) => {
     setIsError(false);
     const user = {
       email: authData.email,
@@ -115,12 +101,9 @@ const App: React.FC = () => {
         localStorage.setItem('expiryDate', expiryDate);
         setAutoLogout(remainingMilliseconds);
         setIsLoggedIn(true);
-        // setToken(res.data.token);
-        // setUserId(res.data.userId);
         setShowAuthModal(false);
       })
       .catch(err => {
-        console.log(err);
         setIsError(true);
       });
   };
@@ -159,10 +142,9 @@ const App: React.FC = () => {
 
   const searchHandler = (values: MySearchFormValues) => {
     history.push('/search?value=' + values.search);
-    // history.push('/search');
   };
 
-  let routes = (
+  const routes = (
     <CartContext.Provider
       value={{ quantity: cartQuantityState, updateQuantity: cartQuantity }}
     >
