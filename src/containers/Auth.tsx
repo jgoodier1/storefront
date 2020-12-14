@@ -57,7 +57,6 @@ const Auth: React.FC<AuthProps> = props => {
       confirmPassword: ''
     },
     onSubmit(values, actions) {
-      console.log({ values, actions });
       if (isSignUp) {
         props.signUp(values);
         actions.resetForm();
@@ -70,13 +69,13 @@ const Auth: React.FC<AuthProps> = props => {
   });
 
   // this needs to no close when there's an error after submitting
-  // const modalClosed = () => {
-  //   props.closedModal();
-  //   setIsSignUp(false);
-  // };
+  const modalClosed = () => {
+    props.closedModal();
+    setIsSignUp(false);
+  };
 
   return (
-    <Modal show={props.show}>
+    <Modal show={props.show} modalClosed={() => modalClosed()}>
       <StyledForm onSubmit={formik.handleSubmit}>
         {isSignUp ? <h1>Sign Up</h1> : <h1>Sign In</h1>}
         {isSignUp && (
