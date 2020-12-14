@@ -6,8 +6,7 @@ const Home: React.FC = () => {
     <StyledMain>
       <StyledArticle>
         <header>
-          <h1>Hello!</h1>
-          <h2>Welcome to my website!</h2>
+          <h1>Welcome to my website!</h1>
         </header>
         <section>
           <p>
@@ -16,7 +15,7 @@ const Home: React.FC = () => {
           </p>
           <p>
             It is built with a React front-end and an Node/Express back-end with a MongoDB
-            database
+            database.
           </p>
           <p>
             You can view the source code for the front-end{' '}
@@ -32,7 +31,7 @@ const Home: React.FC = () => {
               href='https://www.linkedin.com/in/jacob-goodier-b64a5586/'
               target='_blank'
             >
-              here
+              here.
             </StyledA>
           </p>
         </section>
