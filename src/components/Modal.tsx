@@ -7,8 +7,8 @@ import { useHistory } from 'react-router-dom';
 
 interface ModalProps {
   show: boolean;
-  // modalClosed: () => void;
   children: React.ReactNode;
+  modalClosed?: () => void;
 }
 
 const Modal: React.FC<ModalProps> = props => {
@@ -20,7 +20,10 @@ const Modal: React.FC<ModalProps> = props => {
 
   return (
     <>
-      <Backdrop show={props.show} clicked={modalClosed} />
+      <Backdrop
+        show={props.show}
+        clicked={props.modalClosed ? props.modalClosed : modalClosed}
+      />
       <div
         className={classes.Modal}
         style={{
@@ -28,7 +31,9 @@ const Modal: React.FC<ModalProps> = props => {
           opacity: props.show ? '1' : '0'
         }}
       >
-        <StyledXButton onClick={modalClosed}>X</StyledXButton>
+        <StyledXButton onClick={props.modalClosed ? props.modalClosed : modalClosed}>
+          X
+        </StyledXButton>
         {props.children}
       </div>
     </>
@@ -42,7 +47,7 @@ export default React.memo(
 );
 
 const StyledXButton = styled.button`
-  position: relative;
+  position: fixed;
   top: 6px;
   right: 10px;
   border: 0;
