@@ -91,7 +91,7 @@ const StyledProductDiv = styled.div`
   padding: 2.5rem 0;
   border-bottom: 1px solid #888383;
   display: grid;
-  grid-template-columns: 400px 1fr;
+  grid-template-columns: 350px 1fr;
   grid-gap: 20px;
 
   @media (max-width: 768px) {
@@ -102,7 +102,7 @@ const StyledProductDiv = styled.div`
 const StyledAnchor = styled(Link)`
   grid-column: 2/3;
   font-size: 1em;
-  margin: 0.5rem 0;
+  margin: 0;
   text-decoration: none;
   color: #000;
   font-weight: bold;

@@ -72,7 +72,8 @@ const StyledBttn = styled.button`
   border: 1px solid black;
   border-left: none;
   position: relative;
-  top: 3px;
+  top: 5px;
+  line-height: 1;
 
   @media (max-width: 768px) {
     top: 4px;
