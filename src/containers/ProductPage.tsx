@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
-import axios from 'axios';
 import styled from 'styled-components';
 
 import { addToCart } from '../utils/addToCart';
@@ -9,44 +8,25 @@ import Spinner from '../components/Spinner';
 import Button from '../components/Button';
 import Select from '../components/Select';
 import Modal from '../components/Modal';
+import useFetch from '../hooks/useFetch';
 
 const ProductPage: React.FC = () => {
-  const [product, setProduct] = useState({
-    price: 0,
-    title: '',
-    image: '',
-    description: ''
-  });
   const [select, setSelect] = useState(1);
-  const [compState, setCompState] = useState<'Loading' | 'Rendered' | 'Error'>(
-    'Rendered'
-  );
+
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
   const cartContext = useContext(CartContext);
 
+  const [product, compState] = useFetch('GET', `/products/${id}`);
+
   const options = 100;
 
-  // maybe conditionally pass in info from props so that it doesn't have to fetch everytime
-  // can pass in the data from the products page and search too (maybe not cart or order???)
-  useEffect(() => {
-    setCompState('Loading');
-    axios
-      .get('/products/' + id)
-      .then(res => {
-        setProduct(res.data);
-        setCompState('Rendered');
-      })
-      .catch(err => {
-        console.log(err);
-        setCompState('Error');
-      });
-  }, [id]);
-
   const addToCartHandler = () => {
-    addToCart(id, product.price, select, cartContext.updateQuantity);
-    // cartContext.updateQuantity();
-    history.push('/cart');
+    if (product) {
+      addToCart(id, product.data.price, select, cartContext.updateQuantity);
+      // cartContext.updateQuantity();
+      history.push('/cart');
+    } else return;
   };
 
   const selectChangeHandler = (e: React.FormEvent<HTMLSelectElement>) => {
@@ -56,14 +36,14 @@ const ProductPage: React.FC = () => {
   let prod;
   if (compState === 'Loading') {
     prod = <Spinner />;
-  } else if (compState === 'Rendered') {
+  } else if (compState === 'Rendered' && product) {
     prod = (
       <>
-        <StyledTitle>{product.title}</StyledTitle>
-        <StyledPrice>${product.price}</StyledPrice>
-        <StyledImage src={product.image} alt={product.title} />
+        <StyledTitle>{product.data.title}</StyledTitle>
+        <StyledPrice>${product.data.price}</StyledPrice>
+        <StyledImage src={product.data.image} alt={product.data.title} />
         <StyledH3>ABOUT</StyledH3>
-        <StyledDesc>{product.description}</StyledDesc>
+        <StyledDesc>{product.data.description}</StyledDesc>
         <StyledSelect name='quantity' options={options} changed={selectChangeHandler} />
         <StyledButton clicked={addToCartHandler}>Add to Cart</StyledButton>
       </>
@@ -73,7 +53,10 @@ const ProductPage: React.FC = () => {
   return (
     <StyledMain>
       {compState === 'Error' ? (
-        <Modal show={compState === 'Error'}>Cannot find product, please try again</Modal>
+        <Modal show={compState === 'Error'}>
+          <h1>Error</h1>
+          Cannot find product, please try again.
+        </Modal>
       ) : (
         <>{prod}</>
       )}

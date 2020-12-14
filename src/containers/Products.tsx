@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import axios from 'axios';
@@ -7,46 +7,43 @@ import Product from '../components/Product';
 import Spinner from '../components/Spinner';
 import Modal from '../components/Modal';
 import Paginator from '../components/Paginator';
+import useFetch from '../hooks/useFetch';
+
+interface ProductInt {
+  _id: string;
+  title: string;
+  image: string;
+  description: string;
+  price: number;
+}
 
 const Products: React.FC = () => {
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<ProductInt[]>([]);
   const [page, setPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
-  const [compState, setCompState] = useState<'Loading' | 'Rendered' | 'Error'>(
-    'Rendered'
-  );
 
   const history = useHistory();
 
   const urlPageValue = new URLSearchParams(useLocation().search).get('page');
 
+  const fetchURL = useRef('/products');
   useEffect(() => {
-    let effectGetURL: string;
     if (urlPageValue !== null && typeof +urlPageValue === 'number') {
-      effectGetURL = `/products?page=${urlPageValue}`;
+      fetchURL.current = `/products?page=${urlPageValue}`;
       setPage(+urlPageValue); // the cause of the problem
     } else {
-      effectGetURL = '/products';
+      return;
     }
-    setCompState('Loading');
-    axios
-      .get(effectGetURL)
-      .then(res => {
-        const fetchedProducts = [];
-        for (let key in res.data.products) {
-          fetchedProducts.push({
-            ...res.data.products[key],
-            id: key
-          });
-        }
-        setProducts(fetchedProducts);
-        setTotalItems(res.data.totalItems);
-        setCompState('Rendered');
-      })
-      .catch(err => {
-        setCompState('Error');
-      });
   }, [urlPageValue]);
+
+  const [data, compState, setCompState] = useFetch('GET', fetchURL.current);
+
+  useEffect(() => {
+    if (data !== null && data.data) {
+      setTotalItems(data.data.totalItems);
+      setProducts(data.data.products);
+    }
+  }, [data]);
 
   const loadPosts = (direction: 'next' | 'previous') => {
     setCompState('Loading');
@@ -65,14 +62,7 @@ const Products: React.FC = () => {
     axios
       .get(`/products?page=${localPage}`)
       .then(res => {
-        const fetchedProducts = [];
-        for (let key in res.data.products) {
-          fetchedProducts.push({
-            ...res.data.products[key],
-            id: key
-          });
-        }
-        setProducts(fetchedProducts);
+        setProducts(res.data.products);
         setTotalItems(res.data.totalItems);
         setCompState('Rendered');
         history.push(`/products?page=${localPage}`);
@@ -84,7 +74,6 @@ const Products: React.FC = () => {
   };
 
   const clickDeleteHandler = (id: string) => {
-    console.log(id);
     const deletedProduct = { id: id };
     setCompState('Loading');
     axios
@@ -104,7 +93,7 @@ const Products: React.FC = () => {
   };
 
   let renderedProducts: JSX.Element | JSX.Element[] = <Spinner />;
-  if (compState === 'Rendered') {
+  if (compState === 'Rendered' && data !== null) {
     renderedProducts = products.map(p => (
       <Product
         key={p._id}
@@ -123,7 +112,7 @@ const Products: React.FC = () => {
     <StyledMain>
       {compState === 'Error' ? (
         <Modal show={compState === 'Error'}>
-          Error <br />
+          <h1>Error</h1>
           Cannot find products. Please try again in a moment.
         </Modal>
       ) : (

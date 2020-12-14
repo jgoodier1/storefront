@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
 
 import Modal from '../components/Modal';
 import Button from '../components/Button';
 import Spinner from '../components/Spinner';
+import useFetch from '../hooks/useFetch';
 
 interface OrderProps {
-  key: number;
+  key: string;
   id: string;
   products: [
     {
@@ -43,6 +43,35 @@ interface OrdersProps {
   isLoggedIn: boolean;
 }
 
+interface ResOrder {
+  _id: string;
+  products: [
+    {
+      _id: number;
+      prodId: {
+        _id: number;
+        title: string;
+        image: string;
+      };
+      price: number;
+      quantity: number;
+    }
+  ];
+  totalPrice: number;
+  createdAt: number;
+  contactInfo: {
+    firstName: string;
+    lastName: string;
+    streetAddress: string;
+    city: string;
+    province: string;
+    country: string;
+    postalCode: string;
+    phoneNumber: string;
+  };
+  shippingSpeed: string;
+}
+
 const Order: React.FC<OrderProps> = props => {
   //put state here because it would show for every order
   const [isShown, setIsShown] = useState(false);
@@ -60,11 +89,9 @@ const Order: React.FC<OrderProps> = props => {
       <StyledTitle to={'/products/' + product.prodId._id}>
         {product.prodId.title}
       </StyledTitle>
-      {/* <StyledTitle>{product.prodId.title}</StyledTitle> */}
       <StyledImg src={product.prodId.image} alt={product.prodId.title} />
       <StyledPrice>${product.price}</StyledPrice>
       <StyledQty>Qty: {product.quantity}</StyledQty>
-      {/* <StyledLink to=''></StyledLink> */}
     </StyledProdDiv>
   ));
 
@@ -104,35 +131,19 @@ const Order: React.FC<OrderProps> = props => {
           </StyledPopoverDiv>
         )}
       </StyledTopBarDiv>
-      <StyledH2>Expected Delivery: {deliveryDate}</StyledH2>
+      {dayjs(props.date) > dayjs() ? (
+        <StyledH2>Expected Delivery: {deliveryDate}</StyledH2>
+      ) : (
+        <StyledH2>Delivered: {deliveryDate}</StyledH2>
+      )}
       {renderedOrder}
     </StyledOrderDiv>
   );
 };
 
 const Orders: React.FC<OrdersProps> = props => {
-  const [allOrders, setAllOrders] = useState<any[]>([]);
-  const [compState, setCompState] = useState<'Loading' | 'Rendered' | 'Error'>(
-    'Rendered'
-  );
-
-  useEffect(() => {
-    if (props.isLoggedIn) {
-      setCompState('Loading');
-      const userId = localStorage.getItem('userId');
-      axios
-        .post('/orders', { userId })
-        .then(res => {
-          setAllOrders(res.data);
-          setCompState('Rendered');
-          // console.log(res.data);
-        })
-        .catch(err => {
-          // console.error(err);
-          setCompState('Error');
-        });
-    } else return;
-  }, [props.isLoggedIn]);
+  const userId = localStorage.getItem('userId');
+  const [orders, compState] = useFetch('POST', '/orders', { userId });
 
   const notAuth = (
     <>
@@ -144,8 +155,8 @@ const Orders: React.FC<OrdersProps> = props => {
   let renderedOrders;
   if (compState === 'Loading') {
     renderedOrders = <Spinner />;
-  } else if (compState === 'Rendered') {
-    renderedOrders = allOrders.map(order => (
+  } else if (compState === 'Rendered' && orders !== null) {
+    renderedOrders = orders.data.map((order: ResOrder) => (
       <Order
         key={order._id}
         id={order._id}
@@ -162,7 +173,10 @@ const Orders: React.FC<OrdersProps> = props => {
     <StyledMain>
       {props.isLoggedIn ? (
         compState === 'Error' ? (
-          <Modal show={compState === 'Error'}>Cannot load orders, please try again</Modal>
+          <Modal show={compState === 'Error'}>
+            <h1>Error</h1>
+            Cannot load orders, please try again.
+          </Modal>
         ) : (
           <>
             <h1 style={{ justifySelf: 'center' }}>Your Orders</h1>
@@ -240,7 +254,7 @@ const StyledProdDiv = styled.div`
   grid-column: 2/3;
   display: grid;
   grid-template-columns: 10rem 1fr 1fr;
-  grid-gap: 5px;
+  grid-gap: 15px;
   padding: 2rem;
   width: 70%;
 `;

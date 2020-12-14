@@ -1,40 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useLocation } from 'react-router-dom';
-import axios from 'axios';
 import styled from 'styled-components';
 
 import Product from '../components/Product';
 import Spinner from '../components/Spinner';
 import Modal from '../components/Modal';
+import useFetch from '../hooks/useFetch';
+
+interface Result {
+  _id: string;
+  title: string;
+  image: string;
+  price: number;
+  description: string;
+}
 
 const Search: React.FC = () => {
-  const [results, setResults] = useState<any[]>([]);
-  const [compState, setCompState] = useState<'Loading' | 'Rendered' | 'Error'>(
-    'Rendered'
-  );
-
   const value = new URLSearchParams(useLocation().search).get('value');
 
-  useEffect(() => {
-    setCompState('Loading');
-    axios
-      .get(`/search?value=${value}`)
-      .then(res => {
-        console.log(res.data);
-        setResults(res.data);
-        setCompState('Rendered');
-      })
-      .catch(err => {
-        setCompState('Error');
-        console.error(err);
-      });
-  }, [value]);
+  const [results, compState] = useFetch('GET', `/search?value=${value}`);
 
   let renderedResults;
   if (compState === 'Loading') {
     renderedResults = <Spinner />;
-  } else if (compState === 'Rendered' && results !== undefined) {
-    renderedResults = results.map(r => (
+  } else if (compState === 'Rendered' && results) {
+    renderedResults = results.data.map((r: Result) => (
       <Product
         key={r._id}
         title={r.title}
@@ -46,17 +36,33 @@ const Search: React.FC = () => {
     ));
   }
 
+  // this is super messy 🙃
   return (
     <StyledMain>
-      {compState === 'Error' && (
-        <Modal show={compState === 'Error'}>Search Failed. Please try again.</Modal>
-      )}
-      {results.length !== 1 ? (
-        <StyledH1>{results.length} Results Found</StyledH1>
+      {compState === 'Error' ? (
+        <Modal show={compState === 'Error'}>
+          <h1>Error</h1>
+          Search Failed. Please try again.
+        </Modal>
       ) : (
-        <StyledH1>{results.length} Result Found</StyledH1>
+        <>
+          {results !== null ? (
+            results.data.length !== 1 ? (
+              <>
+                <StyledH1>{results.data.length} Results Found</StyledH1>
+                {renderedResults}
+              </>
+            ) : (
+              <>
+                <StyledH1>{results.data.length} Result Found</StyledH1>
+                {renderedResults}
+              </>
+            )
+          ) : (
+            <>{renderedResults}</>
+          )}
+        </>
       )}
-      {renderedResults}
     </StyledMain>
   );
 };
@@ -64,7 +70,6 @@ const Search: React.FC = () => {
 export default Search;
 
 const StyledMain = styled.main`
-  ${'' /* margin: 56px; */}
   margin-left: 25px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 2fr minmax(0, 1fr);

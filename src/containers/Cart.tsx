@@ -8,6 +8,7 @@ import Select from '../components/Select';
 import CartContext from '../context/cartContext';
 import OrderSummary from '../components/OrderSummary';
 import Modal from '../components/Modal';
+import useFetch from '../hooks/useFetch';
 
 interface CartItemProps {
   quantity: number;
@@ -38,7 +39,6 @@ interface ICart {
 }
 
 const CartItem: React.FC<CartItemProps> = props => {
-  console.log(props);
   const [select, setSelect] = useState(props.quantity);
 
   const options = 100;
@@ -65,39 +65,20 @@ const CartItem: React.FC<CartItemProps> = props => {
 };
 
 const Cart: React.FC = () => {
-  const [cart, setCart] = useState<ICart[] | null>([]);
-  const [compState, setCompState] = useState<'Loading' | 'Rendered' | 'Error'>(
-    'Rendered'
-  );
+  const [cart, setCart] = useState<ICart[]>([]);
+
   const cartContext = useContext(CartContext);
 
-  console.log(compState);
+  const cartFromStorage = JSON.parse(sessionStorage.getItem('cart')!);
+  const [data, compState, setCompState] = useFetch('POST', '/cart', cartFromStorage);
 
   useEffect(() => {
-    setCompState('Loading');
-    let cartFromStorage = JSON.parse(sessionStorage.getItem('cart')!);
-    // console.log(cartFromStorage);
-    if (cartFromStorage === null) {
-      cartFromStorage = [];
-    }
-    if (cartFromStorage.length !== 0) {
-      axios
-        .post('/cart', cartFromStorage)
-        .then(res => {
-          setCart(res.data);
-          setCompState('Rendered');
-        })
-        .catch(err => {
-          setCompState('Error');
-          console.error(err.response.data.message);
-        });
-    }
-  }, []);
+    if (data) setCart(data.data);
+  }, [data]);
 
   const editCartItem = (id: string, quantity: number) => {
     setCompState('Loading');
     const cart: ICartStorage = JSON.parse(sessionStorage.getItem('cart')!);
-    console.log({ cart });
     if (cart === undefined) {
       console.log('cart undefined');
       setCompState('Rendered');
@@ -163,26 +144,28 @@ const Cart: React.FC = () => {
       if (newCart.products.length < 1) {
         sessionStorage.removeItem('cart');
         setCart([]);
+        cartContext.updateQuantity(null);
+        return;
       } else {
         sessionStorage.setItem('cart', JSON.stringify(newCart));
         cartContext.updateQuantity(newCart);
+        axios
+          .post('/cart', newCart)
+          .then(res => {
+            setCart(res.data);
+            setCompState('Rendered');
+            console.log(res);
+          })
+          .catch(err => {
+            console.error(err);
+            setCompState('Error');
+          });
       }
-      axios
-        .post('/cart', newCart)
-        .then(res => {
-          setCart(res.data);
-          setCompState('Rendered');
-          console.log(res);
-        })
-        .catch(err => {
-          console.error(err.response.data.message);
-          setCompState('Error');
-        });
     }
   };
 
   let renderedCart: JSX.Element | JSX.Element[] = <Spinner />;
-  if (cart !== null && compState === 'Rendered') {
+  if (cart !== undefined && cart !== null && compState === 'Rendered') {
     renderedCart = cart.map((ci: ICart) => (
       <CartItem
         key={ci.prodId}
@@ -195,13 +178,13 @@ const Cart: React.FC = () => {
         id={ci.prodId}
       />
     ));
-  } else if (cart === null || cart.length === 0) {
+  } else if (cart === undefined || cart === null || cart.length === 0) {
     // setCompState('Rendered');
     renderedCart = <h1>Cart is empty</h1>;
   }
 
   let subTotal; // should probably handle prices on back-end (or at least validate them)
-  if (cart !== null && cart.length > 0) {
+  if (cart !== undefined && cart !== null && cart.length > 0) {
     const filteredPrices = cart.map(p => p.price);
     const filteredQuants = cart.map(p => p.quantity);
     const oneArray = filteredPrices.map(
@@ -213,7 +196,10 @@ const Cart: React.FC = () => {
   return (
     <StyledMain>
       {compState === 'Error' && (
-        <Modal show={compState === 'Error'}>An error occurred. Please try again</Modal>
+        <Modal show={compState === 'Error'}>
+          <h1>Error</h1>
+          An error occurred. Please try again.
+        </Modal>
       )}
 
       <h1>Your Shopping Cart</h1>
@@ -263,6 +249,7 @@ const StyledItemDiv = styled.div`
   display: grid;
   grid-template-columns: 3fr 4fr 1fr 2fr;
   grid-template-rows: repeat(3, 1fr);
+  grid-gap: 10px;
   align-content: start;
   justify-content: space-between;
   padding: 1rem;
@@ -271,6 +258,7 @@ const StyledItemDiv = styled.div`
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr 2fr;
+    grid-gap: 0;
   }
 `;
 
