@@ -17,7 +17,7 @@ const Select: React.FC<SelectProps> = props => {
 
   if (typeof props.options === 'number') {
     const range = (start: number, end: number) => {
-      let arr = [];
+      const arr = [];
       for (let i = start; i <= end; i++) {
         arr.push(i);
       }

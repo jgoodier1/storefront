@@ -20,7 +20,7 @@ const cartQuantity = () => {
 
 const CartContext = React.createContext({
   quantity: cartQuantity(),
-  updateQuantity: (cart: any) => {}
+  updateQuantity: (cart: any) => {} //eslint-disable-line
 });
 
 export default CartContext;

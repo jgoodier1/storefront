@@ -12,7 +12,7 @@ export function addToCart(
   price: number,
   quantity: number,
   updateFn: (cart: ICart) => void
-) {
+): void {
   let cart: ICart | null = JSON.parse(sessionStorage.getItem('cart')!);
   console.log(cart);
   if (cart === null) {
