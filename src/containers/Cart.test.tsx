@@ -32,8 +32,8 @@ const cart = [
 
 describe('Cart Tests', () => {
   test('renders the cart', async () => {
-    sessionStorage.getItem.mockImplementationOnce(() => storageCart);
-    axios.post.mockImplementationOnce(() => Promise.resolve({ data: cart }));
+    // sessionStorage.getItem.mockImplementationOnce(() => storageCart);
+    // axios.post.mockImplementationOnce(() => Promise.resolve({ data: cart }));
 
     render(
       <MemoryRouter>
@@ -41,6 +41,6 @@ describe('Cart Tests', () => {
       </MemoryRouter>
     );
     // expect(await screen.findByText(/rustic/i)).toBeInTheDocument;
-    screen.debug();
+    // screen.debug();
   });
 });
