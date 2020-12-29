@@ -179,8 +179,7 @@ const Cart: React.FC = () => {
       />
     ));
   } else if (cart === undefined || cart === null || cart.length === 0) {
-    // setCompState('Rendered');
-    renderedCart = <h1>Cart is empty</h1>;
+    renderedCart = <h2>Cart is empty</h2>;
   }
 
   let subTotal; // should probably handle prices on back-end (or at least validate them)
@@ -228,6 +227,7 @@ const StyledMain = styled.main`
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
     margin: 1rem 0;
+    justify-items: center;
   }
 `;
 

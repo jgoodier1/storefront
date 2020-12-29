@@ -30,7 +30,7 @@ const Auth: React.FC<AuthProps> = props => {
       .min(2, 'Too short! Name has to be between 2 and 50 characters')
       .max(50, 'Too long! Name has to be between 2 and 50 characters')
       .required('Name is required'),
-    email: Yup.string().email().required('Email is required!'),
+    email: Yup.string().email().required('Email is required'),
     password: Yup.string()
       .min(5, 'Too short! Password must be between 5 and 20 characters')
       .max(20, 'Too long! Password must be between 5 and 20 characters')
@@ -40,7 +40,7 @@ const Auth: React.FC<AuthProps> = props => {
   });
 
   const loginSchema = Yup.object().shape({
-    email: Yup.string().email().required('Email is required!'),
+    email: Yup.string().email().required('Email is required'),
     password: Yup.string()
       .min(5, 'Too short! Password must be between 5 and 20 characters')
       .max(20, 'Too long! Password must be between 5 and 20 characters')
@@ -138,7 +138,7 @@ const Auth: React.FC<AuthProps> = props => {
             ) : null}
           </>
         )}
-        <Button>Submit</Button>
+        <StyledButton>Submit</StyledButton>
         {!isSignUp && (
           <p>
             Don't have an account?{' '}
@@ -159,21 +159,7 @@ const StyledForm = styled.form`
   justify-content: flex-end;
   width: auto;
   text-align: center;
-  ${'' /* box-shadow: 0 2px 3px #ccc; */}
 `;
-
-// const StyledButton = styled.button`
-//   position: absolute;
-//   top: 10px;
-//   right: 10px;
-//   border: 0;
-//   width: 60px;
-//   height: 60px;
-//   font-size: 1.75rem;
-//   font-weight: bold;
-//   background-color: white;
-//   cursor: pointer;
-// `;
 
 const StyledSwitch = styled.button`
   color: #38689e;
@@ -185,14 +171,6 @@ const StyledSwitch = styled.button`
   cursor: pointer;
 `;
 
-//1. make the form (probably want name, email, and pass for s-u, just email and pass for s-i)
-//3. send to back-end to check if they're valid there (and don't/do exist (depending on s-u of s-i))
-//4. back-end sends the response saying yay or nay
-//5. if success, redirect somewhere (depending on where they came from)
-//7. store cookies or session on the browser if logged in
-//8. create a logout button that removes the cookies/session
-
-//2. check to see if the inputs are valid types on the front-end
-
-//6. if fail, keep the form with the submitted info and display an error message saying what happened
-//9. make a 'forgot your password' button
+const StyledButton = styled(Button)`
+  margin-top: 1rem;
+`;
