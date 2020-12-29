@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import axios from 'axios';
@@ -21,22 +21,22 @@ const Products: React.FC = () => {
   const [products, setProducts] = useState<ProductInt[]>([]);
   const [page, setPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
+  const [fetchURL, setFetchURL] = useState('/products');
 
   const history = useHistory();
+  const location = useLocation();
 
-  const urlPageValue = new URLSearchParams(useLocation().search).get('page');
-
-  const fetchURL = useRef('/products');
   useEffect(() => {
+    const urlPageValue = new URLSearchParams(location.search).get('page');
     if (urlPageValue !== null && typeof +urlPageValue === 'number') {
-      fetchURL.current = `/products?page=${urlPageValue}`;
-      setPage(+urlPageValue); // the cause of the problem
+      setFetchURL(`/products?page=${urlPageValue}`);
+      setPage(+urlPageValue);
     } else {
       return;
     }
-  }, [urlPageValue]);
+  }, [location]);
 
-  const [data, compState, setCompState] = useFetch('GET', fetchURL.current);
+  const [data, compState, setCompState] = useFetch('GET', fetchURL);
 
   useEffect(() => {
     if (data !== null && data.data) {
@@ -46,31 +46,19 @@ const Products: React.FC = () => {
   }, [data]);
 
   const loadPosts = (direction: 'next' | 'previous') => {
-    setCompState('Loading');
-    let localPage: number;
     if (direction === 'next') {
       setPage(prevState => {
         return prevState + 1;
       });
-      localPage = page + 1;
+      setFetchURL(`/products?page=${page + 1}`);
+      history.push(`/products?page=${page + 1}`);
     } else {
       setPage(prevState => {
         return prevState - 1;
       });
-      localPage = page - 1;
+      setFetchURL(`/products?page=${page - 1}`);
+      history.push(`/products?page=${page - 1}`);
     }
-    axios
-      .get(`/products?page=${localPage}`)
-      .then(res => {
-        setProducts(res.data.products);
-        setTotalItems(res.data.totalItems);
-        setCompState('Rendered');
-        history.push(`/products?page=${localPage}`);
-      })
-      .catch(err => {
-        setCompState('Error');
-        console.error(err.response.data);
-      });
   };
 
   const clickDeleteHandler = (id: string) => {
@@ -106,7 +94,6 @@ const Products: React.FC = () => {
       />
     ));
   }
-  // console.log(renderedProducts);
 
   return (
     <StyledMain>
