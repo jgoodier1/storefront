@@ -34,6 +34,7 @@ interface OrderProps {
     country: string;
     postalCode: string;
     phoneNumber: string;
+    streetAddressTwo?: string;
   };
   speed: string;
 }
@@ -68,6 +69,7 @@ interface ResOrder {
     country: string;
     postalCode: string;
     phoneNumber: string;
+    streetAddressTwo?: string;
   };
   shippingSpeed: string;
 }
@@ -98,9 +100,9 @@ const Order: React.FC<OrderProps> = props => {
   const dateOrdered = dayjs(props.date).format('MMM DD, YYYY');
   let deliveryDate;
   if (props.speed === 'fast') {
-    deliveryDate = dayjs(dateOrdered).add(3, 'day').format('MMM DD, YYYY');
+    deliveryDate = dayjs(dateOrdered).add(3, 'day');
   } else if (props.speed === 'normal') {
-    deliveryDate = dayjs(dateOrdered).add(4, 'day').format('MMM DD, YYYY');
+    deliveryDate = dayjs(dateOrdered).add(4, 'day');
   }
 
   return (
@@ -120,9 +122,15 @@ const Order: React.FC<OrderProps> = props => {
         </StyledP>
         {isShown && (
           <StyledPopoverDiv>
-            <StyledPopoverP>{props.address.firstName}</StyledPopoverP>
-            <StyledPopoverP>{props.address.lastName}</StyledPopoverP>
+            <StyledPopoverP>
+              <strong>
+                {props.address.firstName} {props.address.lastName}
+              </strong>
+            </StyledPopoverP>
             <StyledPopoverP>{props.address.streetAddress}</StyledPopoverP>
+            {props.address.streetAddressTwo && (
+              <StyledPopoverP>{props.address.streetAddressTwo}</StyledPopoverP>
+            )}
             <StyledPopoverP>
               {props.address.city}, {props.address.province} {props.address.postalCode}
             </StyledPopoverP>
@@ -131,10 +139,12 @@ const Order: React.FC<OrderProps> = props => {
           </StyledPopoverDiv>
         )}
       </StyledTopBarDiv>
-      {dayjs(props.date) > dayjs() ? (
-        <StyledH2>Expected Delivery: {deliveryDate}</StyledH2>
+      {deliveryDate !== undefined && +deliveryDate.valueOf() > +dayjs().valueOf() ? (
+        <StyledH2>Expected Delivery: {deliveryDate.format('MMM DD, YYYY')}</StyledH2>
       ) : (
-        <StyledH2>Delivered: {deliveryDate}</StyledH2>
+        <StyledH2>
+          Delivered: {deliveryDate !== undefined && deliveryDate.format('MMM DD, YYYY')}
+        </StyledH2>
       )}
       {renderedOrder}
     </StyledOrderDiv>
@@ -167,6 +177,7 @@ const Orders: React.FC<OrdersProps> = props => {
         speed={order.shippingSpeed}
       />
     ));
+    renderedOrders.reverse();
   }
 
   return (
@@ -223,6 +234,11 @@ const StyledTopBarDiv = styled.div`
   padding: 0 2rem;
   z-index: 199;
   position: relative;
+
+  @media (max-width: 768px) {
+    justify-content: space-around;
+    padding: 0;
+  }
 `;
 
 const StyledP = styled.p`
@@ -235,7 +251,9 @@ const StyledPopoverDiv = styled.div`
   z-index: 200;
   background: #fff;
   padding: 1rem;
+  width: max-content;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border: 1px solid #f6f6f6;
   border-radius: 4px;
   justify-self: flex-end;
   top: 4rem;
