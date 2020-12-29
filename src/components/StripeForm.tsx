@@ -9,7 +9,7 @@ import Modal from './Modal';
 import CartContext from '../context/cartContext';
 import classes from '../css/CheckoutForm.module.css';
 
-interface CheckoutFormProps {
+interface StripeFormProps {
   shippingSpeed: 'normal' | 'fast';
   formValues: {
     firstName: string;
@@ -25,7 +25,7 @@ interface CheckoutFormProps {
   className?: string;
 }
 
-const CheckoutForm: React.FC<CheckoutFormProps> = props => {
+const StripeForm: React.FC<StripeFormProps> = props => {
   const [error, setError] = useState<null | string>(null);
   const [processing, setProcessing] = useState(false);
   const [succeeded, setSucceeded] = useState(false);
@@ -144,7 +144,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = props => {
   );
 };
 
-export default CheckoutForm;
+export default StripeForm;
 
 const StyledForm = styled.form`
   background-color: #def7ff;
