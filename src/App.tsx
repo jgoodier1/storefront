@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { Switch, Route, useHistory } from 'react-router-dom';
 import axios from 'axios';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
 
 import Products from './containers/Products';
 import NavBar from './components/NavBar';
@@ -37,12 +39,15 @@ interface MySearchFormValues {
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  // const [token, setToken] = useState<string | null>(null);
-  // const [userId, setUserId] = useState<string | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isError, setIsError] = useState(false);
   const cartContext = useContext(CartContext);
   const [cartQuantityState, setCartQuantityState] = useState(cartContext.quantity);
+  const [promise] = useState(() =>
+    loadStripe(
+      'pk_test_51HKOZDEVSid6nUScxcOBQFjklW1uXACqD8rLvnyLU9HslaRYixM4qQ0gzxz6YaqIxyDITov9Vfxcxvyrinisbnf400FIRya1kL'
+    )
+  );
 
   const history = useHistory();
 
@@ -131,7 +136,6 @@ const App: React.FC = () => {
   };
 
   const cartQuantity = (cart: ICart) => {
-    // const cart = JSON.parse(sessionStorage.getItem('cart')!);
     if (cart === null) {
       setCartQuantityState(0);
     } else {
@@ -162,8 +166,6 @@ const App: React.FC = () => {
           <Checkout isLoggedIn={isLoggedIn} showModal={showModalHandler} />
         </Route>
         <Route path='/search' component={Search} />
-        {/* <Route path='/login' render={() => <Auth login={loginHandler} />} />
-      <Route path='/signup' render={() => <Auth signUp={signUpHandler} />} /> */}
         <Route path='/' exact component={Home} />
         <Route path='*' component={NotFound} />
       </Switch>
@@ -172,24 +174,26 @@ const App: React.FC = () => {
 
   return (
     <div>
-      <CartContext.Provider
-        value={{ quantity: cartQuantityState, updateQuantity: cartQuantity }}
-      >
-        <NavBar
-          isLoggedIn={isLoggedIn}
-          logout={logoutHandler}
-          showModal={showModalHandler}
-          search={searchHandler}
+      <Elements stripe={promise}>
+        <CartContext.Provider
+          value={{ quantity: cartQuantityState, updateQuantity: cartQuantity }}
+        >
+          <NavBar
+            isLoggedIn={isLoggedIn}
+            logout={logoutHandler}
+            showModal={showModalHandler}
+            search={searchHandler}
+          />
+        </CartContext.Provider>
+        {routes}
+        <Auth
+          login={loginHandler}
+          signUp={signUpHandler}
+          show={showAuthModal}
+          closedModal={hideModalHandler}
+          error={isError}
         />
-      </CartContext.Provider>
-      {routes}
-      <Auth
-        login={loginHandler}
-        signUp={signUpHandler}
-        show={showAuthModal}
-        closedModal={hideModalHandler}
-        error={isError}
-      />
+      </Elements>
     </div>
   );
 };

@@ -1,8 +1,7 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import axios from 'axios';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
@@ -12,8 +11,8 @@ import Button from '../components/Button';
 import Spinner from '../components/Spinner';
 import Select from '../components/Select';
 import OrderSummary from '../components/OrderSummary';
-import CartContext from '../context/cartContext';
 import Modal from '../components/Modal';
+import StripeForm from '../components/StripeForm';
 
 dayjs.extend(localizedFormat);
 
@@ -34,14 +33,9 @@ interface MyFormValues {
 }
 
 const Checkout: React.FC<CheckoutProps> = props => {
-  // const [loading, setLoading] = useState(false);
-  const [compState, setCompState] = useState<'Loading' | 'Rendered' | 'Error'>(
-    'Rendered'
-  );
-  const [stepTwo, setStepTwo] = useState(false);
-  const [shippingSpeed, setShippingSpeed] = useState('normal');
-  const [formValues, setFormValues] = useState({});
-  const context = useContext(CartContext);
+  const [compState] = useState<'Loading' | 'Rendered' | 'Error'>('Rendered');
+  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [shippingSpeed, setShippingSpeed] = useState<'normal' | 'fast'>(/**/ 'normal');
   const history = useHistory();
 
   const checkoutSchema = yup.object().shape({
@@ -87,10 +81,12 @@ const Checkout: React.FC<CheckoutProps> = props => {
       phoneNumber: ''
     },
     onSubmit(values) {
-      !stepTwo ? setStepTwoTrue(values) : orderHandler();
+      step === 1 ? setStepTwoTrue(values) : setStep(3);
     },
     validationSchema: checkoutSchema
   });
+
+  const [formValues, setFormValues] = useState(formik.initialValues);
 
   const PROVINCES = [
     '',
@@ -112,39 +108,19 @@ const Checkout: React.FC<CheckoutProps> = props => {
 
   const cart = JSON.parse(sessionStorage.getItem('cart')!);
 
-  const orderHandler = () => {
-    setCompState('Loading');
-    const userId = localStorage.getItem('userId');
-    // not actually using currentDate on back-end, just using Mongo timestampss
-    // const currentDate = new Date();
-    const order = { cart, orderData: formValues, userId, shippingSpeed, totalPrice };
-    axios
-      .post('/order', order)
-      .then(res => {
-        setCompState('Rendered');
-        setStepTwo(false);
-        context.updateQuantity(null);
-        sessionStorage.removeItem('cart');
-        history.push('/');
-      })
-      .catch(err => {
-        setCompState('Error');
-        console.log(err);
-      });
-  };
-
   const cancelHandler = () => {
-    setStepTwo(false);
+    setStep(1);
     history.push('/cart');
   };
 
   const setStepTwoTrue = (values: MyFormValues) => {
     setFormValues(values);
-    setStepTwo(true);
+    setStep(2);
   };
 
   const shippingSpeedChangeHandler = (e: React.FormEvent<HTMLInputElement>) => {
-    setShippingSpeed(e.currentTarget.value);
+    if (e.currentTarget.value === 'fast' || e.currentTarget.value === 'normal')
+      setShippingSpeed(e.currentTarget.value);
   };
 
   const subTotal = cart.subTotal;
@@ -198,16 +174,17 @@ const Checkout: React.FC<CheckoutProps> = props => {
   let totalPrice = subTotal + tax;
   let shippingPrice = subTotal > 35 ? 'FREE' : 'TBD';
 
-  if (stepTwo && shippingSpeed === 'fast') {
+  if ((step === 2 || step === 3) && shippingSpeed === 'fast') {
     shippingPrice = SHIPPING_PRICE[0].toFixed(2);
     totalPrice += +shippingPrice;
-  } else if (stepTwo && shippingSpeed === 'normal' && subTotal > 35) {
+  } else if ((step === 2 || step === 3) && shippingSpeed === 'normal' && subTotal > 35) {
     shippingPrice = 'FREE';
     totalPrice = subTotal + tax;
-  } else if (stepTwo && shippingSpeed === 'normal' && subTotal < 35) {
+  } else if ((step === 2 || step === 3) && shippingSpeed === 'normal' && subTotal < 35) {
     shippingPrice = SHIPPING_PRICE[1].toFixed(2);
     totalPrice += +shippingPrice;
   }
+  console.log(shippingPrice);
 
   const shippingLabelFast = `$10 -- Delivered By ${dayjs().add(3, 'day').format('LL')}`;
   const shippingLabelNormal = `${
@@ -215,7 +192,7 @@ const Checkout: React.FC<CheckoutProps> = props => {
   } -- Delivered By ${dayjs().add(4, 'day').format('LL')}`;
 
   let renderedForm = <Spinner />;
-  if (compState === 'Rendered' && !stepTwo) {
+  if (compState === 'Rendered' && step === 1) {
     renderedForm = (
       <>
         <StyledFirstName
@@ -319,7 +296,7 @@ const Checkout: React.FC<CheckoutProps> = props => {
         ) : null}
       </>
     );
-  } else if (compState === 'Rendered' && stepTwo) {
+  } else if (compState === 'Rendered' && step === 2) {
     renderedForm = (
       <>
         <StyledRadioDiv>
@@ -350,6 +327,8 @@ const Checkout: React.FC<CheckoutProps> = props => {
         </StyledRadioDiv>
       </>
     );
+  } else if (compState === 'Rendered' && step === 3) {
+    renderedForm = <div></div>;
   }
 
   const notAuth = (
@@ -366,7 +345,16 @@ const Checkout: React.FC<CheckoutProps> = props => {
       )}
       {props.isLoggedIn ? (
         <>
-          <h1>{!stepTwo ? 'Shipping Address' : 'Shipping Speed'}</h1>
+          <h1>
+            {step === 1 ? 'Shipping Address' : step === 2 ? 'Shipping Speed' : 'Payment'}
+          </h1>
+          {step === 3 && (
+            <StyledStripeForm
+              formValues={formValues}
+              shippingSpeed={'normal'}
+              totalPrice={totalPrice.toFixed(2)}
+            />
+          )}
           <StyledForm onSubmit={formik.handleSubmit}>
             {renderedForm}
             <StyledOrderSummary
@@ -376,9 +364,7 @@ const Checkout: React.FC<CheckoutProps> = props => {
               shippingPrice={shippingPrice}
             />
             <StyledBttnDiv>
-              <StyledButton type='submit'>
-                {!stepTwo ? 'Continue' : 'Place Order'}
-              </StyledButton>
+              {step !== 3 && <StyledButton type='submit'>Continue</StyledButton>}
               <StyledButton clicked={cancelHandler}>Cancel</StyledButton>
             </StyledBttnDiv>
           </StyledForm>
@@ -402,6 +388,13 @@ const StyledMain = styled.main`
     grid-template-columns: 1fr;
     justify-items: center;
   }
+`;
+
+const StyledStripeForm = styled(StripeForm)`
+  grid-column: 1/2;
+  grid-row: 2/3;
+  width: max-content;
+  z-index: 400;
 `;
 
 const StyledForm = styled.form`
