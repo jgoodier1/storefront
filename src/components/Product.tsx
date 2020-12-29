@@ -30,10 +30,10 @@ const Product: React.FC<ProductProps> = props => {
   };
 
   let buttons = undefined;
-  if (location.pathname === '/products') {
+  if (location.pathname === '/products' || location.pathname === '/search') {
     buttons = <StyledBttn clicked={addToCartHandler}>ADD TO CART</StyledBttn>;
   } else if (location.pathname === '/admin/products') {
-    // not really using these
+    // not  using these
     buttons = (
       <div>
         <StyledLink to={{ pathname: '/admin/edit-product', search: '?id=' + props.id }}>
