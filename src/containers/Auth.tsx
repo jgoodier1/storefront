@@ -13,6 +13,12 @@ interface IAuthData {
   name?: string;
   confirmPassword?: string;
 }
+interface AuthError {
+  value: string;
+  msg: string;
+  param: string;
+  location: string;
+}
 
 interface AuthProps {
   signUp: (arg1: IAuthData) => void;
@@ -20,6 +26,7 @@ interface AuthProps {
   closedModal: () => void;
   show: boolean;
   error: boolean;
+  authError: AuthError[] | null;
 }
 
 const Auth: React.FC<AuthProps> = props => {
@@ -59,19 +66,19 @@ const Auth: React.FC<AuthProps> = props => {
     onSubmit(values, actions) {
       if (isSignUp) {
         props.signUp(values);
-        actions.resetForm();
+        if (props.authError) actions.resetForm();
       } else if (!isSignUp) {
         props.login(values);
-        actions.resetForm();
+        if (props.authError) actions.resetForm();
       }
     },
     validationSchema
   });
 
-  // this needs to no close when there's an error after submitting
   const modalClosed = () => {
     props.closedModal();
     setIsSignUp(false);
+    formik.resetForm();
   };
 
   return (
@@ -138,12 +145,20 @@ const Auth: React.FC<AuthProps> = props => {
             ) : null}
           </>
         )}
+        {props.authError && props.authError.map(e => <p key={e.msg}>{e.msg}</p>)}
         <StyledButton>Submit</StyledButton>
         {!isSignUp && (
           <p>
             Don't have an account?{' '}
             <StyledSwitch onClick={() => setIsSignUp(true)}>Click here</StyledSwitch> to
             sign up
+          </p>
+        )}
+        {isSignUp && (
+          <p>
+            Already have an account?{' '}
+            <StyledSwitch onClick={() => setIsSignUp(false)}>Click here</StyledSwitch> to
+            sign in
           </p>
         )}
       </StyledForm>
