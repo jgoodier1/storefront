@@ -165,6 +165,16 @@ const Orders: React.FC<OrdersProps> = props => {
   let renderedOrders;
   if (compState === 'Loading') {
     renderedOrders = <Spinner />;
+  } else if (compState === 'Rendered' && (orders === null || orders.data.length === 0)) {
+    renderedOrders = (
+      <>
+        <h2>You haven't ordered anything yet!</h2>
+        <p>
+          Go to <StyledLink to='/products'>products</StyledLink> to browse the products,
+          or use the search bar to search for something.
+        </p>
+      </>
+    );
   } else if (compState === 'Rendered' && orders !== null) {
     renderedOrders = orders.data.map((order: ResOrder) => (
       <Order
@@ -319,4 +329,9 @@ const StyledAuthBttn = styled(Button)`
   width: max-content;
   padding: 1rem;
   place-self: center;
+`;
+
+const StyledLink = styled(Link)`
+  color: #3f6cd7;
+  text-decoration: none;
 `;
