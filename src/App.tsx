@@ -37,10 +37,18 @@ interface MySearchFormValues {
   search: string;
 }
 
+interface AuthError {
+  value: string;
+  msg: string;
+  param: string;
+  location: string;
+}
+
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [authError, setAuthErr] = useState<AuthError[] | null>(null);
   const cartContext = useContext(CartContext);
   const [cartQuantityState, setCartQuantityState] = useState(cartContext.quantity);
   const [promise] = useState(() =>
@@ -50,6 +58,8 @@ const App: React.FC = () => {
   );
 
   const history = useHistory();
+
+  console.log(authError);
 
   useEffect(() => {
     const oldToken = localStorage.getItem('token');
@@ -80,10 +90,14 @@ const App: React.FC = () => {
           'Content-Type': 'application/json'
         }
       })
-      .then(res => {
-        setShowAuthModal(false);
+      .then(() => {
+        // setShowAuthModal(false);
+        loginHandler(newUser);
       })
       .catch(err => {
+        if (err.response) {
+          setAuthErr(err.response.data);
+        }
         setIsError(true);
       });
   };
@@ -109,6 +123,9 @@ const App: React.FC = () => {
         setShowAuthModal(false);
       })
       .catch(err => {
+        if (err.response) {
+          setAuthErr(err.response.data);
+        }
         setIsError(true);
       });
   };
@@ -133,6 +150,7 @@ const App: React.FC = () => {
 
   const hideModalHandler = () => {
     setShowAuthModal(false);
+    setAuthErr(null);
   };
 
   const cartQuantity = (cart: ICart) => {
@@ -192,6 +210,7 @@ const App: React.FC = () => {
           show={showAuthModal}
           closedModal={hideModalHandler}
           error={isError}
+          authError={authError}
         />
       </Elements>
     </div>
