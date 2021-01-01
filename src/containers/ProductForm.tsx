@@ -37,15 +37,12 @@ const ProductForm: React.FC = () => {
     }
   }, [location]);
 
-  // let intialValues: MyFormValues = { title: '', image: '', price: '', description: '' };
-
   useEffect(() => {
     if (editingState) {
       setCompState('Loading');
       axios
         .get('/admin/edit-product' + location.search)
         .then(res => {
-          // console.log(res.data);
           setCompState('Rendered');
           setInitailValues({
             title: res.data.title,
@@ -53,19 +50,11 @@ const ProductForm: React.FC = () => {
             price: res.data.price,
             description: res.data.description
           });
-          // initialValues.title = res.data.title;
-          // initialValues.image = res.data.image;
-          // initialValues.price = res.data.price;
-          // initialValues.description = res.data.description;
         })
         .catch(() => {
           setCompState('Error');
         });
     } else if (editingState === false) {
-      // setTitleValue('');
-      // setImageValue('');
-      // setPriceValue('');
-      // setDescValue('');
     }
   }, [location.search, editingState]); //eslint-disable-line
 
@@ -83,15 +72,13 @@ const ProductForm: React.FC = () => {
       })
       .then(res => {
         setCompState('Rendered');
-        console.log('Axios res', res);
-        console.log('Axios res.data', res.data);
       })
       .then(() => {
         history.push('/products');
       })
       .catch(err => {
         setCompState('Error');
-        console.log(err.response.data);
+        console.error(err.response.data);
       });
   };
 
@@ -110,15 +97,13 @@ const ProductForm: React.FC = () => {
       })
       .then(res => {
         setCompState('Rendered');
-        console.log('Axios res', res);
-        console.log('Axios res.data', res.data);
       })
       .then(() => {
         history.push('/products');
       })
       .catch(err => {
         setCompState('Error');
-        console.error(err);
+        console.error(err.response.data);
       });
   };
 

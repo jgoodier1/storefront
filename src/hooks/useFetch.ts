@@ -29,7 +29,6 @@ const useFetch = (
           if (isMounted) {
             setCompState('Error');
             setData(err);
-            // console.log(err);
           }
         });
     } else if (
@@ -47,7 +46,6 @@ const useFetch = (
         })
         .catch(err => {
           if (isMounted) {
-            // console.log(err);
             setCompState('Error');
             setData(err);
           }

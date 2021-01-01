@@ -80,13 +80,11 @@ const Cart: React.FC = () => {
     setCompState('Loading');
     const cart: ICartStorage = JSON.parse(sessionStorage.getItem('cart')!);
     if (cart === undefined) {
-      console.log('cart undefined');
       setCompState('Rendered');
       return;
     }
     const prodId = cart.products.find(p => p.prodId === id);
     if (!prodId) {
-      console.log('no product found');
       setCompState('Rendered');
       return;
     } else {
@@ -121,13 +119,11 @@ const Cart: React.FC = () => {
     //why not cart from storage???
     const cart: ICartStorage = JSON.parse(sessionStorage.getItem('cart')!);
     if (cart === undefined) {
-      console.log('cart undefined');
       setCompState('Rendered');
       return; // return some kind of error
     }
     const existingProdId = cart.products.find(p => p.prodId === id);
     if (!existingProdId) {
-      console.log('no existing prod id');
       setCompState('Rendered');
       return; // need another error
     } else {
@@ -154,10 +150,9 @@ const Cart: React.FC = () => {
           .then(res => {
             setCart(res.data);
             setCompState('Rendered');
-            console.log(res);
           })
           .catch(err => {
-            console.error(err);
+            console.error(err.response.data);
             setCompState('Error');
           });
       }

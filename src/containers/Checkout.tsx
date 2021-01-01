@@ -184,7 +184,6 @@ const Checkout: React.FC<CheckoutProps> = props => {
     shippingPrice = SHIPPING_PRICE[1].toFixed(2);
     totalPrice += +shippingPrice;
   }
-  console.log(shippingPrice);
 
   const shippingLabelFast = `$10 -- Delivered By ${dayjs().add(3, 'day').format('LL')}`;
   const shippingLabelNormal = `${

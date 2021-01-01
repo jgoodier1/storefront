@@ -69,7 +69,6 @@ const Products: React.FC = () => {
         headers: { Authorization: 'bearer ' + localStorage.getItem('token') }
       })
       .then(res => {
-        console.log('Delete res.data', res.data);
         setCompState('Rendered');
       })
       .then(() => {
