@@ -57,9 +57,9 @@ const App: React.FC = () => {
     )
   );
 
-  const history = useHistory();
+  axios.defaults.baseURL = 'https://immense-earth-76647.herokuapp.com';
 
-  console.log(authError);
+  const history = useHistory();
 
   useEffect(() => {
     const oldToken = localStorage.getItem('token');
