@@ -34,7 +34,6 @@ const StripeForm: React.FC<StripeFormProps> = props => {
   const stripe = useStripe();
   const elements = useElements();
   const context = useContext(CartContext);
-  // const history = useHistory();
 
   useEffect(() => {
     setCompState('Loading');
@@ -48,18 +47,16 @@ const StripeForm: React.FC<StripeFormProps> = props => {
         formValues: props.formValues
       })
       .then(res => {
-        console.log(res.data);
         setClientSecret(res.data.clientSecret);
         setCompState('Rendered');
       })
       .catch(err => {
-        console.log(err);
+        console.error(err.response.data);
         setCompState('Error');
       });
   }, [props.formValues, props.shippingSpeed]);
 
   const orderHandler = async (e: FormEvent<HTMLFormElement>) => {
-    console.log('hellooooo');
     e.preventDefault();
     setProcessing(true);
 
@@ -67,6 +64,18 @@ const StripeForm: React.FC<StripeFormProps> = props => {
       const payload = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
           card: elements.getElement(CardElement)!
+        },
+        shipping: {
+          address: {
+            line1: props.formValues.streetAddress,
+            line2: props.formValues.streetAddressTwo,
+            city: props.formValues.city,
+            country: 'CA',
+            postal_code: props.formValues.postalCode,
+            state: props.formValues.province
+          },
+          name: props.formValues.firstName + ' ' + props.formValues.lastName,
+          phone: props.formValues.phoneNumber
         }
       });
 
@@ -75,12 +84,28 @@ const StripeForm: React.FC<StripeFormProps> = props => {
         setProcessing(false);
       } else {
         setError(null);
-        setProcessing(false);
-        setSucceeded(true);
-        console.log('succeeded');
-        context.updateQuantity(null);
-        sessionStorage.removeItem('cart');
-        // history.push('/');
+        const userId = localStorage.getItem('userId');
+        const cart = JSON.parse(sessionStorage.getItem('cart')!);
+        let totalPrice;
+        if (payload.paymentIntent?.amount)
+          totalPrice = payload.paymentIntent?.amount / 100;
+        axios
+          .post('/order', {
+            userId,
+            cart,
+            shippingSpeed: props.shippingSpeed,
+            orderData: props.formValues,
+            totalPrice: totalPrice
+          })
+          .then(() => {
+            setProcessing(false);
+            setSucceeded(true);
+            context.updateQuantity(null);
+            sessionStorage.removeItem('cart');
+          })
+          .catch(err => {
+            console.error(err.response.data);
+          });
       }
     }
   };
