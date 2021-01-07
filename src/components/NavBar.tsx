@@ -1,9 +1,12 @@
 import React, { useContext } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
 import SearchBar from './SearchBar';
 import CartContext from '../context/cartContext';
+import { selectAuthState, logout, showModal } from '../reduxSlices/authSlice';
+
 import logo from '../images/logo2.png';
 import shoppingCart from '../images/shopping-cart.png';
 
@@ -15,20 +18,14 @@ interface NavItemProps {
 }
 
 interface NavItemsProps {
-  isLoggedIn: boolean;
-  logout: () => void;
-  showModal: () => void;
-  search: (values: MySearchFormValues) => void;
+  search: (values: SearchValues) => void;
 }
 
 interface NavBarProps {
-  isLoggedIn: boolean;
-  logout: () => void;
-  showModal: () => void;
-  search: (values: MySearchFormValues) => void;
+  search: (values: SearchValues) => void;
 }
 
-interface MySearchFormValues {
+interface SearchValues {
   search: string;
 }
 
@@ -43,7 +40,9 @@ const NavItem: React.FC<NavItemProps> = props => {
 };
 
 const NavItems: React.FC<NavItemsProps> = props => {
+  const dispatch = useDispatch();
   const cartContext = useContext(CartContext);
+  const isLoggedIn = useSelector(selectAuthState);
 
   return (
     <SUl>
@@ -53,18 +52,18 @@ const NavItems: React.FC<NavItemsProps> = props => {
       <PSearchBar search={props.search} />
       <PProducts link='/products'>Products</PProducts>
       <POrders link='/orders'>Orders</POrders>
-      {!props.isLoggedIn && (
+      {!isLoggedIn && (
         <>
           <PAuth>
-            <SButton onClick={props.showModal}>Sign In</SButton>
+            <SButton onClick={() => dispatch(showModal())}>Sign In</SButton>
           </PAuth>
           {/* <NavItem link='/signup'>Sign Up</NavItem> */}
         </>
       )}
-      {props.isLoggedIn && (
+      {isLoggedIn && (
         <>
           <PAuth>
-            <SButton onClick={props.logout}>Logout</SButton>
+            <SButton onClick={() => dispatch(logout())}>Logout</SButton>
           </PAuth>
         </>
       )}
@@ -82,12 +81,7 @@ const NavBar: React.FC<NavBarProps> = props => {
   return (
     <SHead>
       <nav style={{ width: '100%' }}>
-        <NavItems
-          isLoggedIn={props.isLoggedIn}
-          logout={props.logout}
-          showModal={props.showModal}
-          search={props.search}
-        />
+        <NavItems search={props.search} />
       </nav>
     </SHead>
   );

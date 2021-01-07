@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import * as Yup from 'yup';
+import axios from 'axios';
 
 import { Input } from '../components/Input';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
+import { logIn, logout, hideModal, selectModalState } from '../reduxSlices/authSlice';
 
 interface IAuthData {
   email: string;
@@ -20,17 +24,12 @@ interface AuthError {
   location: string;
 }
 
-interface AuthProps {
-  signUp: (arg1: IAuthData) => void;
-  login: (arg1: IAuthData) => void;
-  closedModal: () => void;
-  show: boolean;
-  error: boolean;
-  authError: AuthError[] | null;
-}
-
-const Auth: React.FC<AuthProps> = props => {
+const Auth: React.FC = () => {
   const [isSignUp, setIsSignUp] = useState(false);
+  const [authError, setAuthError] = useState<AuthError[] | null>(null);
+  const history = useHistory();
+  const dispatch = useDispatch();
+  const showModal = useSelector(selectModalState);
 
   const signUpSchema = Yup.object().shape({
     name: Yup.string()
@@ -65,24 +64,108 @@ const Auth: React.FC<AuthProps> = props => {
     },
     onSubmit(values, actions) {
       if (isSignUp) {
-        props.signUp(values);
-        if (props.authError) actions.resetForm();
+        signUpHandler(values);
+        if (authError) actions.resetForm();
       } else if (!isSignUp) {
-        props.login(values);
-        if (props.authError) actions.resetForm();
+        loginHandler(values);
+        if (authError) actions.resetForm();
       }
     },
     validationSchema
   });
 
+  useEffect(() => {
+    const oldToken = localStorage.getItem('token');
+    const expiryDate = localStorage.getItem('expiryDate');
+    if (!oldToken || !expiryDate) {
+      return;
+    }
+    if (new Date(expiryDate) < new Date()) {
+      logoutHandler();
+      return;
+    }
+    const remainingMilliseconds = new Date(expiryDate).getTime() - new Date().getTime();
+    setAutoLogout(remainingMilliseconds);
+    dispatch(logIn());
+  }, []); //eslint-disable-line
+
+  const signUpHandler = (values: IAuthData) => {
+    const newUser = {
+      name: values.name,
+      email: values.email,
+      password: values.password,
+      confirmPassword: values.confirmPassword
+    };
+    axios
+      .post('/signup', newUser, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(() => {
+        // setShowAuthModal(false);
+        loginHandler(newUser);
+      })
+      .catch(err => {
+        if (err.response) {
+          setAuthError(err.response.data);
+        }
+      });
+  };
+
+  const loginHandler = (authData: IAuthData) => {
+    const user = {
+      email: authData.email,
+      password: authData.password
+    };
+    axios
+      .post('/signin', user)
+      .then(res => {
+        localStorage.setItem('token', res.data.token);
+        localStorage.setItem('userId', res.data.userId);
+        const remainingMilliseconds = 60 * 60 * 1000;
+        const expiryDate = new Date(
+          new Date().getTime() + remainingMilliseconds
+        ).toString();
+        localStorage.setItem('expiryDate', expiryDate);
+        setAutoLogout(remainingMilliseconds);
+        dispatch(logIn());
+        dispatch(hideModal());
+      })
+      .catch(err => {
+        if (err.response) {
+          setAuthError(err.response.data);
+        }
+      });
+  };
+
+  const logoutHandler = () => {
+    dispatch(logout());
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('expiryDate');
+    history.push('/');
+  };
+
+  const setAutoLogout = useCallback(milliseconds => {
+    setTimeout(() => {
+      logoutHandler();
+    }, milliseconds);
+  }, []); //eslint-disable-line
+
+  // const showModalHandler = () => {
+  //   setShowAuthModal(true); //dispatch(showModal())
+  // };
+
   const modalClosed = () => {
-    props.closedModal();
+    setAuthError(null);
+    dispatch(hideModal());
     setIsSignUp(false);
     formik.resetForm();
   };
 
   return (
-    <Modal show={props.show} modalClosed={() => modalClosed()}>
+    <Modal show={showModal} modalClosed={() => modalClosed()}>
       <StyledForm onSubmit={formik.handleSubmit}>
         {isSignUp ? <h1>Sign Up</h1> : <h1>Sign In</h1>}
         {isSignUp && (
@@ -145,7 +228,7 @@ const Auth: React.FC<AuthProps> = props => {
             ) : null}
           </>
         )}
-        {props.authError && props.authError.map(e => <p key={e.msg}>{e.msg}</p>)}
+        {authError && authError.map(e => <p key={e.msg}>{e.msg}</p>)}
         <StyledButton>Submit</StyledButton>
         {!isSignUp && (
           <p>

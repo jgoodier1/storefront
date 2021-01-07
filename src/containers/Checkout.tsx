@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import styled from 'styled-components';
@@ -13,13 +14,9 @@ import Select from '../components/Select';
 import OrderSummary from '../components/OrderSummary';
 import Modal from '../components/Modal';
 import StripeForm from '../components/StripeForm';
+import { selectAuthState, showModal } from '../reduxSlices/authSlice';
 
 dayjs.extend(localizedFormat);
-
-interface CheckoutProps {
-  isLoggedIn: boolean;
-  showModal: () => void;
-}
 
 interface MyFormValues {
   firstName: string;
@@ -32,11 +29,13 @@ interface MyFormValues {
   phoneNumber: string;
 }
 
-const Checkout: React.FC<CheckoutProps> = props => {
+const Checkout: React.FC = () => {
   const [compState] = useState<'Loading' | 'Rendered' | 'Error'>('Rendered');
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [shippingSpeed, setShippingSpeed] = useState<'normal' | 'fast'>(/**/ 'normal');
   const history = useHistory();
+  const dispatch = useDispatch();
+  const isLoggedIn = useSelector(selectAuthState);
 
   const checkoutSchema = yup.object().shape({
     firstName: yup.string().trim().required('First Name is required').max(20).min(2),
@@ -333,7 +332,7 @@ const Checkout: React.FC<CheckoutProps> = props => {
   const notAuth = (
     <>
       <h2 style={{ placeSelf: 'center' }}>Please sign in to continue</h2>
-      <StyledAuthBttn clicked={props.showModal}>Sign In</StyledAuthBttn>
+      <StyledAuthBttn clicked={() => dispatch(showModal())}>Sign In</StyledAuthBttn>
     </>
   );
 
@@ -342,7 +341,7 @@ const Checkout: React.FC<CheckoutProps> = props => {
       {compState === 'Error' && (
         <Modal show={compState === 'Error'}>Cannot place order. Please try again.</Modal>
       )}
-      {props.isLoggedIn ? (
+      {isLoggedIn ? (
         <>
           <h1>
             {step === 1 ? 'Shipping Address' : step === 2 ? 'Shipping Speed' : 'Payment'}

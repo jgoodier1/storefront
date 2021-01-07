@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
@@ -7,6 +8,7 @@ import Modal from '../components/Modal';
 import Button from '../components/Button';
 import Spinner from '../components/Spinner';
 import useFetch from '../hooks/useFetch';
+import { selectAuthState, showModal } from '../reduxSlices/authSlice';
 
 interface OrderProps {
   key: string;
@@ -37,11 +39,6 @@ interface OrderProps {
     streetAddressTwo?: string;
   };
   speed: string;
-}
-
-interface OrdersProps {
-  showModal: () => void;
-  isLoggedIn: boolean;
 }
 
 interface ResOrder {
@@ -151,14 +148,16 @@ const Order: React.FC<OrderProps> = props => {
   );
 };
 
-const Orders: React.FC<OrdersProps> = props => {
+const Orders: React.FC = () => {
   const userId = localStorage.getItem('userId');
   const [orders, compState] = useFetch('POST', '/orders', { userId });
+  const dispatch = useDispatch();
+  const isLoggedIn = useSelector(selectAuthState);
 
   const notAuth = (
     <>
       <StyledAuthH2>Please sign in to continue</StyledAuthH2>
-      <StyledAuthBttn clicked={props.showModal}>Sign In</StyledAuthBttn>
+      <StyledAuthBttn clicked={() => dispatch(showModal())}>Sign In</StyledAuthBttn>
     </>
   );
 
@@ -192,7 +191,7 @@ const Orders: React.FC<OrdersProps> = props => {
 
   return (
     <StyledMain>
-      {props.isLoggedIn ? (
+      {isLoggedIn ? (
         compState === 'Error' ? (
           <Modal show={compState === 'Error'}>
             <h1>Error</h1>
