@@ -44,6 +44,7 @@ const CartItem: React.FC<CartItemProps> = props => {
   const options = 100;
 
   const onSelectChange = (e: React.FormEvent<HTMLSelectElement>) => {
+    // this sometimes doesn't update and I don't know why
     setSelect(+e.currentTarget.value);
     props.edit(props.id, +e.currentTarget.value);
   };
@@ -116,7 +117,6 @@ const Cart: React.FC = () => {
 
   const deleteHandler = (id: string) => {
     setCompState('Loading');
-    //why not cart from storage???
     const cart: ICartStorage = JSON.parse(sessionStorage.getItem('cart')!);
     if (cart === undefined) {
       setCompState('Rendered');
