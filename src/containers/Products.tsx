@@ -10,7 +10,7 @@ import Paginator from '../components/Paginator';
 import useFetch from '../hooks/useFetch';
 
 interface ProductInt {
-  _id: string;
+  prod_id: string;
   title: string;
   image: string;
   description: string;
@@ -83,12 +83,12 @@ const Products: React.FC = () => {
   if (compState === 'Rendered' && data !== null) {
     renderedProducts = products.map(p => (
       <Product
-        key={p._id}
+        key={p.prod_id}
         title={p.title}
         image={p.image}
         price={p.price}
         description={p.description}
-        id={p._id}
+        id={p.prod_id}
         delete={clickDeleteHandler}
       />
     ));

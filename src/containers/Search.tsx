@@ -8,7 +8,7 @@ import Modal from '../components/Modal';
 import useFetch from '../hooks/useFetch';
 
 interface Result {
-  _id: string;
+  prod_id: string;
   title: string;
   image: string;
   price: number;
@@ -26,12 +26,12 @@ const Search: React.FC = () => {
   } else if (compState === 'Rendered' && results) {
     renderedResults = results.data.map((r: Result) => (
       <Product
-        key={r._id}
+        key={r.prod_id}
         title={r.title}
         image={r.image}
         price={r.price}
         description={r.description}
-        id={r._id}
+        id={r.prod_id}
       />
     ));
   }
