@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { NavLink } from 'react-router-dom';
+import { useHistory, NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
 import SearchBar from './SearchBar';
@@ -41,6 +41,7 @@ const NavItem: React.FC<NavItemProps> = props => {
 
 const NavItems: React.FC<NavItemsProps> = props => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const cartContext = useContext(CartContext);
   const isLoggedIn = useSelector(selectAuthState);
 
@@ -63,7 +64,7 @@ const NavItems: React.FC<NavItemsProps> = props => {
       {isLoggedIn && (
         <>
           <PAuth>
-            <SButton onClick={() => dispatch(logout())}>Logout</SButton>
+            <SButton onClick={() => dispatch(logout({ history }))}>Logout</SButton>
           </PAuth>
         </>
       )}

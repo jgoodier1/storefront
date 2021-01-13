@@ -65,10 +65,10 @@ const Auth: React.FC = () => {
     onSubmit(values, actions) {
       if (isSignUp) {
         signUpHandler(values);
-        if (authError) actions.resetForm();
+        if (!authError) actions.resetForm();
       } else if (!isSignUp) {
         loginHandler(values);
-        if (authError) actions.resetForm();
+        if (!authError) actions.resetForm();
       }
     },
     validationSchema
@@ -81,7 +81,7 @@ const Auth: React.FC = () => {
       return;
     }
     if (new Date(expiryDate) < new Date()) {
-      logoutHandler();
+      dispatch(logout({ history }));
       return;
     }
     const remainingMilliseconds = new Date(expiryDate).getTime() - new Date().getTime();
@@ -139,17 +139,9 @@ const Auth: React.FC = () => {
       });
   };
 
-  const logoutHandler = () => {
-    dispatch(logout());
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('expiryDate');
-    history.push('/');
-  };
-
   const setAutoLogout = useCallback(milliseconds => {
     setTimeout(() => {
-      logoutHandler();
+      dispatch(logout({ history }));
     }, milliseconds);
   }, []); //eslint-disable-line
 

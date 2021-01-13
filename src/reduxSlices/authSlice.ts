@@ -16,8 +16,13 @@ const authSlice = createSlice({
     logIn(state) {
       state.isLoggedIn = true;
     },
-    logout(state) {
+    logout(state, action) {
+      const { history } = action.payload;
       state.isLoggedIn = false;
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('expiryDate');
+      history.push('/');
     },
     showModal(state) {
       state.showModal = true;
