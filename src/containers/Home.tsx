@@ -14,8 +14,8 @@ const Home: React.FC = () => {
             storefront.
           </p>
           <p>
-            It is built with a React front-end and an Node/Express back-end with a MongoDB
-            database.
+            It is built with a React front-end and an Node/Express back-end with a
+            PostgreSQL database.
           </p>
           <p>
             You can view the source code for the front-end{' '}
