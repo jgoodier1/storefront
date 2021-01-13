@@ -11,21 +11,16 @@ import useFetch from '../hooks/useFetch';
 import { selectAuthState, showModal } from '../reduxSlices/authSlice';
 
 interface OrderProps {
-  key: string;
-  id: string;
-  products: [
-    {
-      _id: number;
-      prodId: {
-        _id: number;
-        title: string;
-        image: string;
-      };
-      price: number;
-      quantity: number;
-    }
-  ];
-  price: number;
+  key: number;
+  id: number;
+  products: {
+    prod_id: number;
+    title: string;
+    image: string;
+    price: number;
+    quantity: number;
+  }[];
+  price: string;
   date: number;
   address: {
     firstName: string;
@@ -42,21 +37,19 @@ interface OrderProps {
 }
 
 interface ResOrder {
-  _id: string;
-  products: [
-    {
-      _id: number;
-      prodId: {
-        _id: number;
-        title: string;
-        image: string;
-      };
-      price: number;
-      quantity: number;
-    }
-  ];
-  totalPrice: number;
-  createdAt: number;
+  order_id: number;
+  user_id: number;
+  email: string;
+  products: {
+    prod_id: number;
+    title: string;
+    image: string;
+    price: number;
+    quantity: number;
+  }[];
+  total_price: string;
+  shipping_speed: string;
+  date: number;
   contactInfo: {
     firstName: string;
     lastName: string;
@@ -68,7 +61,6 @@ interface ResOrder {
     phoneNumber: string;
     streetAddressTwo?: string;
   };
-  shippingSpeed: string;
 }
 
 const Order: React.FC<OrderProps> = props => {
@@ -84,11 +76,9 @@ const Order: React.FC<OrderProps> = props => {
   };
 
   const renderedOrder = props.products.map(product => (
-    <StyledProdDiv key={product._id}>
-      <StyledTitle to={'/products/' + product.prodId._id}>
-        {product.prodId.title}
-      </StyledTitle>
-      <StyledImg src={product.prodId.image} alt={product.prodId.title} />
+    <StyledProdDiv key={product.prod_id}>
+      <StyledTitle to={'/products/' + product.prod_id}>{product.title}</StyledTitle>
+      <StyledImg src={product.image} alt={product.title} />
       <StyledPrice>${product.price}</StyledPrice>
       <StyledQty>Qty: {product.quantity}</StyledQty>
     </StyledProdDiv>
@@ -109,7 +99,7 @@ const Order: React.FC<OrderProps> = props => {
           Date Ordered: <span>{dateOrdered}</span>
         </StyledP>
         <StyledP>
-          Total: <span>${props.price.toFixed(2)}</span>
+          Total: <span>${Number(props.price).toFixed(2)}</span>
         </StyledP>
         <StyledP onMouseEnter={popoverOpen} onMouseLeave={popoverClose}>
           Ship To:{' '}
@@ -177,13 +167,13 @@ const Orders: React.FC = () => {
   } else if (compState === 'Rendered' && orders !== null) {
     renderedOrders = orders.data.map((order: ResOrder) => (
       <Order
-        key={order._id}
-        id={order._id}
+        key={order.order_id}
+        id={order.order_id}
         products={order.products}
-        price={order.totalPrice}
-        date={order.createdAt}
+        price={order.total_price}
+        date={order.date}
         address={order.contactInfo}
-        speed={order.shippingSpeed}
+        speed={order.shipping_speed}
       />
     ));
     renderedOrders.reverse();
