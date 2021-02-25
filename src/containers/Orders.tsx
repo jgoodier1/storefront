@@ -76,12 +76,12 @@ const Order: React.FC<OrderProps> = props => {
   };
 
   const renderedOrder = props.products.map(product => (
-    <StyledProdDiv key={product.prod_id}>
-      <StyledTitle to={'/products/' + product.prod_id}>{product.title}</StyledTitle>
-      <StyledImg src={product.image} alt={product.title} />
-      <StyledPrice>${product.price}</StyledPrice>
-      <StyledQty>Qty: {product.quantity}</StyledQty>
-    </StyledProdDiv>
+    <ProductContainer key={product.prod_id}>
+      <Title to={'/products/' + product.prod_id}>{product.title}</Title>
+      <Image src={product.image} alt={product.title} />
+      <Price>${product.price}</Price>
+      <Quantity>Qty: {product.quantity}</Quantity>
+    </ProductContainer>
   ));
 
   const dateOrdered = dayjs(props.date).format('MMM DD, YYYY');
@@ -93,48 +93,50 @@ const Order: React.FC<OrderProps> = props => {
   }
 
   return (
-    <StyledOrderDiv>
-      <StyledTopBarDiv>
-        <StyledP>
+    <OrderContainer>
+      <TopRowContainer>
+        <Paragraph>
           Date Ordered: <span>{dateOrdered}</span>
-        </StyledP>
-        <StyledP>
+        </Paragraph>
+        <Paragraph>
           Total: <span>${Number(props.price).toFixed(2)}</span>
-        </StyledP>
-        <StyledP onMouseEnter={popoverOpen} onMouseLeave={popoverClose}>
+        </Paragraph>
+        <Paragraph onMouseEnter={popoverOpen} onMouseLeave={popoverClose}>
           Ship To:{' '}
           <span>
             {props.address.firstName} {props.address.lastName}
           </span>
-        </StyledP>
+        </Paragraph>
         {isShown && (
-          <StyledPopoverDiv>
-            <StyledPopoverP>
+          <PopoverContainer>
+            <PopoverParagraph>
               <strong>
                 {props.address.firstName} {props.address.lastName}
               </strong>
-            </StyledPopoverP>
-            <StyledPopoverP>{props.address.streetAddress}</StyledPopoverP>
+            </PopoverParagraph>
+            <PopoverParagraph>{props.address.streetAddress}</PopoverParagraph>
             {props.address.streetAddressTwo && (
-              <StyledPopoverP>{props.address.streetAddressTwo}</StyledPopoverP>
+              <PopoverParagraph>{props.address.streetAddressTwo}</PopoverParagraph>
             )}
-            <StyledPopoverP>
+            <PopoverParagraph>
               {props.address.city}, {props.address.province} {props.address.postalCode}
-            </StyledPopoverP>
-            <StyledPopoverP>{props.address.country}</StyledPopoverP>
-            <StyledPopoverP>{props.address.phoneNumber}</StyledPopoverP>
-          </StyledPopoverDiv>
+            </PopoverParagraph>
+            <PopoverParagraph>{props.address.country}</PopoverParagraph>
+            <PopoverParagraph>{props.address.phoneNumber}</PopoverParagraph>
+          </PopoverContainer>
         )}
-      </StyledTopBarDiv>
+      </TopRowContainer>
       {deliveryDate !== undefined && +deliveryDate.valueOf() > +dayjs().valueOf() ? (
-        <StyledH2>Expected Delivery: {deliveryDate.format('MMM DD, YYYY')}</StyledH2>
+        <DeliveryHeading>
+          Expected Delivery: {deliveryDate.format('MMM DD, YYYY')}
+        </DeliveryHeading>
       ) : (
-        <StyledH2>
+        <DeliveryHeading>
           Delivered: {deliveryDate !== undefined && deliveryDate.format('MMM DD, YYYY')}
-        </StyledH2>
+        </DeliveryHeading>
       )}
       {renderedOrder}
-    </StyledOrderDiv>
+    </OrderContainer>
   );
 };
 
@@ -146,8 +148,8 @@ const Orders: React.FC = () => {
 
   const notAuth = (
     <>
-      <StyledAuthH2>Please sign in to continue</StyledAuthH2>
-      <StyledAuthBttn clicked={() => dispatch(showModal())}>Sign In</StyledAuthBttn>
+      <UnauthorizedHeading>Please sign in to continue</UnauthorizedHeading>
+      <SignInButton clicked={() => dispatch(showModal())}>Sign In</SignInButton>
     </>
   );
 
@@ -159,8 +161,8 @@ const Orders: React.FC = () => {
       <>
         <h2>You haven't ordered anything yet!</h2>
         <p>
-          Go to <StyledLink to='/products'>products</StyledLink> to browse the products,
-          or use the search bar to search for something.
+          Go to <ExtendedLink to='/products'>products</ExtendedLink> to browse the
+          products, or use the search bar to search for something.
         </p>
       </>
     );
@@ -180,7 +182,7 @@ const Orders: React.FC = () => {
   }
 
   return (
-    <StyledMain>
+    <Main>
       {isLoggedIn ? (
         compState === 'Error' ? (
           <Modal show={compState === 'Error'}>
@@ -190,19 +192,19 @@ const Orders: React.FC = () => {
         ) : (
           <>
             <h1 style={{ justifySelf: 'center' }}>Your Orders</h1>
-            <StyledRendedOrdersDiv>{renderedOrders}</StyledRendedOrdersDiv>
+            <RenderedOrdersContainer>{renderedOrders}</RenderedOrdersContainer>
           </>
         )
       ) : (
         notAuth
       )}
-    </StyledMain>
+    </Main>
   );
 };
 
 export default Orders;
 
-const StyledMain = styled.main`
+const Main = styled.main`
   display: grid;
   grid-template-columns: minmax(0, 1fr) 2fr minmax(0, 1fr);
   grid-gap: 15px 0;
@@ -212,20 +214,20 @@ const StyledMain = styled.main`
   }
 `;
 
-const StyledRendedOrdersDiv = styled.div`
+const RenderedOrdersContainer = styled.div`
   @media (max-width: 768px) {
     grid-row-start: 2;
   }
 `;
 
-const StyledOrderDiv = styled.div`
+const OrderContainer = styled.div`
   width: 100%;
   border: 1px solid #ddd;
   border-radius: 4px;
   margin: 20px 0;
 `;
 
-const StyledTopBarDiv = styled.div`
+const TopRowContainer = styled.div`
   grid-column: 2/3;
   display: flex;
   justify-content: space-between;
@@ -240,12 +242,12 @@ const StyledTopBarDiv = styled.div`
   }
 `;
 
-const StyledP = styled.p`
+const Paragraph = styled.p`
   display: flex;
   flex-flow: column;
 `;
 
-const StyledPopoverDiv = styled.div`
+const PopoverContainer = styled.div`
   position: absolute;
   z-index: 200;
   background: #fff;
@@ -259,15 +261,15 @@ const StyledPopoverDiv = styled.div`
   left: 28rem;
 `;
 
-const StyledPopoverP = styled.p`
+const PopoverParagraph = styled.p`
   margin: 0;
 `;
 
-const StyledH2 = styled.h2`
+const DeliveryHeading = styled.h2`
   margin-left: 2rem;
 `;
 
-const StyledProdDiv = styled.div`
+const ProductContainer = styled.div`
   grid-column: 2/3;
   display: grid;
   grid-template-columns: 10rem 1fr 1fr;
@@ -276,13 +278,13 @@ const StyledProdDiv = styled.div`
   width: 70%;
 `;
 
-const StyledImg = styled.img`
+const Image = styled.img`
   max-width: 10rem;
   grid-column: 1/2;
   grid-row: 1/4;
 `;
 
-const StyledTitle = styled(Link)`
+const Title = styled(Link)`
   grid-column: 2/4;
   grid-row: 1/2;
   width: max-content;
@@ -296,31 +298,31 @@ const StyledTitle = styled(Link)`
   }
 `;
 
-const StyledPrice = styled.p`
+const Price = styled.p`
   grid-column: 2/3;
   font-weight: bold;
 `;
 
-const StyledQty = styled.p`
+const Quantity = styled.p`
   grid-column: 3/4;
   font-weight: bold;
   width: max-content;
 `;
 
-const StyledAuthH2 = styled.h2`
+const UnauthorizedHeading = styled.h2`
   grid-column: 2/3;
   place-self: center;
   width: max-content;
 `;
 
-const StyledAuthBttn = styled(Button)`
+const SignInButton = styled(Button)`
   grid-column: 2/3;
   width: max-content;
   padding: 1rem;
   place-self: center;
 `;
 
-const StyledLink = styled(Link)`
+const ExtendedLink = styled(Link)`
   color: #3f6cd7;
   text-decoration: none;
 `;

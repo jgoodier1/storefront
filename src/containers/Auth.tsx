@@ -42,7 +42,6 @@ const Auth: React.FC = () => {
       .max(20, 'Too long! Password must be between 5 and 20 characters')
       .required('Password is required'),
     confirmPassword: Yup.string().required('Please confirm your password')
-    // .oneOf([Yup.ref('password'), null], "Passwords don't match")
   });
 
   const loginSchema = Yup.object().shape({
@@ -103,7 +102,6 @@ const Auth: React.FC = () => {
         }
       })
       .then(() => {
-        // setShowAuthModal(false);
         loginHandler(newUser);
       })
       .catch(err => {
@@ -145,10 +143,6 @@ const Auth: React.FC = () => {
     }, milliseconds);
   }, []); //eslint-disable-line
 
-  // const showModalHandler = () => {
-  //   setShowAuthModal(true); //dispatch(showModal())
-  // };
-
   const modalClosed = () => {
     setAuthError(null);
     dispatch(hideModal());
@@ -158,7 +152,7 @@ const Auth: React.FC = () => {
 
   return (
     <Modal show={showModal} modalClosed={() => modalClosed()}>
-      <StyledForm onSubmit={formik.handleSubmit}>
+      <Form onSubmit={formik.handleSubmit}>
         {isSignUp ? <h1>Sign Up</h1> : <h1>Sign In</h1>}
         {isSignUp && (
           <>
@@ -221,28 +215,32 @@ const Auth: React.FC = () => {
           </>
         )}
         {authError && authError.map(e => <p key={e.msg}>{e.msg}</p>)}
-        <StyledButton>Submit</StyledButton>
+        <ExtendedButton>Submit</ExtendedButton>
         {!isSignUp && (
           <p>
             Don't have an account?{' '}
-            <StyledSwitch onClick={() => setIsSignUp(true)}>Click here</StyledSwitch> to
-            sign up
+            <SwitchModeButton onClick={() => setIsSignUp(true)}>
+              Click here
+            </SwitchModeButton>{' '}
+            to sign up
           </p>
         )}
         {isSignUp && (
           <p>
             Already have an account?{' '}
-            <StyledSwitch onClick={() => setIsSignUp(false)}>Click here</StyledSwitch> to
-            sign in
+            <SwitchModeButton onClick={() => setIsSignUp(false)}>
+              Click here
+            </SwitchModeButton>{' '}
+            to sign in
           </p>
         )}
-      </StyledForm>
+      </Form>
     </Modal>
   );
 };
 export default Auth;
 
-const StyledForm = styled.form`
+const Form = styled.form`
   display: flex;
   flex-flow: column;
   align-items: center;
@@ -251,7 +249,7 @@ const StyledForm = styled.form`
   text-align: center;
 `;
 
-const StyledSwitch = styled.button`
+const SwitchModeButton = styled.button`
   color: #38689e;
   border: none;
   padding: 0;
@@ -261,6 +259,6 @@ const StyledSwitch = styled.button`
   cursor: pointer;
 `;
 
-const StyledButton = styled(Button)`
+const ExtendedButton = styled(Button)`
   margin-top: 1rem;
 `;

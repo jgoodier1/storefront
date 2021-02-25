@@ -1,3 +1,5 @@
+// NOT BEING USED
+
 import React, { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
@@ -124,7 +126,7 @@ const ProductForm: React.FC = () => {
           !editingState ? onAddSubmitHandler(values) : onEditSubmitHandler(values);
         }}
       >
-        <StyledForm>
+        <ExtendedForm>
           <h2>{!editingState ? 'Add Product' : 'Edit Product'}</h2>
           <label htmlFor='title'>Title</label>
           <Field id='title' name='title' type='text' />
@@ -135,7 +137,7 @@ const ProductForm: React.FC = () => {
           <label htmlFor='description'>Description</label>
           <Field id='description' name='description' type='text' as='textarea' />
           <Button type='submit'>Submit</Button>
-        </StyledForm>
+        </ExtendedForm>
       </Formik>
     </>
   );
@@ -143,7 +145,7 @@ const ProductForm: React.FC = () => {
 
 export default ProductForm;
 
-const StyledForm = styled(Form)`
+const ExtendedForm = styled(Form)`
   display: flex;
   flex-flow: column;
   align-items: center;
@@ -151,51 +153,6 @@ const StyledForm = styled(Form)`
   margin: 100px auto;
   width: 500px;
   text-align: center;
-  ${'' /* box-shadow: 0 2px 3px #ccc; */}
   border: 1px solid #eee;
   padding: 10px;
 `;
-
-// const [controlsState, setControlsState] = useState({
-//   title: {
-//     elementType: 'input',
-//     elementConfig: {
-//       type: 'text',
-//     },
-//     label: 'Product Title: ',
-//     value: '',
-//   },
-//   image: {
-//     elementType: 'input',
-//     elementConfig: {
-//       type: 'url',
-//     },
-//     label: 'Image URL: ',
-//     value: '',
-//   },
-//   price: {
-//     elementType: 'input',
-//     elementConfig: {
-//       type: 'number',
-//     },
-//     label: 'Price: ',
-//     value: '',
-//   },
-//   description: {
-//     elementType: 'textarea',
-//     elementConfig: {
-//       name: 'description',
-//       htmlFor: 'description',
-//     },
-//     label: 'Description: ',
-//     value: '',
-//   },
-// });
-
-// const formElementsArray = [];
-// for (let key in controlsState) {
-//   formElementsArray.push({
-//     id: key,
-//     config: controlsState[key],
-//   });
-// }

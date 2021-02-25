@@ -31,11 +31,11 @@ interface SearchValues {
 
 const NavItem: React.FC<NavItemProps> = props => {
   return (
-    <SLi className={props.className}>
-      <SNavLink to={props.link} exact={props.exact}>
+    <ListItem className={props.className}>
+      <ExtendedNavLink to={props.link} exact={props.exact}>
         {props.children}
-      </SNavLink>
-    </SLi>
+      </ExtendedNavLink>
+    </ListItem>
   );
 };
 
@@ -46,54 +46,53 @@ const NavItems: React.FC<NavItemsProps> = props => {
   const isLoggedIn = useSelector(selectAuthState);
 
   return (
-    <SUl>
-      <PLogo link='/' exact>
-        <SLogo src={logo} alt='logo' />
-      </PLogo>
-      <PSearchBar search={props.search} />
-      <PProducts link='/products'>Products</PProducts>
-      <POrders link='/orders'>Orders</POrders>
+    <UnorderList>
+      <LogoLink link='/' exact>
+        <LogoImage src={logo} alt='logo' />
+      </LogoLink>
+      <ExtendedSearchBar search={props.search} />
+      <Products link='/products'>Products</Products>
+      <Orders link='/orders'>Orders</Orders>
       {!isLoggedIn && (
         <>
-          <PAuth>
-            <SButton onClick={() => dispatch(showModal())}>Sign In</SButton>
-          </PAuth>
+          <AuthListItem>
+            <AuthButton onClick={() => dispatch(showModal())}>Sign In</AuthButton>
+          </AuthListItem>
           {/* <NavItem link='/signup'>Sign Up</NavItem> */}
         </>
       )}
       {isLoggedIn && (
         <>
-          <PAuth>
-            <SButton onClick={() => dispatch(logout({ history }))}>Logout</SButton>
-          </PAuth>
+          <AuthListItem>
+            <AuthButton onClick={() => dispatch(logout({ history }))}>Logout</AuthButton>
+          </AuthListItem>
         </>
       )}
-      <PCart link='/cart'>
+      <CartLink link='/cart'>
         <div>
-          <SCart src={shoppingCart} alt='cart' />
-          <SSpan>{cartContext.quantity}</SSpan>
+          <CartImage src={shoppingCart} alt='cart' />
+          <Span>{cartContext.quantity}</Span>
         </div>
-      </PCart>
-    </SUl>
+      </CartLink>
+    </UnorderList>
   );
 };
 
 const NavBar: React.FC<NavBarProps> = props => {
   return (
-    <SHead>
+    <Header>
       <nav style={{ width: '100%' }}>
         <NavItems search={props.search} />
       </nav>
-    </SHead>
+    </Header>
   );
 };
 
 export default NavBar;
 
-const SHead = styled.header`
+const Header = styled.header`
   height: 70px;
   width: 100%;
-  ${'' /* position: fixed; */}
   top: 0;
   left: 0;
   display: flex;
@@ -106,7 +105,7 @@ const SHead = styled.header`
   }
 `;
 
-const SUl = styled.ul`
+const UnorderList = styled.ul`
   margin: 0;
   padding: 0;
   list-stlye: none;
@@ -123,7 +122,7 @@ const SUl = styled.ul`
   }
 `;
 
-const SLi = styled.li`
+const ListItem = styled.li`
   margin: 0;
   display: flex;
   ${'' /* height: 100%; */}
@@ -132,7 +131,7 @@ const SLi = styled.li`
   place-self: center;
 `;
 
-const SButton = styled.button`
+const AuthButton = styled.button`
   text-decoration: none;
   color: #000;
   background: #fff;
@@ -154,7 +153,7 @@ const SButton = styled.button`
   }
 `;
 
-const SNavLink = styled(NavLink)`
+const ExtendedNavLink = styled(NavLink)`
   text-decoration: none;
   color: #000;
   height: 100%;
@@ -171,54 +170,48 @@ const SNavLink = styled(NavLink)`
   }
 `;
 
-const SLogo = styled.img`
+const LogoImage = styled.img`
   height: 56px;
 `;
 
-const SCart = styled.img`
+const CartImage = styled.img`
   height: 2rem;
 `;
 
-const SSpan = styled.span`
-  ${'' /* position: absolute; */}
-  ${'' /* background: #61e7ee; */}
+const Span = styled.span`
   background: #80f9ff;
   border-radius: 40px;
-  ${'' /* width: 20px;
-  height: 20px; */}
   width: 25px;
   height: 25px;
   text-align: center;
   display: inline-block;
   position: relative;
-  ${'' /* top: -21px;
-  right: 22px; */}
   top: -23px;
   right: 12px;
 `;
 
-const PSearchBar = styled(SearchBar)`
+const ExtendedSearchBar = styled(SearchBar)`
   grid-area: searchbar;
   place-self: center;
 `;
 
-const PLogo = styled(NavItem)`
+const LogoLink = styled(NavItem)`
   grid-area: logo;
 `;
 
-const PProducts = styled(NavItem)`
+const Products = styled(NavItem)`
   grid-area: products;
 `;
 
-const POrders = styled(NavItem)`
+const Orders = styled(NavItem)`
   grid-area: orders;
 `;
 
-const PAuth = styled(SLi)`
+const AuthListItem = styled(ListItem)`
   grid-area: auth;
 `;
 
-const PCart = styled(NavItem)`
+const CartLink = styled(NavItem)`
   grid-area: cart;
 `;
 

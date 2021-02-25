@@ -7,11 +7,11 @@ interface BackdropProps {
 }
 
 const Backdrop: React.FC<BackdropProps> = props =>
-  props.show ? <StyledBackdrop onClick={props.clicked}></StyledBackdrop> : null;
+  props.show ? <Container onClick={props.clicked}></Container> : null;
 
 export default Backdrop;
 
-const StyledBackdrop = styled.div`
+const Container = styled.div`
   width: 100%;
   height: 100%;
   position: fixed;

@@ -193,7 +193,7 @@ const Checkout: React.FC = () => {
   if (compState === 'Rendered' && step === 1) {
     renderedForm = (
       <>
-        <StyledFirstName
+        <FirstName
           type='text'
           name='firstName'
           id='firstName'
@@ -202,7 +202,7 @@ const Checkout: React.FC = () => {
           value={formik.values.firstName}
           onBlur={formik.handleBlur}
         />
-        <StyledLastName
+        <LastName
           type='text'
           name='lastName'
           id='lastName'
@@ -211,7 +211,7 @@ const Checkout: React.FC = () => {
           value={formik.values.lastName}
           onBlur={formik.handleBlur}
         />
-        <StyledAddress1
+        <Address1
           type='text'
           name='streetAddress'
           id='streetAddress'
@@ -220,7 +220,7 @@ const Checkout: React.FC = () => {
           value={formik.values.streetAddress}
           onBlur={formik.handleBlur}
         />
-        <StyledAddress2
+        <Address2
           type='text'
           name='streetAddressTwo'
           id='streetAddressTwo'
@@ -229,7 +229,7 @@ const Checkout: React.FC = () => {
           value={formik.values.streetAddressTwo}
           onBlur={formik.handleBlur}
         />
-        <StyledCity
+        <City
           type='text'
           name='city'
           id='city'
@@ -238,20 +238,20 @@ const Checkout: React.FC = () => {
           value={formik.values.city}
           onBlur={formik.handleBlur}
         />
-        <StyledProvince htmlFor='province'>
+        <Province htmlFor='province'>
           Province*
-          <StyledSelect
+          <ExtendedSelect
             options={PROVINCES}
             name='province'
             value={formik.values.province}
             changed={formik.handleChange}
             // onBlur here?
           />
-        </StyledProvince>
-        <StyledCountry>
-          Country* <StyledSpan>Canada</StyledSpan>
-        </StyledCountry>
-        <StyledPostalCode
+        </Province>
+        <Country>
+          Country* <CountrySpan>Canada</CountrySpan>
+        </Country>
+        <PostalCode
           type='text'
           name='postalCode'
           id='postalCode'
@@ -260,7 +260,7 @@ const Checkout: React.FC = () => {
           value={formik.values.postalCode}
           onBlur={formik.handleBlur}
         />
-        <StyledPhoneNumber
+        <PhoneNumber
           type='text'
           name='phoneNumber'
           id='phoneNumber'
@@ -297,7 +297,7 @@ const Checkout: React.FC = () => {
   } else if (compState === 'Rendered' && step === 2) {
     renderedForm = (
       <>
-        <StyledRadioDiv>
+        <RadioContainer>
           <input
             type='radio'
             name='shipping'
@@ -309,8 +309,8 @@ const Checkout: React.FC = () => {
             }
           />
           <label htmlFor='fast'>{shippingLabelFast}</label>
-        </StyledRadioDiv>
-        <StyledRadioDiv>
+        </RadioContainer>
+        <RadioContainer>
           <input
             type='radio'
             name='shipping'
@@ -322,7 +322,7 @@ const Checkout: React.FC = () => {
             }
           />
           <label htmlFor='normal'>{shippingLabelNormal}</label>
-        </StyledRadioDiv>
+        </RadioContainer>
       </>
     );
   } else if (compState === 'Rendered' && step === 3) {
@@ -332,12 +332,12 @@ const Checkout: React.FC = () => {
   const notAuth = (
     <>
       <h2 style={{ placeSelf: 'center' }}>Please sign in to continue</h2>
-      <StyledAuthBttn clicked={() => dispatch(showModal())}>Sign In</StyledAuthBttn>
+      <SignInButton clicked={() => dispatch(showModal())}>Sign In</SignInButton>
     </>
   );
 
   return (
-    <StyledMain>
+    <Main>
       {compState === 'Error' && (
         <Modal show={compState === 'Error'}>Cannot place order. Please try again.</Modal>
       )}
@@ -347,36 +347,36 @@ const Checkout: React.FC = () => {
             {step === 1 ? 'Shipping Address' : step === 2 ? 'Shipping Speed' : 'Payment'}
           </h1>
           {step === 3 && (
-            <StyledStripeForm
+            <ExtendedStripeForm
               formValues={formValues}
               shippingSpeed={'normal'}
               totalPrice={totalPrice.toFixed(2)}
             />
           )}
-          <StyledForm onSubmit={formik.handleSubmit}>
+          <Form onSubmit={formik.handleSubmit}>
             {renderedForm}
-            <StyledOrderSummary
+            <ExtendedOrderSummary
               totalPrice={totalPrice.toFixed(2)}
               tax={tax.toFixed(2)}
               subTotal={subTotal.toFixed(2)}
               shippingPrice={shippingPrice}
             />
-            <StyledBttnDiv>
-              {step !== 3 && <StyledButton type='submit'>Continue</StyledButton>}
-              <StyledButton clicked={cancelHandler}>Cancel</StyledButton>
-            </StyledBttnDiv>
-          </StyledForm>
+            <ButtonContainer>
+              {step !== 3 && <ExtendedButton type='submit'>Continue</ExtendedButton>}
+              <ExtendedButton clicked={cancelHandler}>Cancel</ExtendedButton>
+            </ButtonContainer>
+          </Form>
         </>
       ) : (
         notAuth
       )}
-    </StyledMain>
+    </Main>
   );
 };
 
 export default Checkout;
 
-const StyledMain = styled.main`
+const Main = styled.main`
   display: grid;
   grid-template-columns: 2fr 1fr;
   margin: 1rem 6rem;
@@ -388,24 +388,20 @@ const StyledMain = styled.main`
   }
 `;
 
-const StyledStripeForm = styled(StripeForm)`
+const ExtendedStripeForm = styled(StripeForm)`
   grid-column: 1/2;
   grid-row: 2/3;
   width: max-content;
   z-index: 400;
 `;
 
-const StyledForm = styled.form`
+const Form = styled.form`
   grid-column: 1/2;
   grid-row: 2/5;
   display: grid;
   grid-template-columns: repeat(3, 20rem);
-  ${'' /* grid-template-columns: 1fr 1fr; */}
   grid-template-rows: 4rem;
   grid-gap: 10px;
-  ${'' /* margin: 100px auto;
-  border: 1px solid #eee;
- */}
   max-width: max-content;
   height: max-content;
   text-align: left;
@@ -418,12 +414,12 @@ const StyledForm = styled.form`
   }
 `;
 
-const StyledFirstName = styled(Input)`
+const FirstName = styled(Input)`
   grid-column: 1/2;
   grid-row: 1/2;
 `;
 
-const StyledLastName = styled(Input)`
+const LastName = styled(Input)`
   grid-column: 2/3;
   grid-row: 1/2;
 
@@ -433,7 +429,7 @@ const StyledLastName = styled(Input)`
   }
 `;
 
-const StyledAddress1 = styled(Input)`
+const Address1 = styled(Input)`
   grid-column: 1/3;
   grid-row: 2/3;
 
@@ -443,7 +439,7 @@ const StyledAddress1 = styled(Input)`
   }
 `;
 
-const StyledAddress2 = styled(Input)`
+const Address2 = styled(Input)`
   grid-column: 1/3;
   grid-row: 3/4;
 
@@ -453,7 +449,7 @@ const StyledAddress2 = styled(Input)`
   }
 `;
 
-const StyledCity = styled(Input)`
+const City = styled(Input)`
   grid-column: 1/3;
   grid-row: 4/5;
 
@@ -463,7 +459,7 @@ const StyledCity = styled(Input)`
   }
 `;
 
-const StyledProvince = styled.label`
+const Province = styled.label`
   grid-column: 1/2;
   grid-row: 5/6;
   font-weight: bold;
@@ -473,7 +469,7 @@ const StyledProvince = styled.label`
   }
 `;
 
-const StyledSelect = styled(Select)`
+const ExtendedSelect = styled(Select)`
   border: 1px solid #000;
   width: 20rem;
 
@@ -482,7 +478,7 @@ const StyledSelect = styled(Select)`
   }
 `;
 
-const StyledPostalCode = styled(Input)`
+const PostalCode = styled(Input)`
   grid-column: 2/3;
   grid-row: 5/6;
 
@@ -492,7 +488,7 @@ const StyledPostalCode = styled(Input)`
   }
 `;
 
-const StyledCountry = styled.p`
+const Country = styled.p`
   grid-column: 1/2;
   grid-row: 6/7;
   font-weight: bold;
@@ -505,7 +501,7 @@ const StyledCountry = styled.p`
   }
 `;
 
-const StyledSpan = styled.span`
+const CountrySpan = styled.span`
   height: 34px;
   border: 1px solid black;
   padding-left: 0.5em;
@@ -514,7 +510,7 @@ const StyledSpan = styled.span`
   font-weight: normal;
 `;
 
-const StyledPhoneNumber = styled(Input)`
+const PhoneNumber = styled(Input)`
   grid-column: 2/3;
   grid-row: 6/7;
 
@@ -524,7 +520,7 @@ const StyledPhoneNumber = styled(Input)`
   }
 `;
 
-const StyledOrderSummary = styled(OrderSummary)`
+const ExtendedOrderSummary = styled(OrderSummary)`
   grid-column: 3/4;
   grid-row: 1/4;
   align-self: start;
@@ -538,7 +534,7 @@ const StyledOrderSummary = styled(OrderSummary)`
   }
 `;
 
-const StyledBttnDiv = styled.div`
+const ButtonContainer = styled.div`
   grid-column: 3/4;
   grid-row: 3/8;
   display: flex;
@@ -554,11 +550,10 @@ const StyledBttnDiv = styled.div`
   }
 `;
 
-const StyledButton = styled(Button)`
+const ExtendedButton = styled(Button)`
   width: max-content;
   height: max-content;
   padding: 1.5rem;
-  ${'' /* margin-left: 1rem; */}
   font-weight: bold;
   font-size: 1.5rem;
   font-family: inherit;
@@ -568,12 +563,12 @@ const StyledButton = styled(Button)`
   }
 `;
 
-const StyledRadioDiv = styled.div`
+const RadioContainer = styled.div`
   grid-column: 1/3;
   height: max-content;
 `;
 
-const StyledAuthBttn = styled(Button)`
+const SignInButton = styled(Button)`
   grid-row: 2;
   width: max-content;
   padding: 1rem;

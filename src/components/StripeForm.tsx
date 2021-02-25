@@ -135,7 +135,7 @@ const StripeForm: React.FC<StripeFormProps> = props => {
       )}
       {compState === 'Rendered' && (
         <>
-          <StyledForm id='payment-form' onSubmit={orderHandler}>
+          <Form id='payment-form' onSubmit={orderHandler}>
             <div style={{ padding: '3px' }}>
               <CardElement id='card-element' options={cardStyle} />
             </div>
@@ -153,7 +153,7 @@ const StripeForm: React.FC<StripeFormProps> = props => {
                 {error}
               </div>
             )}
-          </StyledForm>
+          </Form>
           <p>use 4000 0012 4000 0000 to test it!</p>
         </>
       )}
@@ -161,7 +161,8 @@ const StripeForm: React.FC<StripeFormProps> = props => {
         {succeeded && (
           <Modal show={succeeded}>
             <h2>Finished</h2>
-            Order completed. Click <StyledLink to='/'>here</StyledLink> to return home!
+            Order completed. Click <ExtendedLink to='/'>here</ExtendedLink> to return
+            home!
           </Modal>
         )}
       </>
@@ -171,12 +172,12 @@ const StripeForm: React.FC<StripeFormProps> = props => {
 
 export default StripeForm;
 
-const StyledForm = styled.form`
+const Form = styled.form`
   background-color: #def7ff;
   border: 0;
   border-radius: 7px;
 `;
 
-const StyledLink = styled(Link)`
+const ExtendedLink = styled(Link)`
   color: #3f6cd7;
 `;

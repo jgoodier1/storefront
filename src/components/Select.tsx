@@ -1,9 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 
-// this is prop broken because the select is actually Field, which needs to be wrapped in Form and/or Formik,
-// but the quantity ones will not be wrapped (as of now at least, maybe never)
-
 interface SelectProps {
   options: number | string[];
   name: string;
@@ -38,7 +35,7 @@ const Select: React.FC<SelectProps> = props => {
   }
 
   return (
-    <StyledDiv className={props.className}>
+    <Container className={props.className}>
       <StyledSelect
         name={props.name}
         id={props.name}
@@ -47,24 +44,21 @@ const Select: React.FC<SelectProps> = props => {
       >
         {options}
       </StyledSelect>
-    </StyledDiv>
+    </Container>
   );
 };
 
 export default Select;
 
-const StyledDiv = styled.div`
+const Container = styled.div`
   display: grid;
   grid-template-areas: 'select';
   align-items: center;
   width: max-content;
-  ${'' /* min-width: 15ch; */}
-  ${'' /* max-width: 30ch; */}
   border: 2px solid #000;
   padding: 0.25em 0.5em;
   font-size: 1rem;
   cursor: pointer;
-  ${'' /* line-height: 1.1; */}
   background-color: #fff;
 
   :after {

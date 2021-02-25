@@ -40,7 +40,7 @@ const Search: React.FC = () => {
   }
 
   return (
-    <StyledMain>
+    <Container>
       {compState === 'Error' ? (
         <Modal show={compState === 'Error'}>
           <h1>Error</h1>
@@ -51,12 +51,12 @@ const Search: React.FC = () => {
           {results !== undefined ? (
             results.length !== 1 ? (
               <>
-                <StyledH1>{results.length} Results Found</StyledH1>
+                <Heading>{results.length} Results Found</Heading>
                 {renderedResults}
               </>
             ) : (
               <>
-                <StyledH1>{results.length} Result Found</StyledH1>
+                <Heading>{results.length} Result Found</Heading>
                 {renderedResults}
               </>
             )
@@ -65,13 +65,13 @@ const Search: React.FC = () => {
           )}
         </>
       )}
-    </StyledMain>
+    </Container>
   );
 };
 
 export default Search;
 
-const StyledMain = styled.main`
+const Container = styled.main`
   margin-left: 25px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 2fr minmax(0, 1fr);
@@ -82,7 +82,7 @@ const StyledMain = styled.main`
   }
 `;
 
-const StyledH1 = styled.h1`
+const Heading = styled.h1`
   justify-self: end;
 
   @media (max-width: 768px) {

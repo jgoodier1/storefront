@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 const Home: React.FC = () => {
   return (
-    <StyledMain>
-      <StyledArticle>
+    <Main>
+      <Article>
         <header>
           <h1>Welcome to my website!</h1>
         </header>
@@ -19,30 +19,30 @@ const Home: React.FC = () => {
           </p>
           <p>
             You can view the source code for the front-end{' '}
-            <StyledA href='https://github.com/jgoodier1/storefront' target='_blank'>
+            <AnchorTag href='https://github.com/jgoodier1/storefront' target='_blank'>
               here
-            </StyledA>{' '}
+            </AnchorTag>{' '}
             and the back-end{' '}
-            <StyledA href='https://github.com/jgoodier1/storefront-api' target='_blank'>
+            <AnchorTag href='https://github.com/jgoodier1/storefront-api' target='_blank'>
               here
-            </StyledA>
+            </AnchorTag>
             . My LinkedIn profile is{' '}
-            <StyledA
+            <AnchorTag
               href='https://www.linkedin.com/in/jacob-goodier-b64a5586/'
               target='_blank'
             >
               here.
-            </StyledA>
+            </AnchorTag>
           </p>
         </section>
-      </StyledArticle>
-    </StyledMain>
+      </Article>
+    </Main>
   );
 };
 
 export default Home;
 
-const StyledMain = styled.main`
+const Main = styled.main`
   display: grid;
   grid-template-columns: 2rem 1fr 2rem;
 
@@ -51,11 +51,11 @@ const StyledMain = styled.main`
   }
 `;
 
-const StyledArticle = styled.article`
+const Article = styled.article`
   grid-column: 2/3;
 `;
 
-const StyledA = styled.a`
+const AnchorTag = styled.a`
   text-decoration: none;
   color: #3f6cd7;
 `;

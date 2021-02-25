@@ -11,31 +11,33 @@ interface OrderSummaryProps {
 
 const OrderSummary: React.FC<OrderSummaryProps> = props => {
   return (
-    <StyledSection className={props.className}>
-      <StyledH3>ORDER SUMMARY</StyledH3>
-      <StyledRowDiv>
-        <StyledP>Subtotal:</StyledP>
-        <StyledP>${props.subTotal}</StyledP>
-      </StyledRowDiv>
-      <StyledRowDiv>
-        <StyledP>Shipping:</StyledP>
-        <StyledP>{props.shippingPrice}</StyledP>
-      </StyledRowDiv>
-      <StyledRowDiv>
-        <StyledP>Tax:</StyledP>
-        <StyledP>{props.tax || 'TBD'}</StyledP>
-      </StyledRowDiv>
-      <StyledRowDiv>
-        <StyledTotal>Total Price:</StyledTotal>
-        <StyledTotal>${props.totalPrice ? props.totalPrice : props.subTotal}</StyledTotal>
-      </StyledRowDiv>
-    </StyledSection>
+    <Section className={props.className}>
+      <Heading>ORDER SUMMARY</Heading>
+      <RowContainer>
+        <Paragraph>Subtotal:</Paragraph>
+        <Paragraph>${props.subTotal}</Paragraph>
+      </RowContainer>
+      <RowContainer>
+        <Paragraph>Shipping:</Paragraph>
+        <Paragraph>{props.shippingPrice}</Paragraph>
+      </RowContainer>
+      <RowContainer>
+        <Paragraph>Tax:</Paragraph>
+        <Paragraph>{props.tax || 'TBD'}</Paragraph>
+      </RowContainer>
+      <RowContainer>
+        <TotalHeading>Total Price:</TotalHeading>
+        <TotalHeading>
+          ${props.totalPrice ? props.totalPrice : props.subTotal}
+        </TotalHeading>
+      </RowContainer>
+    </Section>
   );
 };
 
 export default OrderSummary;
 
-const StyledSection = styled.section`
+const Section = styled.section`
   grid-column: 2/3;
   grid-row: 2/3;
   align-self: center;
@@ -53,19 +55,19 @@ const StyledSection = styled.section`
   }
 `;
 
-const StyledRowDiv = styled.div`
+const RowContainer = styled.div`
   display: flex;
   justify-content: space-between;
 `;
 
-const StyledH3 = styled.h3`
+const Heading = styled.h3`
   margin: 0;
 `;
 
-const StyledTotal = styled.h4`
+const TotalHeading = styled.h4`
   margin: 0;
 `;
 
-const StyledP = styled.p`
+const Paragraph = styled.p`
   margin: 0;
 `;

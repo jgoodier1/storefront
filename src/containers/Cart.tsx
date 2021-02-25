@@ -50,18 +50,18 @@ const CartItem: React.FC<CartItemProps> = props => {
   };
 
   return (
-    <StyledItemDiv className={props.className}>
-      <StyledTitle to={'/products/' + props.id}>{props.title}</StyledTitle>
-      <StyledImage src={props.image} alt={props.title} />
-      <StyledPrice>${props.price}</StyledPrice>
-      <StyledSelect
+    <CartItemContainer className={props.className}>
+      <Title to={'/products/' + props.id}>{props.title}</Title>
+      <Image src={props.image} alt={props.title} />
+      <Price>${props.price}</Price>
+      <ExtendedSelect
         name='quantity'
         options={options}
         value={select}
         changed={onSelectChange}
       />
-      <StyledButton onClick={() => props.delete(props.id)}>remove</StyledButton>
-    </StyledItemDiv>
+      <RemoveButton onClick={() => props.delete(props.id)}>remove</RemoveButton>
+    </CartItemContainer>
   );
 };
 
@@ -192,7 +192,7 @@ const Cart: React.FC = () => {
   }
 
   return (
-    <StyledMain>
+    <Main>
       {compState === 'Error' && (
         <Modal show={compState === 'Error'}>
           <h1>Error</h1>
@@ -203,21 +203,21 @@ const Cart: React.FC = () => {
       <h1>Your Shopping Cart</h1>
       {renderedCart}
       {subTotal && (
-        <StyledOrderSummary
+        <ExtendedOrderSummary
           subTotal={subTotal}
           shippingPrice={subTotal > 35 ? 'FREE' : 'TBD'}
         />
       )}
       {(renderedCart as []).length > 0 && (
-        <StyledLink to='/checkout'>Proceed to Checkout</StyledLink>
+        <ExtendedLink to='/checkout'>Proceed to Checkout</ExtendedLink>
       )}
-    </StyledMain>
+    </Main>
   );
 };
 
 export default Cart;
 
-const StyledMain = styled.main`
+const Main = styled.main`
   display: grid;
   grid-template-columns: 2fr 1fr;
   grid-template-rows: auto;
@@ -230,7 +230,7 @@ const StyledMain = styled.main`
   }
 `;
 
-const StyledOrderSummary = styled(OrderSummary)`
+const ExtendedOrderSummary = styled(OrderSummary)`
   grid-column: 2/3;
   grid-row: 2/3;
   align-self: center;
@@ -243,7 +243,7 @@ const StyledOrderSummary = styled(OrderSummary)`
   }
 `;
 
-const StyledItemDiv = styled.div`
+const CartItemContainer = styled.div`
   grid-column: 1/2;
   display: grid;
   grid-template-columns: 3fr 4fr 1fr 2fr;
@@ -261,7 +261,7 @@ const StyledItemDiv = styled.div`
   }
 `;
 
-const StyledTitle = styled(Link)`
+const Title = styled(Link)`
   grid-column: 2/3;
   grid-row: 2/3;
   margin-right: 1rem;
@@ -280,19 +280,18 @@ const StyledTitle = styled(Link)`
   }
 `;
 
-const StyledImage = styled.img`
+const Image = styled.img`
   grid-column: 1/2;
   grid-row: 1/4;
   padding: 5px;
   width: 100%;
-  ${'' /* min-width: 300px; */}
 
   @media (max-width: 768px) {
     min-width: 200px;
   }
 `;
 
-const StyledPrice = styled.h2`
+const Price = styled.h2`
   grid-column: 4/5;
   grid-row: 2/3;
   margin-right: 1rem;
@@ -307,7 +306,7 @@ const StyledPrice = styled.h2`
   }
 `;
 
-const StyledSelect = styled(Select)`
+const ExtendedSelect = styled(Select)`
   grid-column: 3/4;
   grid-row: 2/3;
   justify-self: start;
@@ -319,7 +318,7 @@ const StyledSelect = styled(Select)`
   }
 `;
 
-const StyledButton = styled.button`
+const RemoveButton = styled.button`
   grid-column: 4/5;
   grid-row: 3/4;
   place-self: end;
@@ -339,7 +338,7 @@ const StyledButton = styled.button`
   }
 `;
 
-const StyledLink = styled(Link)`
+const ExtendedLink = styled(Link)`
   grid-column: 2/3;
   grid-row: 3/4;
   padding: 1.5rem;
@@ -353,7 +352,6 @@ const StyledLink = styled(Link)`
   text-align: center;
   width: 100%;
   height: max-content;
-  ${'' /* margin-right: 20px; */}
 
   &:hover {
     cursor: pointer;

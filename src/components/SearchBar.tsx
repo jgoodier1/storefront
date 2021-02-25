@@ -31,7 +31,7 @@ const SearchBar: React.FC<SearchBarProps> = props => {
 
   return (
     <form className={props.className} onSubmit={formik.handleSubmit}>
-      <StlyedInput
+      <Input
         type='search'
         placeholder='Search...'
         id='search'
@@ -39,16 +39,16 @@ const SearchBar: React.FC<SearchBarProps> = props => {
         value={formik.values.search}
         onChange={formik.handleChange}
       />
-      <StyledBttn type='submit'>
-        <StyledImg src={search} alt='search' />
-      </StyledBttn>
+      <Button type='submit'>
+        <Image src={search} alt='search' />
+      </Button>
     </form>
   );
 };
 
 export default SearchBar;
 
-const StlyedInput = styled.input`
+const Input = styled.input`
   height: 3rem;
   width: auto;
   border: 1px solid black;
@@ -62,11 +62,12 @@ const StlyedInput = styled.input`
   }
 `;
 
-const StyledImg = styled.img`
+const Image = styled.img`
   height: 25px;
   background: #fff;
 `;
-const StyledBttn = styled.button`
+
+const Button = styled.button`
   height: 3rem;
   background: #fff;
   border: 1px solid black;

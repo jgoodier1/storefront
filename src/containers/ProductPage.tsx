@@ -47,19 +47,19 @@ const ProductPage: React.FC = () => {
   } else if (compState === 'Rendered' && product) {
     prod = (
       <>
-        <StyledTitle>{product.title}</StyledTitle>
-        <StyledPrice>${product.price}</StyledPrice>
-        <StyledImage src={product.image} alt={product.title} />
-        <StyledH3>ABOUT</StyledH3>
-        <StyledDesc>{product.description}</StyledDesc>
-        <StyledSelect name='quantity' options={options} changed={selectChangeHandler} />
-        <StyledButton clicked={addToCartHandler}>Add to Cart</StyledButton>
+        <Heading>{product.title}</Heading>
+        <Price>${product.price}</Price>
+        <Image src={product.image} alt={product.title} />
+        <AboutHeading>ABOUT</AboutHeading>
+        <Description>{product.description}</Description>
+        <ExtendedSelect name='quantity' options={options} changed={selectChangeHandler} />
+        <ExtendedButton clicked={addToCartHandler}>Add to Cart</ExtendedButton>
       </>
     );
   }
 
   return (
-    <StyledMain>
+    <Main>
       {compState === 'Error' ? (
         <Modal show={compState === 'Error'}>
           <h1>Error</h1>
@@ -68,13 +68,13 @@ const ProductPage: React.FC = () => {
       ) : (
         <>{prod}</>
       )}
-    </StyledMain>
+    </Main>
   );
 };
 
 export default ProductPage;
 
-const StyledMain = styled.main`
+const Main = styled.main`
   margin: 2rem 6rem;
   width: auto;
   display: grid;
@@ -92,12 +92,12 @@ const StyledMain = styled.main`
   }
 `;
 
-const StyledTitle = styled.h1`
+const Heading = styled.h1`
   grid-area: title;
   text-transform: uppercase;
 `;
 
-const StyledImage = styled.img`
+const Image = styled.img`
   grid-area: img;
   width: 25rem;
   place-self: center;
@@ -107,24 +107,24 @@ const StyledImage = styled.img`
   }
 `;
 
-const StyledPrice = styled.h2`
+const Price = styled.h2`
   grid-area: price;
 `;
 
-const StyledH3 = styled.h3`
+const AboutHeading = styled.h3`
   grid-area: about;
 `;
 
-const StyledDesc = styled.p`
+const Description = styled.p`
   grid-area: desc;
 `;
 
-const StyledSelect = styled(Select)`
+const ExtendedSelect = styled(Select)`
   grid-area: bttn;
   justify-self: start;
 `;
 
-const StyledButton = styled(Button)`
+const ExtendedButton = styled(Button)`
   grid-area: bttn;
   justify-self: center;
   padding: 0 2rem;

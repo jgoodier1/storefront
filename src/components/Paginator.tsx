@@ -13,20 +13,22 @@ interface PaginatorProp {
 
 const Paginator: React.FC<PaginatorProp> = props => {
   return (
-    <StyledDiv className={props.className}>
-      {props.page > 1 && <PrevButton clicked={props.previous}>Previous</PrevButton>}
+    <Container className={props.className}>
+      {props.page > 1 && (
+        <PreviousButton clicked={props.previous}>Previous</PreviousButton>
+      )}
       {props.page < props.finalPage && <NextButton clicked={props.next}>Next</NextButton>}
-    </StyledDiv>
+    </Container>
   );
 };
 
 export default Paginator;
 
-const StyledDiv = styled.div`
+const Container = styled.div`
   position: relative;
 `;
 
-const PrevButton = styled(Button)`
+const PreviousButton = styled(Button)`
   position: absolute;
   left: 0;
 `;
