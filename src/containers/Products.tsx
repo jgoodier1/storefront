@@ -9,7 +9,7 @@ import Modal from '../components/Modal';
 import Paginator from '../components/Paginator';
 import useFetch from '../hooks/useFetch';
 
-interface ProductInt {
+interface ProductInterface {
   prod_id: string;
   title: string;
   image: string;
@@ -17,8 +17,19 @@ interface ProductInt {
   price: number;
 }
 
+interface FetchResponse {
+  products: {
+    prod_id: string;
+    title: string;
+    image: string;
+    description: string;
+    price: number;
+  }[];
+  totalItems: number;
+}
+
 const Products: React.FC = () => {
-  const [products, setProducts] = useState<ProductInt[]>([]);
+  const [products, setProducts] = useState<ProductInterface[]>([]);
   const [page, setPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const [fetchURL, setFetchURL] = useState('/products');
@@ -36,12 +47,12 @@ const Products: React.FC = () => {
     }
   }, [location]);
 
-  const [data, compState, setCompState] = useFetch('GET', fetchURL);
+  const [data, compState, setCompState] = useFetch<FetchResponse>('GET', fetchURL);
 
   useEffect(() => {
-    if (data !== null && data.data) {
-      setTotalItems(data.data.totalItems);
-      setProducts(data.data.products);
+    if (data !== null && data) {
+      setTotalItems(data.totalItems);
+      setProducts(data.products);
     }
   }, [data]);
 
@@ -95,7 +106,7 @@ const Products: React.FC = () => {
   }
 
   return (
-    <StyledMain>
+    <Main>
       {compState === 'Error' ? (
         <Modal show={compState === 'Error'}>
           <h1>Error</h1>
@@ -104,7 +115,7 @@ const Products: React.FC = () => {
       ) : (
         <>
           {renderedProducts}
-          <StyledPaginator
+          <PositionedPaginator
             next={() => loadPosts('next')}
             previous={() => loadPosts('previous')}
             page={page}
@@ -112,13 +123,13 @@ const Products: React.FC = () => {
           />
         </>
       )}
-    </StyledMain>
+    </Main>
   );
 };
 
 export default Products;
 
-const StyledMain = styled.main`
+const Main = styled.main`
   ${'' /* margin: 56px; */}
   ${'' /* margin-left: 25px; */}
   display: grid;
@@ -130,6 +141,6 @@ const StyledMain = styled.main`
   }
 `;
 
-const StyledPaginator = styled(Paginator)`
+const PositionedPaginator = styled(Paginator)`
   grid-column: 2/3;
 `;

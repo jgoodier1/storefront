@@ -71,10 +71,14 @@ const Cart: React.FC = () => {
   const cartContext = useContext(CartContext);
 
   const cartFromStorage = JSON.parse(sessionStorage.getItem('cart')!);
-  const [data, compState, setCompState] = useFetch('POST', '/cart', cartFromStorage);
+  const [data, compState, setCompState] = useFetch<ICart[]>(
+    'POST',
+    '/cart',
+    cartFromStorage
+  );
 
   useEffect(() => {
-    if (data) setCart(data.data);
+    if (data) setCart(data);
   }, [data]);
 
   const editCartItem = (id: string, quantity: number) => {

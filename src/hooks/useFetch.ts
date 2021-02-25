@@ -1,16 +1,16 @@
 import { useState, useEffect, SetStateAction, Dispatch } from 'react';
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 
-const useFetch = (
+const useFetch = <T>(
   method: 'POST' | 'GET',
   url: string,
   object?: any //eslint-disable-line
 ): [
-  AxiosResponse,
+  T,
   'Loading' | 'Rendered' | 'Error',
   Dispatch<SetStateAction<'Loading' | 'Rendered' | 'Error'>>
 ] => {
-  const [data, setData] = useState<AxiosResponse | null | void>(null);
+  const [data, setData] = useState<T>();
   const [compState, setCompState] = useState<'Loading' | 'Rendered' | 'Error'>('Loading');
 
   useEffect(() => {
@@ -21,8 +21,8 @@ const useFetch = (
         .get(url)
         .then(res => {
           if (isMounted) {
+            setData(res.data);
             setCompState('Rendered');
-            setData(res);
           }
         })
         .catch(err => {
@@ -40,8 +40,8 @@ const useFetch = (
         .post(url, object)
         .then(res => {
           if (isMounted) {
+            setData(res.data);
             setCompState('Rendered');
-            setData(res);
           }
         })
         .catch(err => {
@@ -55,9 +55,9 @@ const useFetch = (
     return () => {
       isMounted = false;
     };
-  }, [url, JSON.stringify(object)]); // eslint-disable-line
+  }, [url, JSON.stringify(object), method]); //eslint-disable-line
 
-  return [data as AxiosResponse, compState, setCompState];
+  return [data as T, compState, setCompState];
 };
 
 export default useFetch;

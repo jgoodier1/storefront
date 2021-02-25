@@ -140,7 +140,7 @@ const Order: React.FC<OrderProps> = props => {
 
 const Orders: React.FC = () => {
   const userId = localStorage.getItem('userId');
-  const [orders, compState] = useFetch('POST', '/orders', { userId });
+  const [orders, compState] = useFetch<ResOrder[]>('POST', '/orders', { userId });
   const dispatch = useDispatch();
   const isLoggedIn = useSelector(selectAuthState);
 
@@ -154,7 +154,7 @@ const Orders: React.FC = () => {
   let renderedOrders;
   if (compState === 'Loading') {
     renderedOrders = <Spinner />;
-  } else if (compState === 'Rendered' && (orders === null || orders.data.length === 0)) {
+  } else if (compState === 'Rendered' && (orders === null || orders.length === 0)) {
     renderedOrders = (
       <>
         <h2>You haven't ordered anything yet!</h2>
@@ -165,7 +165,7 @@ const Orders: React.FC = () => {
       </>
     );
   } else if (compState === 'Rendered' && orders !== null) {
-    renderedOrders = orders.data.map((order: ResOrder) => (
+    renderedOrders = orders.map((order: ResOrder) => (
       <Order
         key={order.order_id}
         id={order.order_id}

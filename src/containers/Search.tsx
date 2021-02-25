@@ -7,7 +7,7 @@ import Spinner from '../components/Spinner';
 import Modal from '../components/Modal';
 import useFetch from '../hooks/useFetch';
 
-interface Result {
+interface ProductInterface {
   prod_id: string;
   title: string;
   image: string;
@@ -18,13 +18,16 @@ interface Result {
 const Search: React.FC = () => {
   const value = new URLSearchParams(useLocation().search).get('value');
 
-  const [results, compState] = useFetch('GET', `/search?value=${value}`);
+  const [results, compState] = useFetch<ProductInterface[]>(
+    'GET',
+    `/search?value=${value}`
+  );
 
   let renderedResults;
   if (compState === 'Loading') {
     renderedResults = <Spinner />;
   } else if (compState === 'Rendered' && results) {
-    renderedResults = results.data.map((r: Result) => (
+    renderedResults = results.map((r: ProductInterface) => (
       <Product
         key={r.prod_id}
         title={r.title}
@@ -36,7 +39,6 @@ const Search: React.FC = () => {
     ));
   }
 
-  // this is super messy 🙃
   return (
     <StyledMain>
       {compState === 'Error' ? (
@@ -46,15 +48,15 @@ const Search: React.FC = () => {
         </Modal>
       ) : (
         <>
-          {results !== null ? (
-            results.data.length !== 1 ? (
+          {results !== undefined ? (
+            results.length !== 1 ? (
               <>
-                <StyledH1>{results.data.length} Results Found</StyledH1>
+                <StyledH1>{results.length} Results Found</StyledH1>
                 {renderedResults}
               </>
             ) : (
               <>
-                <StyledH1>{results.data.length} Result Found</StyledH1>
+                <StyledH1>{results.length} Result Found</StyledH1>
                 {renderedResults}
               </>
             )

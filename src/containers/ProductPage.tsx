@@ -10,6 +10,14 @@ import Select from '../components/Select';
 import Modal from '../components/Modal';
 import useFetch from '../hooks/useFetch';
 
+interface ProductInterface {
+  prod_id: string;
+  title: string;
+  image: string;
+  description: string;
+  price: number;
+}
+
 const ProductPage: React.FC = () => {
   const [select, setSelect] = useState(1);
 
@@ -17,13 +25,13 @@ const ProductPage: React.FC = () => {
   const history = useHistory();
   const cartContext = useContext(CartContext);
 
-  const [product, compState] = useFetch('GET', `/products/${id}`);
+  const [product, compState] = useFetch<ProductInterface>('GET', `/products/${id}`);
 
   const options = 100;
 
   const addToCartHandler = () => {
     if (product) {
-      addToCart(id, product.data.price, select, cartContext.updateQuantity);
+      addToCart(id, product.price, select, cartContext.updateQuantity);
       // cartContext.updateQuantity();
       history.push('/cart');
     } else return;
@@ -39,11 +47,11 @@ const ProductPage: React.FC = () => {
   } else if (compState === 'Rendered' && product) {
     prod = (
       <>
-        <StyledTitle>{product.data.title}</StyledTitle>
-        <StyledPrice>${product.data.price}</StyledPrice>
-        <StyledImage src={product.data.image} alt={product.data.title} />
+        <StyledTitle>{product.title}</StyledTitle>
+        <StyledPrice>${product.price}</StyledPrice>
+        <StyledImage src={product.image} alt={product.title} />
         <StyledH3>ABOUT</StyledH3>
-        <StyledDesc>{product.data.description}</StyledDesc>
+        <StyledDesc>{product.description}</StyledDesc>
         <StyledSelect name='quantity' options={options} changed={selectChangeHandler} />
         <StyledButton clicked={addToCartHandler}>Add to Cart</StyledButton>
       </>
