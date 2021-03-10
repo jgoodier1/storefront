@@ -33,8 +33,12 @@ const Product: React.FC<ProductProps> = props => {
 
   return (
     <Container>
-      <Image src={props.image} alt={props.title} />
-      <ExtenedLink to={'/products/' + props.id}>{props.title.toUpperCase()}</ExtenedLink>
+      <Image src={props.image} alt='' />
+      <Heading2>
+        <ExtendedLink to={'/products/' + props.id}>
+          {props.title.toUpperCase()}
+        </ExtendedLink>
+      </Heading2>
       <Description>{shortenedDesc}</Description>
       <Price>$ {props.price}</Price>
       <ExtendedButton clicked={addToCartHandler}>ADD TO CART</ExtendedButton>
@@ -57,10 +61,13 @@ const Container = styled.div`
   }
 `;
 
-const ExtenedLink = styled(Link)`
+const Heading2 = styled.h2`
   grid-column: 2/3;
-  font-size: 1em;
   margin: 0;
+`;
+
+const ExtendedLink = styled(Link)`
+  font-size: 1em;
   text-decoration: none;
   color: #000;
   font-weight: bold;
