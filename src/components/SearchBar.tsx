@@ -30,7 +30,10 @@ const SearchBar: React.FC<SearchBarProps> = props => {
   });
 
   return (
-    <form className={props.className} onSubmit={formik.handleSubmit}>
+    <form className={props.className} onSubmit={formik.handleSubmit} role='search'>
+      <label htmlFor='search' style={{ display: 'none' }}>
+        Search
+      </label>
       <Input
         type='search'
         placeholder='Search...'
@@ -41,6 +44,7 @@ const SearchBar: React.FC<SearchBarProps> = props => {
       />
       <Button type='submit'>
         <Image src={search} alt='search' />
+        {/* Search */}
       </Button>
     </form>
   );
@@ -53,11 +57,10 @@ const Input = styled.input`
   width: auto;
   border: 1px solid black;
   font-size: 20px;
-  color: #a8a8a8;
+  color: #585858;
   padding-left: 1rem;
 
   :focus {
-    outline: none;
     color: #000;
   }
 `;
