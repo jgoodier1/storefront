@@ -191,7 +191,7 @@ const Orders: React.FC = () => {
           </Modal>
         ) : (
           <>
-            <h1 style={{ justifySelf: 'center' }}>Your Orders</h1>
+            <Heading style={{ justifySelf: 'center' }}>Your Orders</Heading>
             <RenderedOrdersContainer>{renderedOrders}</RenderedOrdersContainer>
           </>
         )
@@ -206,18 +206,17 @@ export default Orders;
 
 const Main = styled.main`
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 2fr minmax(0, 1fr);
+  grid-template-columns: 1fr min(60ch, 100%) 1fr;
   grid-gap: 15px 0;
+`;
 
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
+const Heading = styled.h1`
+  grid-column: 2/3;
+  margin-bottom: 0;
 `;
 
 const RenderedOrdersContainer = styled.div`
-  @media (max-width: 768px) {
-    grid-row-start: 2;
-  }
+  grid-column: 2/3;
 `;
 
 const OrderContainer = styled.div`
@@ -225,6 +224,10 @@ const OrderContainer = styled.div`
   border: 1px solid #ddd;
   border-radius: 4px;
   margin: 20px 0;
+
+  &:nth-child(1) {
+    margin-top: 0;
+  }
 `;
 
 const TopRowContainer = styled.div`

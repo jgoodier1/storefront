@@ -72,21 +72,13 @@ const Search: React.FC = () => {
 export default Search;
 
 const Container = styled.main`
-  margin-left: 25px;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 2fr minmax(0, 1fr);
+  grid-template-columns: 1fr min(60ch, 100%) 1fr;
   grid-gap: 20px;
-
-  @media (max-width: 768px) {
-    margin: 0;
-  }
 `;
 
 const Heading = styled.h1`
   justify-self: end;
-
-  @media (max-width: 768px) {
-    grid-column: 2 /3;
-    justify-self: center;
-  }
+  grid-column: 2 /3;
+  justify-self: center;
 `;
