@@ -48,9 +48,12 @@ const NavItems: React.FC<NavItemsProps> = props => {
   return (
     <UnorderList>
       <LogoLink link='/' exact>
-        <LogoImage src={logo} alt='logo' />
+        <LogoImage src={logo} alt='store logo' />
       </LogoLink>
-      <ExtendedSearchBar search={props.search} />
+      {/* TODO: this messed with the searchbar responsiveness */}
+      <ListItem>
+        <ExtendedSearchBar search={props.search} />
+      </ListItem>
       <Products link='/products'>Products</Products>
       <Orders link='/orders'>Orders</Orders>
       {!isLoggedIn && (
@@ -58,7 +61,6 @@ const NavItems: React.FC<NavItemsProps> = props => {
           <AuthListItem>
             <AuthButton onClick={() => dispatch(showModal())}>Sign In</AuthButton>
           </AuthListItem>
-          {/* <NavItem link='/signup'>Sign Up</NavItem> */}
         </>
       )}
       {isLoggedIn && (
