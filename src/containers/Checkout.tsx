@@ -470,11 +470,13 @@ const Province = styled.label`
 `;
 
 const ExtendedSelect = styled(Select)`
-  border: 1px solid #000;
-  width: 20rem;
+  & {
+    border: 1px solid #000;
+    width: 20rem;
 
-  @media (max-width: 768px) {
-    width: auto;
+    @media (max-width: 768px) {
+      width: auto;
+    }
   }
 `;
 
