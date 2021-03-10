@@ -36,6 +36,11 @@ const Select: React.FC<SelectProps> = props => {
 
   return (
     <Container className={props.className}>
+      {props.name !== 'province' && (
+        <label htmlFor={props.name} style={{ display: 'none' }}>
+          {props.name}
+        </label>
+      )}
       <StyledSelect
         name={props.name}
         id={props.name}
