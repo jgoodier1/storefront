@@ -51,7 +51,9 @@ const CartItem: React.FC<CartItemProps> = props => {
 
   return (
     <CartItemContainer className={props.className}>
-      <Title to={'/products/' + props.id}>{props.title}</Title>
+      <Title>
+        <TitleLink to={'/products/' + props.id}>{props.title}</TitleLink>
+      </Title>
       <Image src={props.image} alt={props.title} />
       <Price>${props.price}</Price>
       <ExtendedSelect
@@ -261,23 +263,26 @@ const CartItemContainer = styled.div`
   }
 `;
 
-const Title = styled(Link)`
+const Title = styled.h2`
   grid-column: 2/3;
   grid-row: 2/3;
   margin-right: 1rem;
-  font-size: 1.2rem;
   margin: 0;
   justify-self: start;
   align-self: start;
-  text-transform: uppercase;
-  color: #3f6cd7;
-  text-decoration: none;
-  font-weight: bold;
 
   @media (max-width: 768px) {
     grid-column: 2/4;
     grid-row: 1/2;
   }
+`;
+
+const TitleLink = styled(Link)`
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  color: #3f6cd7;
+  text-decoration: none;
+  font-weight: bold;
 `;
 
 const Image = styled.img`
@@ -291,11 +296,11 @@ const Image = styled.img`
   }
 `;
 
-const Price = styled.h2`
+const Price = styled.p`
   grid-column: 4/5;
   grid-row: 2/3;
-  margin-right: 1rem;
   font-size: 1.2rem;
+  font-weight: 500;
   margin: 0;
   align-self: start;
   justify-self: end;
