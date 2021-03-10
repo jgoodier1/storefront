@@ -107,12 +107,16 @@ const Image = styled.img`
   }
 `;
 
-const Price = styled.h2`
+const Price = styled.p`
   grid-area: price;
+  font-size: 22px;
+  font-weight: 500;
 `;
 
-const AboutHeading = styled.h3`
+const AboutHeading = styled.h2`
   grid-area: about;
+  font-size: 18px;
+  font-weight: 600;
 `;
 
 const Description = styled.p`
