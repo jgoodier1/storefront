@@ -26,10 +26,8 @@ const OrderSummary: React.FC<OrderSummaryProps> = props => {
         <Paragraph>{props.tax || 'TBD'}</Paragraph>
       </RowContainer>
       <RowContainer>
-        <TotalHeading>Total Price:</TotalHeading>
-        <TotalHeading>
-          ${props.totalPrice ? props.totalPrice : props.subTotal}
-        </TotalHeading>
+        <Total>Total Price:</Total>
+        <Total>${props.totalPrice ? props.totalPrice : props.subTotal}</Total>
       </RowContainer>
     </Section>
   );
@@ -64,10 +62,11 @@ const Heading = styled.h3`
   margin: 0;
 `;
 
-const TotalHeading = styled.h4`
+const Paragraph = styled.p`
   margin: 0;
 `;
 
-const Paragraph = styled.p`
+const Total = styled.p`
   margin: 0;
+  font-weight: 600;
 `;
