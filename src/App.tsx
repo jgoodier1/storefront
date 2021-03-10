@@ -6,7 +6,6 @@ import { Elements } from '@stripe/react-stripe-js';
 
 import Products from './containers/Products';
 import NavBar from './components/NavBar';
-import ProductForm from './containers/ProductForm';
 import ProductPage from './containers/ProductPage';
 import Cart from './containers/Cart';
 import Checkout from './containers/Checkout';
@@ -17,7 +16,7 @@ import CartContext from './context/cartContext';
 import Search from './containers/Search';
 import Home from './containers/Home';
 
-interface ICart {
+interface CartInterface {
   products: {
     prodId: string;
     price: number;
@@ -43,7 +42,7 @@ const App: React.FC = () => {
 
   const history = useHistory();
 
-  const cartQuantity = (cart: ICart) => {
+  const cartQuantity = (cart: CartInterface) => {
     if (cart === null) {
       setCartQuantityState(0);
     } else {
@@ -61,9 +60,7 @@ const App: React.FC = () => {
       <Route path='/products/:id' component={ProductPage} />
       <Route path='/products' component={Products} />
       <Route path='/cart' component={Cart} />
-      <Route path='/admin/add-product' render={() => <ProductForm />} />
       <Route path='/admin/products' render={() => <Products />} />
-      <Route path='/admin/edit-product' render={() => <ProductForm />} />
       <Route path='/orders' component={Orders} />
       <Route path='/checkout' component={Checkout} />
       <Route path='/search' component={Search} />
