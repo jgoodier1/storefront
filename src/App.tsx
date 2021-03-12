@@ -1,18 +1,19 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, Suspense } from 'react';
 import { Switch, Route, useHistory } from 'react-router-dom';
 import axios from 'axios';
 
 import Products from './containers/Products';
 import NavBar from './components/NavBar';
 import ProductPage from './containers/ProductPage';
-import Cart from './containers/Cart';
-import Checkout from './containers/Checkout';
 import Auth from './containers/Auth';
-import Orders from './containers/Orders';
 import NotFound from './containers/NotFound';
 import CartContext from './context/cartContext';
 import Search from './containers/Search';
 import Home from './containers/Home';
+import Spinner from './components/Spinner';
+const Cart = React.lazy(() => import('./containers/Cart'));
+const Checkout = React.lazy(() => import('./containers/Checkout'));
+const Orders = React.lazy(() => import('./containers/Orders'));
 
 interface CartInterface {
   products: {
@@ -52,10 +53,31 @@ const App: React.FC = () => {
     <Switch>
       <Route path='/products/:id' component={ProductPage} />
       <Route path='/products' component={Products} />
-      <Route path='/cart' component={Cart} />
+      <Route
+        path='/cart'
+        render={() => (
+          <Suspense fallback={<Spinner />}>
+            <Cart />
+          </Suspense>
+        )}
+      />
       <Route path='/admin/products' render={() => <Products />} />
-      <Route path='/orders' component={Orders} />
-      <Route path='/checkout' component={Checkout} />
+      <Route
+        path='/orders'
+        render={() => (
+          <Suspense fallback={<Spinner />}>
+            <Orders />
+          </Suspense>
+        )}
+      />
+      <Route
+        path='/checkout'
+        render={() => (
+          <Suspense fallback={<Spinner />}>
+            <Checkout />
+          </Suspense>
+        )}
+      />
       <Route path='/search' component={Search} />
       <Route path='/' exact component={Home} />
       <Route path='*' component={NotFound} />
