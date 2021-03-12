@@ -554,7 +554,7 @@ const ExtendedOrderSummary = styled(OrderSummary)`
   @media (min-width: 768px) {
     grid-column: 1/2;
     grid-row: 7/8;
-    margin: 0;
+    margin-top: 1em;
   }
 
   @media (min-width: 1120px) {
