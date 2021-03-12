@@ -269,7 +269,7 @@ const Checkout: React.FC = () => {
           onBlur={formik.handleBlur}
         />
         <PhoneNumber
-          type='text'
+          type='tel'
           name='phoneNumber'
           id='phoneNumber'
           label='Primary Phone Number*'
@@ -424,6 +424,10 @@ const Form = styled.form`
   text-align: left;
   padding: 10px;
 
+  @media (max-width: 1120px) {
+    grid-template-columns: repeat(2, 20rem);
+  }
+
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
     grid-gap: 0;
@@ -545,6 +549,12 @@ const ExtendedOrderSummary = styled(OrderSummary)`
   align-self: start;
   margin-left: 1rem;
 
+  @media (max-width: 1120px) {
+    grid-column: 1/2;
+    grid-row: 7/8;
+    margin: 0;
+  }
+
   @media (max-width: 768px) {
     grid-column: 1/2;
     grid-row: 10/11;
@@ -561,10 +571,18 @@ const ButtonContainer = styled.div`
   margin-left: 1rem;
   margin-top: 3rem;
 
+  @media (max-width: 1120px) {
+    grid-column: 2/4;
+    grid-row: 7/8;
+    flex-flow: row;
+    margin: 0;
+  }
+
   @media (max-width: 768px) {
     grid-column: 1/2;
     grid-row: 11/12;
     align-items: center;
+    flex-flow: column;
     margin: 0;
   }
 `;
@@ -577,9 +595,6 @@ const ExtendedButton = styled(Button)`
   font-size: 1.5rem;
   font-family: inherit;
   margin-top: 20px;
-
-  @media (max-width: 768px) {
-  }
 `;
 
 const Fieldset = styled.fieldset`
