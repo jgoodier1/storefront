@@ -51,9 +51,9 @@ const NavItems: React.FC<NavItemsProps> = props => {
         <LogoImage src={logo} alt='store logo' />
       </LogoLink>
       {/* TODO: this messed with the searchbar responsiveness */}
-      <ListItem>
-        <ExtendedSearchBar search={props.search} />
-      </ListItem>
+      <SearchBarListItem>
+        <SearchBar search={props.search} />
+      </SearchBarListItem>
       <Products link='/products'>Products</Products>
       <Orders link='/orders'>Orders</Orders>
       {!isLoggedIn && (
@@ -192,7 +192,7 @@ const Span = styled.span`
   right: 12px;
 `;
 
-const ExtendedSearchBar = styled(SearchBar)`
+const SearchBarListItem = styled(ListItem)`
   grid-area: searchbar;
   place-self: center;
 `;
