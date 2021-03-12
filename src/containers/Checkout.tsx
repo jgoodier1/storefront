@@ -296,8 +296,9 @@ const Checkout: React.FC = () => {
     );
   } else if (compState === 'Rendered' && step === 2) {
     renderedForm = (
-      <>
-        <RadioContainer>
+      <Fieldset>
+        <legend className='sr-only'>Select Your Shipping Speed</legend>
+        <RadioButtonContainer>
           <input
             type='radio'
             name='shipping'
@@ -309,8 +310,8 @@ const Checkout: React.FC = () => {
             }
           />
           <label htmlFor='fast'>{shippingLabelFast}</label>
-        </RadioContainer>
-        <RadioContainer>
+        </RadioButtonContainer>
+        <RadioButtonContainer>
           <input
             type='radio'
             name='shipping'
@@ -322,8 +323,8 @@ const Checkout: React.FC = () => {
             }
           />
           <label htmlFor='normal'>{shippingLabelNormal}</label>
-        </RadioContainer>
-      </>
+        </RadioButtonContainer>
+      </Fieldset>
     );
   } else if (compState === 'Rendered' && step === 3) {
     renderedForm = <div></div>;
@@ -565,9 +566,14 @@ const ExtendedButton = styled(Button)`
   }
 `;
 
-const RadioContainer = styled.div`
+const Fieldset = styled.fieldset`
   grid-column: 1/3;
   height: max-content;
+  width: max-content;
+`;
+
+const RadioButtonContainer = styled.div`
+  padding: 1rem 0;
 `;
 
 const SignInButton = styled(Button)`
