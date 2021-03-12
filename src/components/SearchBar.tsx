@@ -31,7 +31,7 @@ const SearchBar: React.FC<SearchBarProps> = props => {
 
   return (
     <form className={props.className} onSubmit={formik.handleSubmit} role='search'>
-      <label htmlFor='search' style={{ display: 'none' }}>
+      <label htmlFor='search' className='sr-only'>
         Search
       </label>
       <Input
