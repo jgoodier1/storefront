@@ -78,6 +78,7 @@ const Button = styled.button`
   position: relative;
   top: 5px;
   line-height: 1;
+  cursor: pointer;
 
   @media (max-width: 768px) {
     top: 4px;
