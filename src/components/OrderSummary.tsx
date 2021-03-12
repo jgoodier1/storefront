@@ -36,21 +36,10 @@ const OrderSummary: React.FC<OrderSummaryProps> = props => {
 export default OrderSummary;
 
 const Section = styled.section`
-  grid-column: 2/3;
-  grid-row: 2/3;
-  align-self: center;
   background: #fff6f0;
   padding: 1rem;
   width: 100%;
   height: max-content;
-  margin-left: 1rem;
-
-  @media (max-width: 768px) {
-    grid-column: 1/2;
-    grid-row: auto;
-    margin: 0;
-    margin-top: -2rem;
-  }
 `;
 
 const RowContainer = styled.div`
@@ -58,7 +47,8 @@ const RowContainer = styled.div`
   justify-content: space-between;
 `;
 
-const Heading = styled.h3`
+const Heading = styled.h2`
+  font-size: 1.17em;
   margin: 0;
 `;
 
