@@ -31,7 +31,7 @@ interface ICartStorage {
 }
 
 interface ICart {
-  prodId: string;
+  prod_id: string;
   title: string;
   image: string;
   price: number;
@@ -169,14 +169,14 @@ const Cart: React.FC = () => {
   if (cart !== undefined && cart !== null && compState === 'Rendered') {
     renderedCart = cart.map((ci: ICart) => (
       <CartItem
-        key={ci.prodId}
+        key={ci.prod_id}
         title={ci.title}
         price={ci.price}
         image={ci.image}
         quantity={ci.quantity}
         delete={deleteHandler}
         edit={editCartItem}
-        id={ci.prodId}
+        id={ci.prod_id}
       />
     ));
   } else if (cart === undefined || cart === null || cart.length === 0) {
