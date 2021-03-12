@@ -75,20 +75,20 @@ const ProductPage: React.FC = () => {
 export default ProductPage;
 
 const Main = styled.main`
-  margin: 2rem 6rem;
-  width: auto;
   display: grid;
-  grid-template-areas:
-    'img title .'
-    'img price .'
-    'img bttn bttn'
-    'img . .'
-    'about about about'
-    'desc desc desc';
+  grid-template-areas: 'img' 'title' 'price' 'bttn' 'about' 'desc';
+  margin: 2rem;
+  width: auto;
 
-  @media (max-width: 768px) {
-    grid-template-areas: 'img' 'title' 'price' 'bttn' 'about' 'desc';
-    margin: 2rem;
+  @media (min-width: 768px) {
+    grid-template-areas:
+      'img title .'
+      'img price .'
+      'img bttn bttn'
+      'img . .'
+      'about about about'
+      'desc desc desc';
+    margin: 2rem 6rem;
   }
 `;
 
@@ -99,11 +99,11 @@ const Heading = styled.h1`
 
 const Image = styled.img`
   grid-area: img;
-  width: 25rem;
   place-self: center;
+  width: 80%;
 
-  @media (max-width: 768px) {
-    width: 80%;
+  @media (min-width: 768px) {
+    width: 25rem;
   }
 `;
 

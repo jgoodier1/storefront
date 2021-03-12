@@ -221,59 +221,64 @@ export default Cart;
 
 const Main = styled.main`
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 1fr;
   grid-template-rows: auto;
-  margin: 1rem 6rem;
+  justify-items: center;
+  margin: 1rem 0;
 
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    margin: 1rem 0;
-    justify-items: center;
+  @media (min-width: 768px) {
+    grid-template-columns: 2fr 1fr;
+    margin: 1rem 6rem;
+    justify-items: start;
   }
 `;
 
 const ExtendedOrderSummary = styled(OrderSummary)`
-  grid-column: 2/3;
-  grid-row: 2/3;
-  align-self: center;
+  grid-column: 1/2;
+  grid-row: auto;
+  margin-top: -2rem;
 
-  @media (max-width: 768px) {
-    grid-column: 1/2;
-    grid-row: auto;
+  @media (min-width: 768px) {
+    grid-column: 2/3;
+    grid-row: 2/3;
+    align-self: center;
     margin: 0;
-    margin-top: -2rem;
+    margin-left: 1rem;
   }
 `;
 
 const CartItemContainer = styled.div`
   grid-column: 1/2;
   display: grid;
-  grid-template-columns: 3fr 4fr 1fr 2fr;
   grid-template-rows: repeat(3, 1fr);
-  grid-gap: 10px;
+  grid-template-columns: 1fr 2fr;
+  grid-gap: 0;
   align-content: start;
   justify-content: space-between;
   padding: 1rem;
   border-bottom: 1px solid #888383;
   margin-bottom: 1rem;
 
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr 2fr;
-    grid-gap: 0;
+  @media (min-width: 768px) {
+    grid-template-columns: 3fr 4fr 1fr 2fr;
+    grid-template-rows: 1fr 100px 1fr;
+    grid-gap: 10px;
+    align-items: center;
   }
 `;
 
 const Title = styled.h2`
-  grid-column: 2/3;
-  grid-row: 2/3;
+  grid-column: 2/4;
+  grid-row: 1/2;
   margin-right: 1rem;
   margin: 0;
   justify-self: start;
   align-self: start;
 
-  @media (max-width: 768px) {
-    grid-column: 2/4;
-    grid-row: 1/2;
+  @media (min-width: 768px) {
+    grid-column: 2/3;
+    grid-row: 2/3;
+    align-self: center;
   }
 `;
 
@@ -289,44 +294,47 @@ const Image = styled.img`
   grid-column: 1/2;
   grid-row: 1/4;
   padding: 5px;
-  width: 100%;
+  max-width: 200px;
 
-  @media (max-width: 768px) {
-    min-width: 200px;
+  @media (min-width: 768px) {
+    width: 200px;
+    grid-row: 2/3;
   }
 `;
 
 const Price = styled.p`
-  grid-column: 4/5;
+  grid-column: 2/3;
   grid-row: 2/3;
   font-size: 1.2rem;
   font-weight: 500;
   margin: 0;
   align-self: start;
-  justify-self: end;
+  justify-self: start;
 
-  @media (max-width: 768px) {
-    grid-column: 2/3;
-    justify-self: start;
+  @media (min-width: 768px) {
+    grid-column: 4/5;
+    justify-self: end;
+    align-self: center;
   }
 `;
 
 const ExtendedSelect = styled(Select)`
-  grid-column: 3/4;
-  grid-row: 2/3;
+  grid-column: 2/3;
+  grid-row: 3/4;
   justify-self: start;
   align-self: start;
 
-  @media (max-width: 768px) {
-    grid-column: 2/3;
-    grid-row: 3/4;
+  @media (min-width: 768px) {
+    grid-column: 3/4;
+    grid-row: 2/3;
+    align-self: center;
   }
 `;
 
 const RemoveButton = styled.button`
-  grid-column: 4/5;
+  grid-column: 3/4;
   grid-row: 3/4;
-  place-self: end;
+  align-self: start;
   border: none;
   color: #000;
   font: inherit;
@@ -337,17 +345,18 @@ const RemoveButton = styled.button`
     cursor: pointer;
   }
 
-  @media (max-width: 768px) {
-    grid-column: 3/4;
-    align-self: start;
+  @media (min-width: 768px) {
+    grid-column: 4/5;
+    place-self: end;
+    align-self: center;
   }
 `;
 
 const ExtendedLink = styled(Link)`
-  grid-column: 2/3;
-  grid-row: 3/4;
+  grid-column: 1/2;
+  grid-row: auto;
+  margin: 0;
   padding: 1.5rem;
-  margin-left: 1rem;
   font-weight: bold;
   font-size: 1.5rem;
   font-family: inherit;
@@ -362,9 +371,9 @@ const ExtendedLink = styled(Link)`
     cursor: pointer;
   }
 
-  @media (max-width: 768px) {
-    grid-column: 1/2;
-    grid-row: auto;
-    margin: 0;
+  @media (min-width: 768px) {
+    grid-column: 2/3;
+    grid-row: 3/4;
+    margin-left: 1rem;
   }
 `;

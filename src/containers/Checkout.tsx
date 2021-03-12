@@ -395,13 +395,14 @@ export default Checkout;
 
 const Main = styled.main`
   display: grid;
-  grid-template-columns: 2fr 1fr;
-  margin: 1rem 6rem;
+  grid-template-columns: 1fr;
+  margin: 1rem;
+  justify-items: center;
 
-  @media (max-width: 768px) {
-    margin: 1rem;
-    grid-template-columns: 1fr;
-    justify-items: center;
+  @media (min-width: 768px) {
+    grid-template-columns: 2fr 1fr;
+    margin: 1rem 6rem;
+    justify-items: start;
   }
 `;
 
@@ -416,22 +417,23 @@ const Form = styled.form`
   grid-column: 1/2;
   grid-row: 2/5;
   display: grid;
-  grid-template-columns: repeat(3, 20rem);
   grid-template-rows: 4rem;
-  grid-gap: 10px;
   max-width: max-content;
   height: max-content;
   text-align: left;
   padding: 10px;
 
-  @media (max-width: 1120px) {
+  grid-template-columns: 1fr;
+  grid-gap: 0;
+  margin: 20px 0;
+
+  @media (min-width: 768px) {
+    grid-gap: 10px;
     grid-template-columns: repeat(2, 20rem);
   }
 
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    grid-gap: 0;
-    margin: 20px 0;
+  @media (min-width: 1120px) {
+    grid-template-columns: repeat(3, 20rem);
   }
 `;
 
@@ -441,86 +443,86 @@ const FirstName = styled(Input)`
 `;
 
 const LastName = styled(Input)`
-  grid-column: 2/3;
-  grid-row: 1/2;
+  grid-column: 1/2;
+  grid-row: 2/3;
 
-  @media (max-width: 768px) {
-    grid-column: 1/2;
-    grid-row: 2/3;
+  @media (min-width: 768px) {
+    grid-column: 2/3;
+    grid-row: 1/2;
   }
 `;
 
 const Address1 = styled(Input)`
-  grid-column: 1/3;
-  grid-row: 2/3;
+  grid-column: 1/2;
+  grid-row: 3/4;
 
-  @media (max-width: 768px) {
-    grid-column: 1/2;
-    grid-row: 3/4;
+  @media (min-width: 768px) {
+    grid-column: 1/3;
+    grid-row: 2/3;
   }
 `;
 
 const Address2 = styled(Input)`
-  grid-column: 1/3;
-  grid-row: 3/4;
+  grid-column: 1/2;
+  grid-row: 4/5;
 
-  @media (max-width: 768px) {
-    grid-column: 1/2;
-    grid-row: 4/5;
+  @media (min-width: 768px) {
+    grid-column: 1/3;
+    grid-row: 3/4;
   }
 `;
 
 const City = styled(Input)`
-  grid-column: 1/3;
-  grid-row: 4/5;
+  grid-column: 1/2;
+  grid-row: 5/6;
 
-  @media (max-width: 768px) {
-    grid-column: 1/2;
-    grid-row: 5/6;
+  @media (min-width: 768px) {
+    grid-column: 1/3;
+    grid-row: 4/5;
   }
 `;
 
 const Province = styled.label`
   grid-column: 1/2;
-  grid-row: 5/6;
+  grid-row: 6/7;
   font-weight: bold;
 
-  @media (max-width: 768px) {
-    grid-row: 6/7;
+  @media (min-width: 768px) {
+    grid-row: 5/6;
   }
 `;
 
 const ExtendedSelect = styled(Select)`
   & {
     border: 1px solid #000;
-    width: 20rem;
+    width: auto;
 
-    @media (max-width: 768px) {
-      width: auto;
+    @media (min-width: 768px) {
+      width: 20rem;
     }
   }
 `;
 
 const PostalCode = styled(Input)`
-  grid-column: 2/3;
-  grid-row: 5/6;
+  grid-column: 1/2;
+  grid-row: 7/8;
 
-  @media (max-width: 768px) {
-    grid-column: 1/2;
-    grid-row: 7/8;
+  @media (min-width: 768px) {
+    grid-column: 2/3;
+    grid-row: 5/6;
   }
 `;
 
 const Country = styled.p`
   grid-column: 1/2;
-  grid-row: 6/7;
+  grid-row: 8/9;
   font-weight: bold;
   display: flex;
   flex-flow: column;
   margin: 0;
 
-  @media (max-width: 768px) {
-    grid-row: 8/9;
+  @media (min-width: 768px) {
+    grid-row: 6/7;
   }
 `;
 
@@ -534,56 +536,60 @@ const CountrySpan = styled.span`
 `;
 
 const PhoneNumber = styled(Input)`
-  grid-column: 2/3;
-  grid-row: 6/7;
+  grid-column: 1/2;
+  grid-row: 9/10;
 
-  @media (max-width: 768px) {
-    grid-column: 1/2;
-    grid-row: 9/10;
+  @media (min-width: 768px) {
+    grid-column: 2/3;
+    grid-row: 6/7;
   }
 `;
 
 const ExtendedOrderSummary = styled(OrderSummary)`
-  grid-column: 3/4;
-  grid-row: 1/4;
-  align-self: start;
-  margin-left: 1rem;
+  grid-column: 1/2;
+  grid-row: 10/11;
+  align-self: center;
+  margin: 0;
 
-  @media (max-width: 1120px) {
+  @media (min-width: 768px) {
     grid-column: 1/2;
     grid-row: 7/8;
     margin: 0;
   }
 
-  @media (max-width: 768px) {
-    grid-column: 1/2;
-    grid-row: 10/11;
-    align-self: center;
-    margin: 0;
+  @media (min-width: 1120px) {
+    grid-column: 3/4;
+    grid-row: 1/4;
+    align-self: start;
+    margin-left: 1rem;
   }
 `;
 
 const ButtonContainer = styled.div`
-  grid-column: 3/4;
-  grid-row: 3/8;
   display: flex;
-  flex-flow: column;
-  margin-left: 1rem;
-  margin-top: 3rem;
 
-  @media (max-width: 1120px) {
+  grid-column: 1/2;
+  grid-row: 11/12;
+  align-items: center;
+  flex-flow: column;
+  margin: 0;
+
+  @media (min-width: 768px) {
     grid-column: 2/4;
     grid-row: 7/8;
     flex-flow: row;
     margin: 0;
+    justify-content: space-between;
   }
 
-  @media (max-width: 768px) {
-    grid-column: 1/2;
-    grid-row: 11/12;
-    align-items: center;
+  @media (min-width: 1120px) {
+    grid-column: 3/4;
+    grid-row: 3/8;
     flex-flow: column;
-    margin: 0;
+    margin-left: 1rem;
+    margin-top: 2rem;
+    align-items: flex-start;
+    justify-content: start;
   }
 `;
 

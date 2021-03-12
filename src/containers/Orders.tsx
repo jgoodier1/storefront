@@ -233,15 +233,15 @@ const OrderContainer = styled.div`
 const TopRowContainer = styled.div`
   grid-column: 2/3;
   display: flex;
-  justify-content: space-between;
   background: #f6f6f6;
-  padding: 0 2rem;
   z-index: 199;
   position: relative;
+  justify-content: space-around;
+  padding: 0;
 
-  @media (max-width: 768px) {
-    justify-content: space-around;
-    padding: 0;
+  @media (min-width: 768px) {
+    justify-content: space-between;
+    padding: 0 2rem;
   }
 `;
 
@@ -290,14 +290,14 @@ const Image = styled.img`
 const Title = styled(Link)`
   grid-column: 2/4;
   grid-row: 1/2;
-  width: max-content;
   font-weight: bold;
   font-size: 20px;
   color: #3f6cd7;
   text-decoration: none;
+  width: auto;
 
-  @media (max-width: 768px) {
-    width: auto;
+  @media (min-width: 768px) {
+    width: max-content;
   }
 `;
 
