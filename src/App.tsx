@@ -1,8 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { Switch, Route, useHistory } from 'react-router-dom';
 import axios from 'axios';
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements } from '@stripe/react-stripe-js';
 
 import Products from './containers/Products';
 import NavBar from './components/NavBar';
@@ -32,11 +30,6 @@ interface SearchValues {
 const App: React.FC = () => {
   const cartContext = useContext(CartContext);
   const [cartQuantityState, setCartQuantityState] = useState(cartContext.quantity);
-  const [promise] = useState(() =>
-    loadStripe(
-      'pk_test_51HKOZDEVSid6nUScxcOBQFjklW1uXACqD8rLvnyLU9HslaRYixM4qQ0gzxz6YaqIxyDITov9Vfxcxvyrinisbnf400FIRya1kL'
-    )
-  );
 
   axios.defaults.baseURL = 'https://immense-earth-76647.herokuapp.com';
 
@@ -71,15 +64,13 @@ const App: React.FC = () => {
 
   return (
     <div>
-      <Elements stripe={promise}>
-        <CartContext.Provider
-          value={{ quantity: cartQuantityState, updateQuantity: cartQuantity }}
-        >
-          <NavBar search={searchHandler} />
-          {routes}
-        </CartContext.Provider>
-        <Auth />
-      </Elements>
+      <CartContext.Provider
+        value={{ quantity: cartQuantityState, updateQuantity: cartQuantity }}
+      >
+        <NavBar search={searchHandler} />
+        {routes}
+      </CartContext.Provider>
+      <Auth />
     </div>
   );
 };

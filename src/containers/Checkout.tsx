@@ -7,6 +7,9 @@ import styled from 'styled-components';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+
 import { Input } from '../components/Input';
 import Button from '../components/Button';
 import Spinner from '../components/Spinner';
@@ -36,6 +39,11 @@ const Checkout: React.FC = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const isLoggedIn = useSelector(selectAuthState);
+  const [promise] = useState(() =>
+    loadStripe(
+      'pk_test_51HKOZDEVSid6nUScxcOBQFjklW1uXACqD8rLvnyLU9HslaRYixM4qQ0gzxz6YaqIxyDITov9Vfxcxvyrinisbnf400FIRya1kL'
+    )
+  );
 
   const checkoutSchema = yup.object().shape({
     firstName: yup.string().trim().required('First Name is required').max(20).min(2),
@@ -338,40 +346,48 @@ const Checkout: React.FC = () => {
   );
 
   return (
-    <Main>
-      {compState === 'Error' && (
-        <Modal show={compState === 'Error'}>Cannot place order. Please try again.</Modal>
-      )}
-      {isLoggedIn ? (
-        <>
-          <h1>
-            {step === 1 ? 'Shipping Address' : step === 2 ? 'Shipping Speed' : 'Payment'}
-          </h1>
-          {step === 3 && (
-            <ExtendedStripeForm
-              formValues={formValues}
-              shippingSpeed={'normal'}
-              totalPrice={totalPrice.toFixed(2)}
-            />
-          )}
-          <Form onSubmit={formik.handleSubmit}>
-            {renderedForm}
-            <ExtendedOrderSummary
-              totalPrice={totalPrice.toFixed(2)}
-              tax={tax.toFixed(2)}
-              subTotal={subTotal.toFixed(2)}
-              shippingPrice={shippingPrice}
-            />
-            <ButtonContainer>
-              {step !== 3 && <ExtendedButton type='submit'>Continue</ExtendedButton>}
-              <ExtendedButton clicked={cancelHandler}>Cancel</ExtendedButton>
-            </ButtonContainer>
-          </Form>
-        </>
-      ) : (
-        notAuth
-      )}
-    </Main>
+    <Elements stripe={promise}>
+      <Main>
+        {compState === 'Error' && (
+          <Modal show={compState === 'Error'}>
+            Cannot place order. Please try again.
+          </Modal>
+        )}
+        {isLoggedIn ? (
+          <>
+            <h1>
+              {step === 1
+                ? 'Shipping Address'
+                : step === 2
+                ? 'Shipping Speed'
+                : 'Payment'}
+            </h1>
+            {step === 3 && (
+              <ExtendedStripeForm
+                formValues={formValues}
+                shippingSpeed={'normal'}
+                totalPrice={totalPrice.toFixed(2)}
+              />
+            )}
+            <Form onSubmit={formik.handleSubmit}>
+              {renderedForm}
+              <ExtendedOrderSummary
+                totalPrice={totalPrice.toFixed(2)}
+                tax={tax.toFixed(2)}
+                subTotal={subTotal.toFixed(2)}
+                shippingPrice={shippingPrice}
+              />
+              <ButtonContainer>
+                {step !== 3 && <ExtendedButton type='submit'>Continue</ExtendedButton>}
+                <ExtendedButton clicked={cancelHandler}>Cancel</ExtendedButton>
+              </ButtonContainer>
+            </Form>
+          </>
+        ) : (
+          notAuth
+        )}
+      </Main>
+    </Elements>
   );
 };
 
