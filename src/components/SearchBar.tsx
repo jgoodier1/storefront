@@ -31,9 +31,6 @@ const SearchBar: React.FC<SearchBarProps> = props => {
 
   return (
     <form className={props.className} onSubmit={formik.handleSubmit} role='search'>
-      <label htmlFor='search' className='sr-only'>
-        Search
-      </label>
       <Input
         type='search'
         placeholder='Search...'
@@ -41,10 +38,10 @@ const SearchBar: React.FC<SearchBarProps> = props => {
         name='search'
         value={formik.values.search}
         onChange={formik.handleChange}
+        aria-label='Search for products'
       />
       <Button type='submit'>
         <Image src={search} alt='search' />
-        {/* Search */}
       </Button>
     </form>
   );
