@@ -209,6 +209,7 @@ const Checkout: React.FC = () => {
           changed={formik.handleChange}
           value={formik.values.firstName}
           onBlur={formik.handleBlur}
+          aria-required='true'
         />
         <LastName
           type='text'
@@ -218,6 +219,7 @@ const Checkout: React.FC = () => {
           changed={formik.handleChange}
           value={formik.values.lastName}
           onBlur={formik.handleBlur}
+          aria-required='true'
         />
         <Address1
           type='text'
@@ -227,6 +229,7 @@ const Checkout: React.FC = () => {
           changed={formik.handleChange}
           value={formik.values.streetAddress}
           onBlur={formik.handleBlur}
+          aria-required='true'
         />
         <Address2
           type='text'
@@ -245,6 +248,7 @@ const Checkout: React.FC = () => {
           changed={formik.handleChange}
           value={formik.values.city}
           onBlur={formik.handleBlur}
+          aria-required='true'
         />
         <Province htmlFor='province'>
           Province*
@@ -253,6 +257,7 @@ const Checkout: React.FC = () => {
             name='province'
             value={formik.values.province}
             changed={formik.handleChange}
+            aria-required='true'
             // onBlur here?
           />
         </Province>
@@ -267,6 +272,7 @@ const Checkout: React.FC = () => {
           changed={formik.handleChange}
           value={formik.values.postalCode}
           onBlur={formik.handleBlur}
+          aria-required='true'
         />
         <PhoneNumber
           type='tel'
@@ -276,6 +282,7 @@ const Checkout: React.FC = () => {
           changed={formik.handleChange}
           value={formik.values.phoneNumber}
           onBlur={formik.handleBlur}
+          aria-required='true'
         />
 
         {formik.errors.firstName && formik.touched.firstName ? (
@@ -369,6 +376,7 @@ const Checkout: React.FC = () => {
                 totalPrice={totalPrice.toFixed(2)}
               />
             )}
+            {/* {step === 1 && <p>Fields marked with an asterisk (*) are required.</p>} */}
             <Form onSubmit={formik.handleSubmit}>
               {renderedForm}
               <ExtendedOrderSummary
