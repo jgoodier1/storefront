@@ -83,7 +83,7 @@ const NavItems: React.FC<NavItemsProps> = props => {
 const NavBar: React.FC<NavBarProps> = props => {
   return (
     <Header>
-      <nav style={{ width: '100%' }}>
+      <nav style={{ width: '100%' }} role='navigation'>
         <NavItems search={props.search} />
       </nav>
     </Header>
@@ -95,8 +95,6 @@ export default NavBar;
 const Header = styled.header`
   height: 70px;
   width: 100%;
-  top: 0;
-  left: 0;
   display: flex;
   border-bottom: 1px solid black;
   justify-content: space-between;
