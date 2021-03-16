@@ -164,6 +164,7 @@ const Auth: React.FC = () => {
               value={formik.values.name}
               changed={formik.handleChange}
               onBlur={formik.handleBlur}
+              aria-required='true'
             />
             {formik.errors.name && formik.touched.name ? (
               <div>{formik.errors.name}</div>
@@ -179,6 +180,7 @@ const Auth: React.FC = () => {
             value={formik.values.email}
             changed={formik.handleChange}
             onBlur={formik.handleBlur}
+            aria-required='true'
           />
           {formik.errors.email && formik.touched.email ? (
             <div>{formik.errors.email}</div>
@@ -193,6 +195,7 @@ const Auth: React.FC = () => {
             value={formik.values.password}
             changed={formik.handleChange}
             onBlur={formik.handleBlur}
+            aria-required='true'
           />
           {formik.errors.password && formik.touched.password ? (
             <div>{formik.errors.password}</div>
@@ -208,6 +211,7 @@ const Auth: React.FC = () => {
               value={formik.values.confirmPassword}
               changed={formik.handleChange}
               onBlur={formik.handleBlur}
+              aria-required='true'
             />
             {formik.errors.confirmPassword && formik.touched.confirmPassword ? (
               <div>{formik.errors.confirmPassword}</div>
