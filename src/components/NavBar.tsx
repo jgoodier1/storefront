@@ -9,6 +9,7 @@ import { selectAuthState, logout, showModal } from '../reduxSlices/authSlice';
 
 import logo from '../images/logo2.png';
 import shoppingCart from '../images/shopping-cart.png';
+import axios from 'axios';
 
 interface NavItemProps {
   children: React.ReactNode;
@@ -45,12 +46,23 @@ const NavItems: React.FC<NavItemsProps> = props => {
   const cartContext = useContext(CartContext);
   const isLoggedIn = useSelector(selectAuthState);
 
+  const logoutHandler = () => {
+    console.log('clicks');
+    axios
+      .get('/logout')
+      .then(res => {
+        console.log(res);
+        dispatch(logout());
+        history.push('/');
+      })
+      .catch(err => console.log(err));
+  };
+
   return (
     <UnorderList>
       <LogoLink link='/' exact>
         <LogoImage src={logo} alt='store logo' />
       </LogoLink>
-      {/* TODO: this messed with the searchbar responsiveness */}
       <SearchBarListItem>
         <SearchBar search={props.search} />
       </SearchBarListItem>
@@ -66,7 +78,7 @@ const NavItems: React.FC<NavItemsProps> = props => {
       {isLoggedIn && (
         <>
           <AuthListItem>
-            <AuthButton onClick={() => dispatch(logout({ history }))}>Logout</AuthButton>
+            <AuthButton onClick={() => logoutHandler()}>Logout</AuthButton>
           </AuthListItem>
         </>
       )}

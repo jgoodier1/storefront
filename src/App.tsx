@@ -29,11 +29,9 @@ interface SearchValues {
 }
 
 const App: React.FC = () => {
+  axios.defaults.baseURL = 'https://immense-earth-76647.herokuapp.com';
   const cartContext = useContext(CartContext);
   const [cartQuantityState, setCartQuantityState] = useState(cartContext.quantity);
-
-  axios.defaults.baseURL = 'https://immense-earth-76647.herokuapp.com';
-
   const history = useHistory();
 
   const cartQuantity = (cart: CartInterface) => {

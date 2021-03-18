@@ -37,11 +37,9 @@ const StripeForm: React.FC<StripeFormProps> = props => {
 
   useEffect(() => {
     setCompState('Loading');
-    const userId = localStorage.getItem('userId');
     const cart = JSON.parse(sessionStorage.getItem('cart')!);
     axios
       .post('create-payment-intent', {
-        userId,
         items: cart,
         shippingSpeed: props.shippingSpeed,
         formValues: props.formValues

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
-import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import * as Yup from 'yup';
 import axios from 'axios';
@@ -27,7 +26,6 @@ interface AuthError {
 const Auth: React.FC = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [authError, setAuthError] = useState<AuthError[] | null>(null);
-  const history = useHistory();
   const dispatch = useDispatch();
   const showModal = useSelector(selectModalState);
 
@@ -74,18 +72,16 @@ const Auth: React.FC = () => {
   });
 
   useEffect(() => {
-    const oldToken = localStorage.getItem('token');
-    const expiryDate = localStorage.getItem('expiryDate');
-    if (!oldToken || !expiryDate) {
-      return;
-    }
-    if (new Date(expiryDate) < new Date()) {
-      dispatch(logout({ history }));
-      return;
-    }
-    const remainingMilliseconds = new Date(expiryDate).getTime() - new Date().getTime();
-    setAutoLogout(remainingMilliseconds);
-    dispatch(logIn());
+    axios
+      .get('/checkAuth')
+      .then(res => {
+        if (res.status === 200) {
+          dispatch(logIn());
+          console.log(res.data);
+          setAutoLogout(res.data.expireTime);
+        }
+      })
+      .catch(err => console.log(err));
   }, []); //eslint-disable-line
 
   const signUpHandler = (values: IAuthData) => {
@@ -118,29 +114,22 @@ const Auth: React.FC = () => {
     };
     axios
       .post('/signin', user)
-      .then(res => {
-        localStorage.setItem('token', res.data.token);
-        localStorage.setItem('userId', res.data.userId);
-        const remainingMilliseconds = 60 * 60 * 1000;
-        const expiryDate = new Date(
-          new Date().getTime() + remainingMilliseconds
-        ).toString();
-        localStorage.setItem('expiryDate', expiryDate);
-        setAutoLogout(remainingMilliseconds);
+      .then(() => {
         dispatch(logIn());
         dispatch(hideModal());
       })
       .catch(err => {
         if (err.response) {
+          console.log(err);
           setAuthError(err.response.data);
         }
       });
   };
 
-  const setAutoLogout = useCallback(milliseconds => {
+  const setAutoLogout = useCallback(seconds => {
     setTimeout(() => {
-      dispatch(logout({ history }));
-    }, milliseconds);
+      dispatch(logout());
+    }, seconds * 1000);
   }, []); //eslint-disable-line
 
   const modalClosed = () => {

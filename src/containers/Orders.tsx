@@ -141,10 +141,9 @@ const Order: React.FC<OrderProps> = props => {
 };
 
 const Orders: React.FC = () => {
-  const userId = localStorage.getItem('userId');
-  const [orders, compState] = useFetch<ResOrder[]>('POST', '/orders', { userId });
   const dispatch = useDispatch();
   const isLoggedIn = useSelector(selectAuthState);
+  const [orders, compState] = useFetch<ResOrder[]>('GET', '/orders', { isLoggedIn });
 
   const notAuth = (
     <>
@@ -166,7 +165,7 @@ const Orders: React.FC = () => {
         </p>
       </>
     );
-  } else if (compState === 'Rendered' && orders !== null) {
+  } else if (compState === 'Rendered' && Array.isArray(orders)) {
     renderedOrders = orders.map((order: ResOrder) => (
       <Order
         key={order.order_id}
