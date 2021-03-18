@@ -47,11 +47,9 @@ const NavItems: React.FC<NavItemsProps> = props => {
   const isLoggedIn = useSelector(selectAuthState);
 
   const logoutHandler = () => {
-    console.log('clicks');
     axios
       .get('/logout')
       .then(res => {
-        console.log(res);
         dispatch(logout());
         history.push('/');
       })
