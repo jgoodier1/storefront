@@ -18,7 +18,7 @@ const useFetch = <T>(
     setCompState('Loading');
     if (method === 'GET') {
       axios
-        .get(url)
+        .get(url, { withCredentials: true })
         .then(res => {
           if (isMounted) {
             setData(res.data);
@@ -37,7 +37,7 @@ const useFetch = <T>(
       !Object.values(object).includes(null)
     ) {
       axios
-        .post(url, object)
+        .post(url, object, { withCredentials: true })
         .then(res => {
           if (isMounted) {
             setData(res.data);

@@ -73,7 +73,7 @@ const Auth: React.FC = () => {
 
   useEffect(() => {
     axios
-      .get('/checkAuth')
+      .get('/checkAuth', { withCredentials: true })
       .then(res => {
         if (res.status === 200) {
           dispatch(logIn());
@@ -113,7 +113,7 @@ const Auth: React.FC = () => {
       password: authData.password
     };
     axios
-      .post('/signin', user)
+      .post('/signin', user, { withCredentials: true })
       .then(() => {
         dispatch(logIn());
         dispatch(hideModal());
