@@ -213,18 +213,16 @@ const Auth: React.FC = () => {
           <p>
             Don't have an account?{' '}
             <SwitchModeButton onClick={() => setIsSignUp(true)}>
-              Click here
+              Click here to sign up
             </SwitchModeButton>{' '}
-            to sign up
           </p>
         )}
         {isSignUp && (
           <p>
             Already have an account?{' '}
             <SwitchModeButton onClick={() => setIsSignUp(false)}>
-              Click here
+              Click here to sign in
             </SwitchModeButton>{' '}
-            to sign in
           </p>
         )}
       </Form>
@@ -248,8 +246,13 @@ const SwitchModeButton = styled.button`
   padding: 0;
   background-color: white;
   font-size: inherit;
+  font-family: inherit;
   font-weight: bold;
   cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
 `;
 
 const ExtendedButton = styled(Button)`
