@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
@@ -64,17 +64,6 @@ interface ResOrder {
 }
 
 const Order: React.FC<OrderProps> = props => {
-  //put state here because it would show for every order
-  const [isShown, setIsShown] = useState(false);
-
-  const popoverOpen = () => {
-    setIsShown(true);
-  };
-
-  const popoverClose = () => {
-    setIsShown(false);
-  };
-
   const renderedOrder = props.products.map(product => (
     <ProductContainer key={product.prod_id}>
       <Title to={'/products/' + product.prod_id}>{product.title}</Title>
@@ -101,13 +90,11 @@ const Order: React.FC<OrderProps> = props => {
         <Paragraph>
           Total: <span>${Number(props.price).toFixed(2)}</span>
         </Paragraph>
-        <Paragraph onMouseEnter={popoverOpen} onMouseLeave={popoverClose}>
+        <Paragraph>
           Ship To:{' '}
           <span>
             {props.address.firstName} {props.address.lastName}
           </span>
-        </Paragraph>
-        {isShown && (
           <PopoverContainer>
             <PopoverParagraph>
               <strong>
@@ -124,7 +111,7 @@ const Order: React.FC<OrderProps> = props => {
             <PopoverParagraph>{props.address.country}</PopoverParagraph>
             <PopoverParagraph>{props.address.phoneNumber}</PopoverParagraph>
           </PopoverContainer>
-        )}
+        </Paragraph>
       </TopRowContainer>
       {deliveryDate !== undefined && +deliveryDate.valueOf() > +dayjs().valueOf() ? (
         <DeliveryHeading>
@@ -247,9 +234,14 @@ const TopRowContainer = styled.div`
 const Paragraph = styled.p`
   display: flex;
   flex-flow: column;
+  &:hover div,
+  &:active div {
+    display: block;
+  }
 `;
 
 const PopoverContainer = styled.div`
+  display: none;
   position: absolute;
   z-index: 200;
   background: #fff;
@@ -259,8 +251,7 @@ const PopoverContainer = styled.div`
   border: 1px solid #f6f6f6;
   border-radius: 4px;
   justify-self: flex-end;
-  top: 4rem;
-  left: 28rem;
+  top: 60px;
 `;
 
 const PopoverParagraph = styled.p`
