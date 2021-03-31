@@ -25,12 +25,10 @@ interface ICart {
 }
 
 const Home: React.FC = () => {
-  const [carouselPage, setCarouselPage] = useState(1);
-  const [products] = useFetch<Product[]>('GET', '/home');
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const [products, compState] = useFetch<Product[]>('GET', '/home');
   const cartContext = useContext(CartContext);
   const history = useHistory();
-
-  // console.log(products);
 
   const addToCartHandler = (
     id: string,
@@ -43,11 +41,10 @@ const Home: React.FC = () => {
   };
 
   let recommendedProducts: JSX.Element | JSX.Element[] = <Spinner />;
-  if (products !== undefined && products !== null) {
-    recommendedProducts = products.map(product => {
-      // if (index > 3) return <></>;
+  if (products !== undefined && products !== null && compState === 'Rendered') {
+    recommendedProducts = products.map((product, index) => {
       return (
-        <CarouselItem key={product.prod_id}>
+        <CarouselItem key={product.prod_id} id={index.toString()}>
           <Link to={`/products/${product.prod_id}`}>
             <img src={product.image} alt='' />
           </Link>
@@ -70,21 +67,26 @@ const Home: React.FC = () => {
         </CarouselItem>
       );
     });
-  }
+  } else if (compState === 'Error') recommendedProducts = <div></div>;
 
+  // not the ideal way to do this, but it's a start
   const nextProducts = (direction: 'NEXT' | 'PREVIOUS') => {
     if (!Array.isArray(recommendedProducts) || recommendedProducts === undefined) return;
-    if (direction === 'NEXT' && carouselPage === 4) {
-      setCarouselPage(1);
-    } else if (direction === 'PREVIOUS' && carouselPage === 1) {
-      setCarouselPage(4);
+    const carousel = document.getElementById('carousel');
+    if (!carousel) return;
+    if (
+      (direction === 'NEXT' && scrollLeft === 4320) ||
+      (direction === 'PREVIOUS' && scrollLeft === 0)
+    ) {
+      return;
     } else if (direction === 'NEXT') {
-      setCarouselPage(carouselPage + 1);
+      setScrollLeft(prevState => prevState + 270);
+      carousel.scrollLeft = scrollLeft + 270;
     } else if (direction === 'PREVIOUS') {
-      setCarouselPage(carouselPage - 1);
+      setScrollLeft(prevState => prevState - 270);
+      carousel.scrollLeft = scrollLeft - 270;
     }
   };
-  console.log(recommendedProducts);
 
   return (
     <Main>
@@ -103,7 +105,7 @@ const Home: React.FC = () => {
       </Panel>
       <CarouselContainer>
         <h2>Recommended Products</h2>
-        <Carousel>
+        <CarouselContainerInner>
           <SvgButton onClick={() => nextProducts('PREVIOUS')}>
             <svg width='20' height='40' version='1.1' xmlns='http://www.w3.org/2000/svg'>
               <polyline
@@ -114,7 +116,12 @@ const Home: React.FC = () => {
               />
             </svg>
           </SvgButton>
-          {recommendedProducts}
+          <Carousel
+            onScroll={e => setScrollLeft((e.target as Element).scrollLeft)}
+            id='carousel'
+          >
+            {recommendedProducts}
+          </Carousel>
           <SvgButton onClick={() => nextProducts('NEXT')}>
             <svg width='20' height='40' version='1.1' xmlns='http://www.w3.org/2000/svg'>
               <polyline
@@ -125,7 +132,7 @@ const Home: React.FC = () => {
               />
             </svg>
           </SvgButton>
-        </Carousel>
+        </CarouselContainerInner>
       </CarouselContainer>
     </Main>
   );
@@ -147,13 +154,25 @@ const Panel = styled.section`
   grid-column: 1/4;
   border: 1px solid black;
   display: grid;
-  grid-template-columns: 2fr 3fr;
+  grid-template-rows: 1fr;
+
+  @media (min-width: 640px) {
+    grid-template-columns: 2fr 3fr;
+    grid-template-rows: 1fr;
+  }
 `;
 
 const Header = styled.header`
   display: grid;
   align-content: center;
   justify-items: center;
+  grid-row: 2;
+  grid-column: 1/3;
+
+  @media (min-width: 640px) {
+    grid-row: 1;
+    grid-column: 1/2;
+  }
 
   & > h2 {
     text-align: center;
@@ -172,7 +191,13 @@ const ExtendedLink = styled(Link)`
 `;
 
 const ImageContainer = styled.div`
-  grid-column: 2/3;
+  grid-column: 1/3;
+  grid-row: 1;
+
+  @media (min-width: 640px) {
+    grid-column: 2/3;
+    grid-row: 1;
+  }
 
   & > img {
     display: block;
@@ -184,18 +209,34 @@ const CarouselContainer = styled.section`
   width: 100%;
 
   & > h2 {
-    padding-left: 2.8rem;
+    padding-left: 2.2rem;
   }
+`;
+
+const CarouselContainerInner = styled.div`
+  overflow: hidden;
+  display: flex;
 `;
 
 const Carousel = styled.div`
   display: flex;
-  align-items: center;
   gap: 10px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behaviour: smooth;
+  -webkit-overflow-scrolling: touch;
 `;
 
 const CarouselItem = styled.div`
-  width: calc(25% - 16px);
+  scroll-snap-align: start;
+  width: calc(50% - 10px);
+  flex-shrink: 0;
+  padding-bottom: 10px;
+
+  @media (min-width: 640px) {
+    width: calc(25% - 10px);
+  }
+
   & img {
     width: 100%;
   }
