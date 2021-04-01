@@ -135,7 +135,8 @@ export default Products;
 const Main = styled.main`
   display: grid;
   grid-template-columns: 1fr min(60ch, 100%) 1fr;
-  grid-gap: 20px;
+  grid-gap: 20px 0;
+  padding: 20px 0;
 `;
 
 const Heading = styled.h1`
