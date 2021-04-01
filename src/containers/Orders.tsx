@@ -90,7 +90,7 @@ const Order: React.FC<OrderProps> = props => {
         <Paragraph>
           Total: <span>${Number(props.price).toFixed(2)}</span>
         </Paragraph>
-        <Paragraph>
+        <Paragraph tabIndex={0}>
           Ship To:{' '}
           <span>
             {props.address.firstName} {props.address.lastName}
@@ -106,8 +106,9 @@ const Order: React.FC<OrderProps> = props => {
               <PopoverParagraph>{props.address.streetAddressTwo}</PopoverParagraph>
             )}
             <PopoverParagraph>
-              {props.address.city}, {props.address.province} {props.address.postalCode}
+              {props.address.city}, {props.address.province}
             </PopoverParagraph>
+            <PopoverParagraph>{props.address.postalCode}</PopoverParagraph>
             <PopoverParagraph>{props.address.country}</PopoverParagraph>
             <PopoverParagraph>{props.address.phoneNumber}</PopoverParagraph>
           </PopoverContainer>
@@ -234,8 +235,10 @@ const TopRowContainer = styled.div`
 const Paragraph = styled.p`
   display: flex;
   flex-flow: column;
+  position: relative;
+
   &:hover div,
-  &:active div {
+  &:focus div {
     display: block;
   }
 `;
@@ -251,7 +254,12 @@ const PopoverContainer = styled.div`
   border: 1px solid #f6f6f6;
   border-radius: 4px;
   justify-self: flex-end;
-  top: 60px;
+  top: 50px;
+  right: 0;
+
+  @media (min-width: 1000px) {
+    left: 0;
+  }
 `;
 
 const PopoverParagraph = styled.p`
