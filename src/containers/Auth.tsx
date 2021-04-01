@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import styled from 'styled-components';
@@ -8,7 +8,7 @@ import axios from 'axios';
 import { Input } from '../components/Input';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
-import { logIn, logout, hideModal, selectModalState } from '../reduxSlices/authSlice';
+import { logIn, hideModal, selectModalState } from '../reduxSlices/authSlice';
 
 interface IAuthData {
   email: string;
@@ -77,8 +77,6 @@ const Auth: React.FC = () => {
       .then(res => {
         if (res.status === 200) {
           dispatch(logIn());
-          console.log(res.data);
-          setAutoLogout(res.data.expireTime);
         }
       })
       .catch(err => console.log(err));
@@ -125,12 +123,6 @@ const Auth: React.FC = () => {
         }
       });
   };
-
-  const setAutoLogout = useCallback(seconds => {
-    setTimeout(() => {
-      dispatch(logout());
-    }, seconds * 1000);
-  }, []); //eslint-disable-line
 
   const modalClosed = () => {
     setAuthError(null);
