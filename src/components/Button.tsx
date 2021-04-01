@@ -27,7 +27,8 @@ const StyledButton = styled.button`
   border: 2px solid #000;
   color: #000;
 
-  &:hover {
+  &:hover,
+  &:focus {
     background-color: #000;
     color: white;
     cursor: pointer;
