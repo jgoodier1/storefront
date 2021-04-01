@@ -54,7 +54,6 @@ const Checkout: React.FC = () => {
       .required('Street Address is required')
       .max(50)
       .min(2),
-    // .matches(streetRegex, 'Street Address is not Valid'), // validate as adress somehow
     streetAddress2: yup.string().trim().max(20).min(2),
     city: yup.string().trim().min(2).max(50).required('City is required'),
     province: yup.string().trim().required('Province is required'),
@@ -63,17 +62,14 @@ const Checkout: React.FC = () => {
       .trim()
       .required('Postal Code is required')
       .matches(
-        /([ABCEGHJKLMNPRSTVXY][0-9][ABCEGHJKLMNPRSTVWXYZ]) ?([0-9][ABCEGHJKLMNPRSTVWXYZ][0-9])/,
+        /^([A-Za-z][0-9][A-Za-z])([0-9][A-Za-z][0-9])$/,
         'Postal Code is not valid'
       ),
     phoneNumber: yup
       .string()
       .trim()
       .required('Phone Number is required')
-      .matches(
-        /^(?:\([2-9]\d{2}\) ?|[2-9]\d{2}(?:-?| ?))[2-9]\d{2}[- ]?\d{4}$/,
-        'Phone Number is not valid'
-      )
+      .matches(/^\d{10}$/, 'Phone Number must be 10 digits')
   });
 
   const formik = useFormik({
