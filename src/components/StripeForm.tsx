@@ -88,13 +88,17 @@ const StripeForm: React.FC<StripeFormProps> = props => {
         if (payload.paymentIntent?.amount)
           totalPrice = payload.paymentIntent?.amount / 100;
         axios
-          .post('/order', {
-            userId,
-            cart,
-            shippingSpeed: props.shippingSpeed,
-            orderData: props.formValues,
-            totalPrice: totalPrice
-          })
+          .post(
+            '/order',
+            {
+              userId,
+              cart,
+              shippingSpeed: props.shippingSpeed,
+              orderData: props.formValues,
+              totalPrice: totalPrice
+            },
+            { withCredentials: true }
+          )
           .then(() => {
             setProcessing(false);
             setSucceeded(true);
